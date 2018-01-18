@@ -22,7 +22,7 @@ if (params.help){
         Clockwork variant_call pipeline.
         Calls variants using Cortex and BWA MEM + Samtools.
         Can either be run on one pair of fastq files,
-        or on mulitple samples using a dataabase.
+        or on multiple samples using a database.
 
         Usage: nextflow run variant_call.nf <arguments>
 

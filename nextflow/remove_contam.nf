@@ -17,7 +17,7 @@ params.max_forks_sam_to_fastq_files = 100
 if (params.help){
     log.info"""
         Clockwork remove_contam pipeline. Removes reads that are contaminated.
-        Can be run on one pair of fastq files, or on mulitple samples using a dataabase.
+        Can be run on one pair of fastq files, or on multiple samples using a database.
 
         Usage: nextflow run remove_contam.nf <arguments>
 

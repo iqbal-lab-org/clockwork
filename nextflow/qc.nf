@@ -16,7 +16,7 @@ if (params.help){
     log.info"""
         Clockwork QC pipeline.
         Can either be run on one pair of fastq files,
-        or on mulitple samples using a dataabase.
+        or on multiple samples using a database.
 
         Usage: nextflow run qc.nf <arguments>
 
