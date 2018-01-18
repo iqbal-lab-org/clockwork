@@ -1,6 +1,5 @@
 # Clockwork - pipelines for processing bacteria Illumina data and variant calling
 
-Note: these pipelines were made for the [CRyPTIC](http://www.crypticproject.org/) project, but
-in principle can be used on any bacteria.
+Note: these pipelines were developed for the [CRyPTIC](http://www.crypticproject.org/) project which studies M. tuberculosis, but in principle can be used on any bacteria.
 
 Please see the [clockwork wiki page](https://github.com/iqbal-lab-org/clockwork/wiki) for documentation.
