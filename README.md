@@ -1,4 +1,5 @@
-# Clockwork - pipelines for processing bacteria Illumina data and variant calling
+# Clockwork 
+## Pipelines for processing bacterial Illumina data and variant calling
 
 Note: these pipelines were developed for the [CRyPTIC](http://www.crypticproject.org/) project which studies M. tuberculosis, but in principle can be used on any bacteria.
 
