@@ -31,6 +31,18 @@ class TestDatasetSubmitter(unittest.TestCase):
         os.unlink(tmp_ini_file)
 
 
+    def test_get_key_from_ini_file(self):
+        '''test _get_key_from_ini_file'''
+        tmp_ini_file = 'tmp.ena.dataset_submitter.ini'
+        with open(tmp_ini_file, 'w') as f:
+            print('[foo]', file=f)
+            print('bar=baz', file=f)
+
+        self.assertEqual(None, dataset_submitter.DatasetSubmitter._get_key_from_ini_file(tmp_ini_file, 'spam', 'bar'))
+        self.assertEqual(None, dataset_submitter.DatasetSubmitter._get_key_from_ini_file(tmp_ini_file, 'foo', 'baz'))
+        self.assertEqual('baz', dataset_submitter.DatasetSubmitter._get_key_from_ini_file(tmp_ini_file, 'foo', 'bar'))
+
+
     def test_get_broker_name_from_ini_file(self):
         '''test _get_broker_name_from_ini_file'''
         tmp_ini_file = 'tmp.ena.dataset_submitter.ini'

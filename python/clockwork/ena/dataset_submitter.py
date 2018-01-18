@@ -87,17 +87,22 @@ class DatasetSubmitter:
 
 
     @classmethod
-    def _get_broker_name_from_ini_file(cls, ini_file):
+    def _get_key_from_ini_file(cls, ini_file, section, key):
         config = configparser.ConfigParser()
         try:
             config.read(ini_file)
         except:
             raise Error('Error reading config file ' + ini_file)
 
-        if 'ena_login' not in config:
+        if section not in config:
             return None
         else:
-            return config['ena_login'].get('broker_name', None)
+            return config[section].get(key, None)
+
+
+    @classmethod
+    def _get_broker_name_from_ini_file(cls, ini_file):
+        return DatasetSubmitter._get_key_from_ini_file(ini_file, 'ena_login', 'broker_name')
 
 
     @classmethod
