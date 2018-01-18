@@ -1,0 +1,31 @@
+BootStrap: debootstrap
+OSVersion: zesty
+MirrorURL: http://us.archive.ubuntu.com/ubuntu/
+
+%environment
+PERL5LIB=/bioinf-tools/vcftools-0.1.15/install/share/perl/5.24.1/:/bioinf-tools/cortex/scripts/analyse_variants/bioinf-perl/lib:/bioinf-tools/cortex/scripts/calling/:$PERL5LIB
+export PERL5LIB
+PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analyse_variants/seq-align/bin/:/bioinf-tools/vcftools-0.1.15/install/bin:/bioinf-tools/enaBrowserTools-1.4.1/python3:$PATH
+
+%setup
+    mkdir $SINGULARITY_ROOTFS/clockwork
+    rsync -a ../python ../nextflow ../scripts $SINGULARITY_ROOTFS/clockwork/
+
+%post
+    #_____________________ setup $PATH _______________________#
+    export PATH=/bioinf-tools/:/bioinf-tools/cortex/scripts/analyse_variants/seq-align/bin/:/bioinf-tools/vcftools-0.1.15/install/bin:/bioinf-tools/enaBrowserTools-1.4.1/python3:$PATH
+    export PERL5LIB=/bioinf-tools/vcftools-0.1.15/install/share/perl/5.24.1/:/bioinf-tools/cortex/scripts/analyse_variants/bioinf-perl/lib:/bioinf-tools/cortex/scripts/calling/:$PERL5LIB
+
+    #_________________ install dependencies __________________#
+    /clockwork/scripts/install_dependencies.sh /bioinf-tools
+
+
+    #______________________ clockwork python ________________#
+    cd /clockwork/python
+    python3 setup.py install
+
+    #______________________ get reference genomes ___________#
+    /clockwork/scripts/make_pipeline_reference_files.pl /clockwork/reference_genomes/
+
+%runscript
+    clockwork

@@ -1,0 +1,5 @@
+subject_id	site_id	lab_id	isolate_number	sequence_replicate_number	submission_date	reads_file_1	reads_file_1_md5	reads_file_2	reads_file_2_md5	dataset_name	instrument_model	ena_center_name	submit_to_ena	ena_on_hold	ena_run_accession	ena_sample_accession
+id1	site1	lab1	1	1	20170101	ERR10_1.fastq.gz	0	ERR10_2.fastq.gz	0	group1	Illumina HiSeq 2500	CENTER 42	0	0	ERR10	ERR10_sample
+id1	site1	lab1	1	2	20170101	ERR11_1.fastq.gz	0	ERR11_2.fastq.gz	0	group1	Illumina HiSeq 2500	CENTER 42	0	0	ERR11	ERR11_sample
+id2	site1	lab1	1	1	20170101	ERR1_1.fastq.gz	0	ERR1_2.fastq.gz	0	group1	Illumina HiSeq 2500	CENTER 42	0	0	ERR1	ERR1_sample
+id2	site1	lab1	1	2	20170101	ERR2_1.fastq.gz	0	ERR2_2.fastq.gz	0	group1	Illumina HiSeq 2500	CENTER 42	0	0	ERR2	ERR2_sample

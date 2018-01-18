@@ -1,0 +1,5 @@
+Name	Is_contam	Reads
+contam	1	4
+wanted	0	4
+Unmapped	0	4
+Reads_kept_after_remove_contam	0	8

@@ -1,0 +1,5 @@
+Mtb	0	Mtb_seq
+human	1	human.chr1	human.chr2	human.chr3
+virus	1	influenza	HIV	EBV
+other	1	other.1
+other	1	other.2	other.3

@@ -1,0 +1,6 @@
+Name	Is_contam	Reads
+group1	0	30
+group2	1	0
+group3	1	42
+Unmapped	0	0
+Reads_kept_after_remove_contam	0	32

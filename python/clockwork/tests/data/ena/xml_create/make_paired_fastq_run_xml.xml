@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<RUN_SET>
+   <RUN alias="run alias" center_name="center name">
+      <EXPERIMENT_REF accession="experiment_acc"/>
+      <DATA_BLOCK>
+         <FILES>
+            <FILE checksum="md51" checksum_method="MD5" filename="reads1.fq" filetype="fastq"/>
+            <FILE checksum="md52" checksum_method="MD5" filename="reads2.gq" filetype="fastq"/>
+         </FILES>
+      </DATA_BLOCK>
+   </RUN>
+</RUN_SET>
