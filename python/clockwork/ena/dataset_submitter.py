@@ -35,6 +35,9 @@ class DatasetSubmitter:
         self.project_xml = DatasetSubmitter.dataset_xml_file(self.pipeline_root, self.dataset_name)
         self.centre_number_to_name = DatasetSubmitter._get_centres_from_ini_file(self.ini_file)
         self.broker_name = DatasetSubmitter._get_broker_name_from_ini_file(self.ini_file)
+        self.study_prefix = DatasetSubmitter._get_key_from_ini_file(self.ini_file, 'ena_login', 'study_prefix')
+        if self.study_prefix is None:
+            raise Error('Error! Must provide study_prefix in [ena_login] section of ini file ' + self.ini_file)
 
 
     @classmethod
@@ -132,7 +135,7 @@ class DatasetSubmitter:
             project_alias = 'project.' + self.dataset_name
             submit_alias = 'submit.' + project_alias
             center_name = DatasetSubmitter._ena_center_name_from_db_data(data_in, number_to_name_dict=self.centre_number_to_name)
-            title = 'CRyPTIC. ' + center_name + '. ' + self.dataset_name
+            title = self.study_prefix + '. ' + center_name + '. ' + self.dataset_name
             project_description = title
             project_creator = object_creator.ObjectCreator(self.ini_file, 'project',
               self.project_xml, project_alias, submit_alias, center_name, title,
