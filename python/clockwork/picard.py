@@ -5,16 +5,14 @@ from clockwork import utils
 
 class Error (Exception): pass
 
-# The picard jar file in the singularity container is /bioinf-tools/picard.jar.
-# If we're not using the container, then need to set the env variable
-# CLOCKWORK_PICARD_JAR instead
-PICARD_JAR = os.environ.get('CLOCKWORK_PICARD_JAR', '/bioinf-tools/picard.jar')
-
-if not os.path.exists(PICARD_JAR):
-    raise Error('Picard jar file not found. Please set environment variable CLOCKWORK_PICARD_JAR, or put it here: /bioinf-tools/picard.jar')
-
-
 def mark_duplicates(sorted_bam_in, bam_out, xmx=2):
+    # The picard jar file in the singularity container is /bioinf-tools/picard.jar.
+    # If we're not using the container, then need to set the env variable
+    # CLOCKWORK_PICARD_JAR instead
+    PICARD_JAR = os.environ.get('CLOCKWORK_PICARD_JAR', '/bioinf-tools/picard.jar')
+    if not os.path.exists(PICARD_JAR):
+        raise Error('Picard jar file not found. Please set environment variable CLOCKWORK_PICARD_JAR, or put it here: /bioinf-tools/picard.jar')
+
     tmpdir = tempfile.mkdtemp(prefix=bam_out + '.tmp.markdups.', dir=os.path.dirname(bam_out))
     m_file = os.path.join(tmpdir, 'covfefe')
 
