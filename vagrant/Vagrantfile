@@ -1,0 +1,64 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.ssh.forward_x11 = true
+  config.vm.box = "ubuntu/zesty64"
+  config.disksize.size = '20GB'
+
+  # Edit these if you want to mount whatever dirs...
+  config.vm.synced_folder "/Users/mhunt/git/", "/home/ubuntu/git"
+  config.vm.synced_folder "/Users/mhunt/vm_share/", "/home/ubuntu/vm_share"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 8000
+    v.cpus = 2
+  end
+
+  config.vm.provision "shell" do |s|
+    s.path = "../scripts/install_dependencies.sh"
+    s.args = '/bioinf-tools'
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    # noninteractive to stop window appearing asking for mysql root password
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server debootstrap
+
+    # see https://gist.github.com/Mins/4602864
+    mysql -e "UPDATE mysql.user SET authentication_string = PASSWORD('root') WHERE User = 'root'"
+    mysql -u root -proot -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
+    mysql -u root -proot -e "DELETE FROM mysql.user WHERE User=''"
+    mysql -u root -proot -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'"
+    mysql -u root -proot -e "FLUSH PRIVILEGES"
+
+    # add user for testing
+    mysql -u root -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'test_user'@'localhost' IDENTIFIED BY 'test_password';"
+
+    # install singularity
+    VERSION=2.3.1
+    wget https://github.com/singularityware/singularity/releases/download/$VERSION/singularity-$VERSION.tar.gz
+    tar xvf singularity-$VERSION.tar.gz
+    cd singularity-$VERSION
+    ./configure --prefix=/usr/local
+    make
+    make install
+
+  SHELL
+
+  # Set up env vars
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    echo "export PATH=/bioinf-tools/:/bioinf-tools/cortex/scripts/analyse_variants/seq-align/bin/:/bioinf-tools/vcftools-0.1.15/install/bin:/bioinf-tools/enaBrowserTools-1.4.1/python3:$PATH" >> $HOME/.bashrc
+    echo "export PERL5LIB=/bioinf-tools/vcftools-0.1.15/install/share/perl/5.24.1/:/bioinf-tools/cortex/scripts/analyse_variants/bioinf-perl/lib:/bioinf-tools/cortex/scripts/calling/:$PERL5LIB" >> $HOME/.bashrc
+  SHELL
+
+  # I like these settings. You may not.
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    echo "set -o vi" >> $HOME/.bashrc
+    echo "export EDITOR=vim" >> $HOME/.bashrc
+  SHELL
+end

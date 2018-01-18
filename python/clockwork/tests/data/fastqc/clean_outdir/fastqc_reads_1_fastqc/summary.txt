@@ -1,0 +1,11 @@
+PASS	Basic Statistics	fastqc_reads_1.fq
+PASS	Per base sequence quality	fastqc_reads_1.fq
+FAIL	Per sequence quality scores	fastqc_reads_1.fq
+FAIL	Per base sequence content	fastqc_reads_1.fq
+FAIL	Per sequence GC content	fastqc_reads_1.fq
+PASS	Per base N content	fastqc_reads_1.fq
+PASS	Sequence Length Distribution	fastqc_reads_1.fq
+PASS	Sequence Duplication Levels	fastqc_reads_1.fq
+FAIL	Overrepresented sequences	fastqc_reads_1.fq
+PASS	Adapter Content	fastqc_reads_1.fq
+PASS	Kmer Content	fastqc_reads_1.fq

@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<PROJECT_SET>
+   <PROJECT alias="project_alias" center_name="center name">
+      <TITLE>title text</TITLE>
+      <DESCRIPTION>description text</DESCRIPTION>
+      <SUBMISSION_PROJECT>
+         <SEQUENCING_PROJECT/>
+      </SUBMISSION_PROJECT>
+   </PROJECT>
+</PROJECT_SET>

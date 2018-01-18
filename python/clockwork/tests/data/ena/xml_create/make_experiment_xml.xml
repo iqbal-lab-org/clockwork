@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<EXPERIMENT_SET>
+   <EXPERIMENT alias="experiment alias" center_name="center name">
+      <TITLE>title</TITLE>
+      <STUDY_REF accession="study_acc"/>
+      <DESIGN>
+         <DESIGN_DESCRIPTION/>
+         <SAMPLE_DESCRIPTOR accession="sample_acc"/>
+         <LIBRARY_DESCRIPTOR>
+            <LIBRARY_NAME>library name</LIBRARY_NAME>
+            <LIBRARY_STRATEGY>WGS</LIBRARY_STRATEGY>
+            <LIBRARY_SOURCE>GENOMIC</LIBRARY_SOURCE>
+            <LIBRARY_SELECTION>RANDOM</LIBRARY_SELECTION>
+            <LIBRARY_LAYOUT>
+               <PAIRED/>
+            </LIBRARY_LAYOUT>
+         </LIBRARY_DESCRIPTOR>
+      </DESIGN>
+      <PLATFORM>
+         <platform>
+            <INSTRUMENT_MODEL>instrument</INSTRUMENT_MODEL>
+         </platform>
+      </PLATFORM>
+      <EXPERIMENT_ATTRIBUTES>
+         <EXPERIMENT_ATTRIBUTE>
+            <TAG>spam</TAG>
+            <VALUE>eggs</VALUE>
+         </EXPERIMENT_ATTRIBUTE>
+      </EXPERIMENT_ATTRIBUTES>
+   </EXPERIMENT>
+</EXPERIMENT_SET>

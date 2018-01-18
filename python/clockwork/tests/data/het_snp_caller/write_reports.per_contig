@@ -1,0 +1,4 @@
+Contig	Length	Positions_mapped	SNPs	Het_SNPs
+ctg1	100	50	2	1
+ctg2	200	100	0	0
+ctg3	0	0	0	0

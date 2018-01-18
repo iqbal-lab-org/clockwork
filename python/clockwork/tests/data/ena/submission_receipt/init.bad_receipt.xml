@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="receipt.xsl"?>
+<RECEIPT receiptDate="2017-09-01T14:13:19.573+01:00" submissionFile="submission.xml" success="false">
+     <SUBMISSION alias="Submission alias run 1"/>
+     <MESSAGES>
+          <ERROR>In submission, alias:"Submission alias run 1", accession:"". The object being added already exists in the submission account.</ERROR>
+          <INFO>Submission has been rolled back.</INFO>
+          <INFO>This submission is a TEST submission and will be discarded within 24 hours</INFO>
+     </MESSAGES>
+     <ACTIONS>ADD</ACTIONS>
+</RECEIPT>

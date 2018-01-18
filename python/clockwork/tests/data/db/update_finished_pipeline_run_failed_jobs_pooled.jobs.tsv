@@ -1,0 +1,5 @@
+isolate_id	seqrep_id	bar	sequence_replicate_number	pool
+1	1	x	1	0
+1	2	x	1	0
+2	3	x	1	1
+3	4_5	x	42_43	1

@@ -1,0 +1,9 @@
+[client]
+user = test_user
+password = test_password
+host = localhost
+port = 3306
+
+[ena_login]
+user = username
+password = correcthorsebatterystaple

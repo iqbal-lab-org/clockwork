@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<SAMPLE_SET>
+   <SAMPLE alias="sample alias" center_name="center name">
+      <TITLE>title</TITLE>
+      <SAMPLE_NAME>
+         <TAXON_ID>42</TAXON_ID>
+      </SAMPLE_NAME>
+      <SAMPLE_ATTRIBUTES>
+         <SAMPLE_ATTRIBUTE>
+            <TAG>foo</TAG>
+            <VALUE>bar</VALUE>
+         </SAMPLE_ATTRIBUTE>
+      </SAMPLE_ATTRIBUTES>
+   </SAMPLE>
+</SAMPLE_SET>

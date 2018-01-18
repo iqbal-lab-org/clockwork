@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="receipt.xsl"?>
+<RECEIPT receiptDate="2017-08-31T11:07:50.251+01:00" submissionFile="submission.xml" success="true">
+     <SAMPLE accession="ERS1234567" alias="Sample alias" status="PRIVATE">
+          <EXT_ID accession="SAMEA123456789" type="biosample"/>
+     </SAMPLE>
+     <SUBMISSION accession="ERA1234567" alias="Sample alias 42"/>
+     <MESSAGES>
+          <INFO>Submission has been committed.</INFO>
+          <INFO>This submission is a TEST submission and will be discarded within 24 hours</INFO>
+     </MESSAGES>
+     <ACTIONS>ADD</ACTIONS>
+</RECEIPT>

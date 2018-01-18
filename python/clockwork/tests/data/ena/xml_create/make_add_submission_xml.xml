@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SUBMISSION alias="alias 42" center_name="Royston Vasey">
+   <ACTIONS>
+      <ACTION>
+         <ADD schema="schema_name" source="source.xml"/>
+      </ACTION>
+   </ACTIONS>
+</SUBMISSION>
