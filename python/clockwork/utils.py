@@ -1,3 +1,4 @@
+import hashlib
 import subprocess
 import datetime
 import os
@@ -26,14 +27,12 @@ def syscall(command):
 
 def md5(filename):
     '''Given a file, returns a string that is the md5 sum of the file'''
-    md5_out = syscall('md5sum ' + filename)
-
-    try:
-        md5sum, fname = md5_out.stdout.rstrip().split()
-    except:
-        raise Error('Error parsing md5 output:\n' + md5_out.stdout)
-
-    return md5sum
+    # see https://stackoverflow.com/questions/3431825/generating-an-md5-checksum-of-a-file
+    hash_md5 = hashlib.md5()
+    with open(filename, "rb") as f:
+        for chunk in iter(lambda: f.read(1048576), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 
 def load_md5_from_file(filename):
