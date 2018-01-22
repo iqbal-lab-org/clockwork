@@ -1,7 +1,7 @@
 import multiprocessing
 import os
 
-from clockwork import spreadsheet_importer, utils
+from clockwork import spreadsheet_helper, utils
 from clockwork.common_data import allowed_sequencing_instruments
 
 class Error (Exception): pass
@@ -154,7 +154,7 @@ class SpreadsheetValidator:
 
 
     def run(self):
-        all_data = spreadsheet_importer.SpreadsheetImporter.load_data_from_spreadsheet(self.spreasheet_xlsx)
+        all_data = spreadsheet_helper.load_data_from_spreadsheet(self.spreasheet_xlsx)
         errors = SpreadsheetValidator._check_no_blank_values(all_data)
         errors.extend(SpreadsheetValidator._check_uniqueness_of_values(all_data))
         errors.extend(SpreadsheetValidator._check_global_file_and_md5_column_intersection(all_data))

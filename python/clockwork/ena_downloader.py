@@ -3,7 +3,7 @@ import multiprocessing
 import os
 import re
 import requests
-from clockwork import spreadsheet_importer, utils
+from clockwork import spreadsheet_helper, utils
 
 class Error (Exception): pass
 
@@ -147,7 +147,7 @@ class EnaDownloader:
     @classmethod
     def _write_import_tsv(cls, outfile, input_data, filename_data, site_id, lab_id, submission_date, dataset_name, test_ena_dict=None):
         with open(outfile, 'w') as f:
-            print(*spreadsheet_importer.columns, sep='\t', file=f)
+            print(*spreadsheet_helper.columns, sep='\t', file=f)
 
             for sample in sorted(input_data):
                 assert sample in filename_data
