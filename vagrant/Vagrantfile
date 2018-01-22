@@ -3,8 +3,8 @@
 
 Vagrant.configure(2) do |config|
   config.ssh.forward_x11 = true
-  config.vm.box = "ubuntu/zesty64"
-  config.disksize.size = '20GB'
+  config.vm.box = "ubuntu/xenial64"
+  config.disksize.size = '40GB'
 
   # Edit these if you want to mount whatever dirs...
   config.vm.synced_folder "/Users/mhunt/git/", "/home/ubuntu/git"
