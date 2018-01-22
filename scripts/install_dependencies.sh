@@ -11,8 +11,6 @@ apt-get install -y software-properties-common
 apt-add-repository universe
 apt-get update
 apt-get install -y \
-  bcftools \
-  bwa \
   build-essential \
   curl \
   default-jre \
@@ -22,6 +20,8 @@ apt-get install -y \
   liblzma-dev \
   libbz2-dev \
   libhts-dev \
+  libncurses5-dev \
+  libncursesw5-dev \
   zlib1g-dev \
   pkg-config \
   python-dev \
@@ -30,13 +30,32 @@ apt-get install -y \
   python3-setuptools \
   r-base-core \
   rsync \
-  samtools \
   unzip \
   wget
 
 
 mkdir $install_root
 cd $install_root
+
+#_________________________ bcftools _______________________#
+cd $install_root
+wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
+tar xf bcftools-1.3.1.tar.bz2
+cd bcftools-1.3.1/
+make
+cd ..
+cp -s bcftools-1.3.1/bcftools .
+
+
+#__________________________ BWA____________________________#
+cd $install_root
+wget https://github.com/lh3/bwa/releases/download/v0.7.15/bwa-0.7.15.tar.bz2
+tar xf bwa-0.7.15.tar.bz2
+cd bwa-0.7.15/
+make
+cd ..
+cp -s bwa-0.7.15/bwa .
+
 
 #_____________________ enaBrowserTools ____________________#
 cd $install_root
@@ -79,6 +98,15 @@ cd seqtk-1.2/
 make
 cd ..
 cp -s seqtk-1.2/seqtk .
+
+#_________________________ samtools ______________________#
+cd $install_root
+wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
+tar xf samtools-1.3.1.tar.bz2
+cd samtools-1.3.1/
+make
+cd ..
+cp -s samtools-1.3.1/samtools .
 
 #________________________ stampy _________________________#
 cd $install_root
