@@ -25,6 +25,7 @@ __all__ = [
     'read_pair_importer',
     'read_trim',
     'samtools_qc',
+    'spreadsheet_helper',
     'spreadsheet_importer',
     'spreadsheet_validator',
     'tasks',

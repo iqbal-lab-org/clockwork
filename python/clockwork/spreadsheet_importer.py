@@ -6,34 +6,12 @@ import re
 import string
 import xlsxwriter
 import openpyxl
-from clockwork import db, lock_file, utils
+from clockwork import db, lock_file, spreadsheet_helper, utils
 from clockwork.common_data import allowed_sequencing_instruments
 
 
 class Error (Exception): pass
 
-
-columns = [
-    'subject_id',
-    'site_id',
-    'lab_id',
-    'isolate_number',
-    'sequence_replicate_number',
-    'submission_date',
-    'reads_file_1',
-    'reads_file_1_md5',
-    'reads_file_2',
-    'reads_file_2_md5',
-    'dataset_name',
-    'instrument_model',
-    'ena_center_name',
-    'submit_to_ena',
-    'ena_on_hold',
-    'ena_run_accession',
-    'ena_sample_accession',
-]
-
-date_iso_regex = re.compile(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
 
 def create_template_spreadsheet(filename):
     workbook = xlsxwriter.Workbook(filename)
@@ -68,7 +46,7 @@ def create_template_spreadsheet(filename):
         'reads_file_1_md5': None,
         'reads_file_2_md5': None,
     }
-    for i, column in enumerate(columns):
+    for i, column in enumerate(spreadsheet_helper.columns):
         main_sheet.set_column(i, i, len(column), unlocked)
         if column in validations:
             column_letter = string.ascii_uppercase[i]
@@ -78,7 +56,7 @@ def create_template_spreadsheet(filename):
                 validation = validations[column]
             main_sheet.data_validation(column_letter + '2:' + column_letter + '1048576', validation)
 
-    main_sheet.write_row('A1', columns, bold_locked)
+    main_sheet.write_row('A1', spreadsheet_helper.columns, bold_locked)
     workbook.close()
 
 
@@ -94,78 +72,8 @@ class SpreadsheetImporter:
 
 
     @classmethod
-    def load_data_from_spreadsheet(cls, infile):
-        if infile.endswith('.xlsx'):
-            workbook = openpyxl.load_workbook(infile)
-            sheet = workbook.active
-            fields_list = []
-            for row in sheet:
-                fields_list.append([str(x.value) for x in row if x.value is not None])
-        elif infile.endswith('.tsv'):
-            with open(infile) as f:
-                fields_list = []
-                for line in f:
-                    fields_list.append([x.strip() for x in line.rstrip().split('\t')])
-
-        data = []
-
-
-        for line_counter, fields in enumerate(fields_list):
-            if line_counter == 0:
-                if fields != columns:
-                    fields_str = ', '.join([str(x) for x in fields])
-                    expected_str = ', '.join(columns)
-                    raise Error('Error in first line of spreadsheet "' + infile +
-                            '". Column names not correct.\nExpected: ' + expected_str +
-                            '\nGot:      ' + fields_str)
-            elif len(fields) != len(columns):
-                raise Error('Wrong number of fields in line ' + str(line_counter) + ' of spreadsheet: ' +
-                        ', '.join([str(x) for x in fields]))
-            else:
-                new_data = dict(zip(columns, fields))
-
-                for key in ['ena_run_accession', 'ena_sample_accession', 'reads_file_1_md5', 'reads_file_2_md5']:
-                    if new_data[key] in {0, '0'}:
-                        new_data[key] = None
-
-                try:
-                    date = dateutil.parser.parse(new_data['submission_date']).date()
-                except:
-                    raise Error('Date format error: ' + SpreadsheetImporter._row_data_dict_to_string(new_data))
-
-                assert SpreadsheetImporter._looks_like_date(str(date))
-                new_data['submission_date'] = date
-                data.append(new_data)
-
-        return data
-
-
-    @classmethod
-    def _row_data_dict_to_string(cls, row_data):
-        return ', '.join([str(row_data[columns[i]]) for i in range(len(columns))])
-
-
-    @classmethod
-    def _looks_like_date(cls, date_string):
-        '''Returns true iff the date_string looks like a date of the form YYYY-MM-DD.
-           We're always getting ISO date strings from the datetime module, but
-           check anyway'''
-        if not date_iso_regex.match(date_string):
-            return False
-
-        year, month, day = date_string[:4], date_string[5:7], date_string[8:]
-
-        try:
-            datetime.date(int(year), int(month), int(day))
-        except:
-            return False
-
-        return True
-
-
-    @classmethod
     def _validate_data(cls, database, data, dropbox_dir):
-        '''Input should be data, made by load_data_from_spreadsheet().
+        '''Input should be data, made by spreadsheet_helper.load_data_from_spreadsheet().
            Sanity checks that it is ok, and returns a list of error messages.
            If the list has length zero, then all is OK.'''
         errors = []
@@ -175,7 +83,7 @@ class SpreadsheetImporter:
 
         for data_dict in data:
             if type(data_dict['submission_date']) is not datetime.date:
-                errors.append('Date format error: ' + SpreadsheetImporter._row_data_dict_to_string(data_dict))
+                errors.append('Date format error: ' + spreadsheet_helper.row_data_dict_to_string(data_dict))
 
             for i in [1, 2]:
                 read_file_key = 'reads_file_' + str(i)
@@ -253,7 +161,7 @@ class SpreadsheetImporter:
 
     def _import_reads_and_update_db(self):
         database = db.Db(self.db_ini_file)
-        data = SpreadsheetImporter.load_data_from_spreadsheet(self.xlsx_file)
+        data = spreadsheet_helper.load_data_from_spreadsheet(self.xlsx_file)
         xlsx_dir = os.path.dirname(self.xlsx_file)
         data_errors = SpreadsheetImporter._validate_data(database, data, self.dropbox_dir)
 
