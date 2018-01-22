@@ -1,5 +1,5 @@
 BootStrap: debootstrap
-OSVersion: zesty
+OSVersion: xenial
 MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
 %environment
