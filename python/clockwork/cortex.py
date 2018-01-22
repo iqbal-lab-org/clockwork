@@ -21,7 +21,7 @@ def _find_binaries(cortex_root=None, stampy_script=None, vcftools_dir=None):
         raise Error('Cortex run_call.pl script ' + cortex_run_calls + ' not found. Cannot continue')
 
     if stampy_script is None:
-        stampy_script = os.environ.get('CLOCKWORK_STAMPY_SCRIPT', '/bioinf-tools/stampy-1.0.31/stampy.py')
+        stampy_script = os.environ.get('CLOCKWORK_STAMPY_SCRIPT', '/bioinf-tools/stampy-1.0.32/stampy.py')
     stampy_script = os.path.abspath(stampy_script)
 
     if not os.path.exists(stampy_script):
