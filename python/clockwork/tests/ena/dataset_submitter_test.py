@@ -41,6 +41,7 @@ class TestDatasetSubmitter(unittest.TestCase):
         self.assertEqual(None, dataset_submitter.DatasetSubmitter._get_key_from_ini_file(tmp_ini_file, 'spam', 'bar'))
         self.assertEqual(None, dataset_submitter.DatasetSubmitter._get_key_from_ini_file(tmp_ini_file, 'foo', 'baz'))
         self.assertEqual('baz', dataset_submitter.DatasetSubmitter._get_key_from_ini_file(tmp_ini_file, 'foo', 'bar'))
+        os.unlink(tmp_ini_file)
 
 
     def test_get_broker_name_from_ini_file(self):
