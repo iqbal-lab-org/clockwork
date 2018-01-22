@@ -107,6 +107,7 @@ cd samtools-1.3.1/
 make
 cd ..
 cp -s samtools-1.3.1/samtools .
+cp -rp samtools-1.3.1/misc/plot-bamstats .
 
 #________________________ stampy _________________________#
 cd $install_root
