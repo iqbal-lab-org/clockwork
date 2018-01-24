@@ -63,6 +63,8 @@ if (params.help){
                                 Limit number of concurrent samtools jobs [100]
           --max_forks_cortex INT
                                 Limit number of concurrent cortex jobs [100]
+          --keep_bam
+                                Keep rmdup BAM file in samtools output dir
     """.stripIndent()
 
     exit 0
