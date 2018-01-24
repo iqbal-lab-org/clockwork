@@ -25,9 +25,10 @@ def vcf_to_sample(vcf_file):
 
 
 class TestNextflowRemoveContam(unittest.TestCase):
-    def _files_are_present_and_correct(self, pipeline_dir, expected_sample):
+    def _files_are_present_and_correct(self, pipeline_dir, expected_sample, expect_rmdup_bam=False):
         samtools_dir = os.path.join(pipeline_dir, 'samtools')
         samtools_vcf = os.path.join(samtools_dir, 'samtools.vcf')
+        self.assertEqual(expect_rmdup_bam, os.path.exists(os.path.join(samtools_dir, 'rmdup.bam')))
         self.assertTrue(os.path.exists(samtools_vcf))
         self.assertEqual(expected_sample, vcf_to_sample(samtools_vcf))
         cortex_dir = os.path.join(pipeline_dir, 'cortex')
@@ -145,13 +146,14 @@ class TestNextflowRemoveContam(unittest.TestCase):
             '--sample_name', sample_name,
             '--cortex_mem_height 17',
             '--testing',
+            '--keep_bam',
             '-with-dag', dag_file,
             '-c', nextflow_helper.config_file,
             '-w', work_dir,
             nextflow_file
         ])
         utils.syscall(command)
-        self._files_are_present_and_correct(outdir, sample_name)
+        self._files_are_present_and_correct(outdir, sample_name, expect_rmdup_bam=True)
         os.unlink(nextflow_helper.config_file)
         shutil.rmtree(work_dir)
         shutil.rmtree(tmp_data_dir)

@@ -15,6 +15,8 @@ params.max_forks_trim_reads = 100
 params.max_forks_map_reads = 100
 params.max_forks_samtools = 100
 params.max_forks_cortex = 100
+params.keep_bam = false
+keep_bam_name = params.keep_bam ? 'rmdup.bam' : ''
 
 
 if (params.help){
@@ -241,7 +243,7 @@ process call_vars_samtools {
     samtools mpileup -ugf ${tsv_fields.reference_dir}/ref.fa "rmdup.bam" | bcftools call -vm -O v -o samtools.vcf
     rm -rf ${tsv_fields.output_dir}/samtools/
     mkdir -p ${tsv_fields.output_dir}/samtools/
-    rsync samtools.vcf ${tsv_fields.output_dir}/samtools/
+    rsync --copy-links samtools.vcf ${keep_bam_name} ${tsv_fields.output_dir}/samtools/
     """
 }
 
