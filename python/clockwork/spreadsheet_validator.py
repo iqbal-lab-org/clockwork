@@ -114,7 +114,7 @@ class SpreadsheetValidator:
                     errors.append('File_not_found\t' + d[key] + '\t' + str(i+2))
 
         if md5_threads == 0:
-            os.chdir(data_root_dir)
+            os.chdir(original_dir)
             return errors
         elif md5_threads > 1:
             pool = multiprocessing.Pool(md5_threads)
