@@ -16,6 +16,7 @@ params.max_forks_map_reads = 100
 params.max_forks_samtools = 100
 params.max_forks_cortex = 100
 params.max_forks_combine_variant_calls = 100
+params.minos_max_read_length = 200
 params.keep_bam = false
 keep_bam_name = params.keep_bam ? 'rmdup.bam' : ''
 
@@ -66,6 +67,9 @@ if (params.help){
                                 Limit number of concurrent cortex jobs [100]
           --keep_bam
                                 Keep rmdup BAM file in samtools output dir
+          --minos_max_read_length INT
+                                --max_read_length passed to 'minos adjudicate'
+                                when combining variant calls [${params.minos_max_read_length}]
     """.stripIndent()
 
     exit 0
@@ -305,7 +309,7 @@ process combine_variant_calls {
 
     script:
     """
-    minos adjudicate --max_read_length 200 --force --reads rmdup.bam ${tsv_fields.output_dir}/minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/*FINAL*raw.vcf
+    minos adjudicate --max_read_length ${params.minos_max_read_length} --force --reads rmdup.bam ${tsv_fields.output_dir}/minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/*FINAL*raw.vcf
     """
 }
 
