@@ -58,13 +58,13 @@ if (params.help){
 
         Other options:
           --max_forks_trim_reads INT
-                                Limit number of concurrent trim_reads jobs [100]
+                                Limit number of concurrent trim_reads jobs [${params.max_forks_trim_reads}]
           --max_forks_map_reads INT
-                                Limit number of concurrent map_reads jobs [100]
+                                Limit number of concurrent map_reads jobs [${params.max_forks_map_reads}]
           --max_forks_samtools INT
-                                Limit number of concurrent samtools jobs [100]
+                                Limit number of concurrent samtools jobs [${params.max_forks_samtools}]
           --max_forks_cortex INT
-                                Limit number of concurrent cortex jobs [100]
+                                Limit number of concurrent cortex jobs [${params.max_forks_cortex}]
           --keep_bam
                                 Keep rmdup BAM file in samtools output dir
           --minos_max_read_length INT
