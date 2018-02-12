@@ -43,9 +43,9 @@ if (params.help){
 
         Other options:
           --max_forks_fastqc INT
-                                Limit number of concurrent fastqc jobs [100]
+                                Limit number of concurrent fastqc jobs [${params.max_forks_fastqc}]
           --max_forks_samtools_qc INT
-                                Limit number of concurrent samtools_qc jobs [100]
+                                Limit number of concurrent samtools_qc jobs [${params.max_forks_samtools_qc}]
     """.stripIndent()
 
     exit 0

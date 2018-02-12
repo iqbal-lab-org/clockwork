@@ -46,10 +46,10 @@ if (params.help){
 
         Other options:
           --max_forks_map_reads INT
-                                Limit number of concurrent map_reads jobs [100]
+                                Limit number of concurrent map_reads jobs [${params.max_forks_map_reads}]
           --max_forks_sam_to_fastq_files INT
                                 Limit number of concurrent
-                                sam_to_fastq_files jobs [100]
+                                sam_to_fastq_files jobs [${params.max_forks_sam_to_fastq_files}]
     """.stripIndent()
 
     exit 0
