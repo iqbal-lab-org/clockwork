@@ -41,6 +41,9 @@ class TestNextflowRemoveContam(unittest.TestCase):
         self.assertEqual(2, len(cortex_vcf_files))
         for vcf_file in cortex_vcf_files:
             self.assertEqual(expected_sample, vcf_to_sample(vcf_file))
+        minos_dir = os.path.join(pipeline_dir, 'minos')
+        self.assertTrue(os.path.exists(minos_dir))
+        self.assertTrue(os.path.exists(os.path.join(minos_dir, 'final.vcf')))
 
 
     def test_nextflow_variant_call_using_database(self):

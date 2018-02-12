@@ -15,6 +15,7 @@ params.max_forks_trim_reads = 100
 params.max_forks_map_reads = 100
 params.max_forks_samtools = 100
 params.max_forks_cortex = 100
+params.max_forks_combine_variant_calls = 100
 params.keep_bam = false
 keep_bam_name = params.keep_bam ? 'rmdup.bam' : ''
 
@@ -180,8 +181,6 @@ process trim_reads {
 
     output:
     set file(trimmed_reads_dir), val(tsv_fields) into map_reads_in
-    //file trimmed_reads_dir
-    //val tsv_fields into map_reads_tsv_fields_channel
 
     """
     rm -fr trimmed_reads_dir
@@ -203,8 +202,6 @@ process map_reads {
 
     input:
     set file(trimmed_reads_dir), val(tsv_fields) from map_reads_in
-    //file trimmed_reads_dir
-    //val tsv_fields from map_reads_tsv_fields_channel
 
     output:
     set(file("rmdup.bam"), val(tsv_fields)) into call_vars_samtools_in
@@ -239,7 +236,7 @@ process call_vars_samtools {
     set(file("rmdup.bam"), val(tsv_fields)) from call_vars_samtools_in
 
     output:
-    val tsv_fields into update_db_channel_from_samtools
+    set(val(tsv_fields), file("rmdup.bam")) into combine_variant_calls_channel_from_samtools
 
     """
     samtools mpileup -ugf ${tsv_fields.reference_dir}/ref.fa "rmdup.bam" | bcftools call -vm -O v -o samtools.vcf
@@ -262,7 +259,7 @@ process call_vars_cortex {
     set(file("rmdup.bam"), val(tsv_fields)) from call_vars_cortex_in
 
     output:
-    val tsv_fields into update_db_channel_from_cortex
+    set(val(tsv_fields)) into combine_variant_calls_channel_from_cortex
 
     script:
     if (using_db_input)
@@ -284,15 +281,37 @@ process call_vars_cortex {
 }
 
 
+/*
+  Ensure the same sample is input from each of call_vars_samtools and call_vars_cortex into
+  the combine_variant_calls process by phasing the two channels, by taking
+  pairs where the tsv fields are all the same
+*/
+call_vars_joined_channel = combine_variant_calls_channel_from_samtools.join(combine_variant_calls_channel_from_cortex, by:0)
+
+
+process combine_variant_calls {
+    maxForks params.max_forks_combine_variant_calls
+    memory '2 GB'
+    if (using_db_input) {
+       errorStrategy {task.attempt < 3 ? 'retry' : 'ignore'}
+       maxRetries 3
+    }
+
+    input:
+    set (val(tsv_fields), file("rmdup.bam")) from call_vars_joined_channel
+
+    output:
+    val tsv_fields into update_db_channel_from_combine_variant_calls
+
+    script:
+    """
+    minos adjudicate --max_read_length 200 --force --reads rmdup.bam ${tsv_fields.output_dir}/minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/*FINAL*raw.vcf
+    """
+}
+
+
+
 if (using_db_input) {
-    /*
-      Ensure the same sample is input from each of call_vars_samtools and call_vars_cortex into
-      the update_database process by phasing the two channels, by taking
-      pairs where the seqrep_id and sequence replicate numbers are the same.
-    */
-    phased_tsv_fields = update_db_channel_from_samtools.phase(update_db_channel_from_cortex){ it -> tuple(it.isolate_id, it.seqrep_id, it.sequence_replicate_number) }
-
-
     process update_database {
         maxForks 10
         time '3m'
@@ -305,14 +324,14 @@ if (using_db_input) {
         using_db_input
 
         input:
-        val tsv_fields from phased_tsv_fields
+        val tsv_fields from update_db_channel_from_combine_variant_calls
 
         output:
-        val "${tsv_fields[0].isolate_id}\t${tsv_fields[0].seqrep_id}\t${tsv_fields[0].sequence_replicate_number}\t${tsv_fields[0].pool}" into update_database_worked
+        val "${tsv_fields.isolate_id}\t${tsv_fields.seqrep_id}\t${tsv_fields.sequence_replicate_number}\t${tsv_fields.pool}" into update_database_worked
 
         script:
         """
-        clockwork db_finished_pipeline_update --reference_id ${params.ref_id} ${db_config_file} ${tsv_fields[0].pool} ${tsv_fields[0].isolate_id} ${tsv_fields[0].seqrep_id} ${tsv_fields[0].sequence_replicate_number} variant_call
+        clockwork db_finished_pipeline_update --reference_id ${params.ref_id} ${db_config_file} ${tsv_fields.pool} ${tsv_fields.isolate_id} ${tsv_fields.seqrep_id} ${tsv_fields.sequence_replicate_number} variant_call
         """
     }
 
