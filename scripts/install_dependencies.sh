@@ -16,6 +16,7 @@ apt-get install -y \
   curl \
   default-jre \
   gawk \
+  git \
   gnuplot \
   graphviz \
   liblzma-dev \
@@ -162,6 +163,7 @@ pip3 install git+https://github.com/iqbal-lab-org/gramtools@415a71f6f1f23f4500ad
 cd $install_root
 wget https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz
 tar xf mummer-4.0.0beta2.tar.gz
+cd mummer-4.0.0beta2
 ./configure
 make
 make install
