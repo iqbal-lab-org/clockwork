@@ -24,7 +24,7 @@ def vcf_to_sample(vcf_file):
     return None
 
 
-class TestNextflowRemoveContam(unittest.TestCase):
+class TestNextflowVarcall(unittest.TestCase):
     def _files_are_present_and_correct(self, pipeline_dir, expected_sample, expect_rmdup_bam=False):
         samtools_dir = os.path.join(pipeline_dir, 'samtools')
         samtools_vcf = os.path.join(samtools_dir, 'samtools.vcf')
