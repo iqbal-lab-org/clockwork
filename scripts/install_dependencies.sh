@@ -12,9 +12,11 @@ apt-add-repository universe
 apt-get update
 apt-get install -y \
   build-essential \
+  cmake \
   curl \
   default-jre \
   gawk \
+  git \
   gnuplot \
   graphviz \
   liblzma-dev \
@@ -150,4 +152,23 @@ make NUM_COLS=2 cortex_var
 # note: requests needs to be here instead of as part of
 # python setup.py install, because setup.py install
 # throws an error.  This way works.
-pip3 install python-dateutil requests pysam pyfastaq pymysql openpyxl pyflakes XlsxWriter
+pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyflakes scipy XlsxWriter
+
+
+
+#________________________ gramtools _________________________#
+pip3 install git+https://github.com/iqbal-lab-org/gramtools@415a71f6f1f23f4500ada32b585db177f9c8506b
+
+#________________________ mummer ____________________________#
+cd $install_root
+wget https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz
+tar xf mummer-4.0.0beta2.tar.gz
+cd mummer-4.0.0beta2
+./configure
+make
+make install
+
+
+#________________________ minos _____________________________#
+pip3 install bio-minos==0.0.2
+

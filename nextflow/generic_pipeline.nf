@@ -38,9 +38,9 @@ if (params.help){
           --dataset_name DATASET_NAME
                                 Limit to all samples in the given dataset_name
 
-          --max_forks INT       Max number of jobs to run at the same time.
+          --max_forks INT       Max number of jobs to run at the same time [${params.max_forks}]
                                 Default is 100.
-          --max_ram FLOAT       RAM limit in GB for each job. Default is 4.
+          --max_ram FLOAT       RAM limit in GB for each job. Default is [${params.max_ram}]
     """.stripIndent()
 
     exit 0
