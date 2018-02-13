@@ -59,7 +59,7 @@ Channel
 
 process parse_xlxs {
     maxForks 1
-    memory '100 MB'
+    memory '1000 MB'
 
     input:
     file xlsx_file from parse_xlsx_channel
