@@ -175,13 +175,6 @@ sub download_file {
         system_call("enaDataGet -d tmp.$$ -f fasta $1");
         system_call("mv tmp.$$/* $outname");
         system_call("rm -r tmp.$$");
-
-        # There is something wrong with BCSX00000000.
-        # It has every contig twice. Remove the duplicates
-        if ($outname eq 'BCSX00000000.fa.gz') {
-            system_call("fastaq to_unique_by_id $outname $outname.tmp.$$");
-            system_call("mv $outname.tmp.$$ $outname");
-        }
     }
     else {
         system_call("wget -nv -O $outname '$url'");
