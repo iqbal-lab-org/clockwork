@@ -4,7 +4,7 @@ import logging
 import operator
 import itertools
 
-from cluster_vcf_records import vcf_file_read, vcf_record
+from cluster_vcf_records import vcf_file_read, vcf_record, vcf_clusterer
 
 class Error (Exception): pass
 
@@ -24,44 +24,7 @@ class SimpleVcfMerger:
         self.min_SNP_qual = min_SNP_qual
         self.min_dp4 = min_dp4
         self.min_GT_conf = min_GT_conf
-        
 
-    @classmethod
-    def _load_vcf_files(cls, filename_list, homozygous_only=False, max_REF_len=None, min_SNP_qual=None, min_dp4=None, min_GT_conf=None):
-        '''Loads all the vcf files from filename_list. Returns tuple of:
-        1. Sample name. If more than one sample name found, uses the first one
-        and warns to stderr
-        3. Dictionary. ref name => list of VcfRecords sorted by position'''
-        headers = {}
-        vcf_records = None
-        sample_name = None
-
-        for filename in filename_list:
-            headers[filename], new_records = vcf_file_read.vcf_file_to_dict(filename, homozygous_only=homozygous_only, remove_asterisk_alts=True, max_REF_len=max_REF_len, remove_useless_start_nucleotides=True, min_SNP_qual=min_SNP_qual, min_dp4=min_dp4, min_GT_conf=min_GT_conf)
-
-            new_sample_name = vcf_file_read.get_sample_name_from_vcf_header_lines(headers[filename])
-            if sample_name is None and new_sample_name is not None:
-                sample_name = new_sample_name
-            elif new_sample_name != sample_name:
-                logging.warning('Using first sample name found "' + str(sample_name) + '". Found a different (or no) sample name "' + str(new_sample_name) + '", which will not be used')
-
-            if vcf_records is None:
-                vcf_records = new_records
-            else:
-                for ref_name, record_list in new_records.items():
-                    if ref_name not in vcf_records:
-                        vcf_records[ref_name] = record_list
-                    else:
-                        vcf_records[ref_name].extend(record_list)
-
-        for record_list in vcf_records.values():
-            record_list.sort(key=operator.attrgetter('POS'))
-
-        if sample_name is None:
-            logging.warning('No sample name found in VCF files. Going to use "sample"')
-            sample_name = 'sample'
-
-        return sample_name, headers, vcf_records
 
     @classmethod
     def _merge_vcf_records(cls, vcf_records, ref_seq):
@@ -126,7 +89,7 @@ class SimpleVcfMerger:
 
     def run(self):
         vcf_files = [self.samtools_vcf, self.cortex_vcf]
-        sample_name, vcf_headers, vcf_records = SimpleVcfMerger._load_vcf_files(vcf_files, homozygous_only=self.homozygous_only, max_REF_len=self.max_REF_len, min_SNP_qual=self.min_SNP_qual, min_dp4=self.min_dp4, min_GT_conf=self.min_GT_conf)
+        sample_name, vcf_headers, vcf_records = vcf_clusterer.VcfClusterer._load_vcf_files(vcf_files, homozygous_only=self.homozygous_only, max_REF_len=self.max_REF_len, min_SNP_qual=self.min_SNP_qual, min_dp4=self.min_dp4, min_GT_conf=self.min_GT_conf)
         
         f_out = pyfastaq.utils.open_file_write(self.output_vcf)
         print('##fileformat=VCFv4.2',file=f_out)
