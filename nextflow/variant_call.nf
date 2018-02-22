@@ -309,6 +309,9 @@ process combine_variant_calls {
 
     script:
     """
+    rm -fr ${tsv_fields.output_dir}/simple_merge/
+    mkdir ${tsv_fields.output_dir}/simple_merge/
+    clockwork samtools_cortex_vcf_merge ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/*FINAL*raw.vcf ${tsv_fields.output_dir}/simple_merge/simple_merge.vcf
     minos adjudicate --max_read_length ${params.minos_max_read_length} --force --reads rmdup.bam ${tsv_fields.output_dir}/minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/*FINAL*raw.vcf
     """
 }

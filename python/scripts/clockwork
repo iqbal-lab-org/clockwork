@@ -315,6 +315,25 @@ subparser_samtools_qc.add_argument('output_dir', help='Name of output directory 
 subparser_samtools_qc.set_defaults(func=clockwork.tasks.samtools_qc.run)
 
 
+#--------------------- samtools_cortex_vcf_merge --------------------
+subparser_samtools_cortex_vcf_merge = subparsers.add_parser(
+    'samtools_cortex_vcf_merge',
+    help='Merge samtools and cortex VCF files',
+    usage='clockwork [options] samtools_cortex_vcf_merge <ref_fasta> <samtools.vcf> <cortex.vcf> <out.vcf>',
+    description='Simple merging of samtools and cortex VCF files (indels from cortex take precendence over samtools)',
+)
+
+subparser_samtools_cortex_vcf_merge.add_argument('ref_fasta')
+subparser_samtools_cortex_vcf_merge.add_argument('samtools_vcf')
+subparser_samtools_cortex_vcf_merge.add_argument('cortex_vcf')
+subparser_samtools_cortex_vcf_merge.add_argument('output_vcf')
+subparser_samtools_cortex_vcf_merge.add_argument('--include_homozygous', action='store_true', help='Use this to include homozygous calls. By default they are filtered')
+subparser_samtools_cortex_vcf_merge.add_argument('--min_SNP_qual', type=float, help='Minimum SNP quality [%(default)s]', default=30, metavar='FLOAT')
+subparser_samtools_cortex_vcf_merge.add_argument('--min_dp4', type=int, help='Minimum DP4 [%(default)s]', default=4, metavar='INT')
+subparser_samtools_cortex_vcf_merge.add_argument('--min_GT_conf', type=float, help='Minimum GT_CONF [%(default)s]', default=5, metavar='FLOAT')
+subparser_samtools_cortex_vcf_merge.set_defaults(func=clockwork.tasks.samtools_cortex_vcf_merge.run)
+
+
 #------------------------ trim reads --------------------------------
 subparser_trim_reads = subparsers.add_parser(
     'trim_reads',
