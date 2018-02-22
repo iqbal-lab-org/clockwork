@@ -157,7 +157,7 @@ pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyfl
 
 
 #________________________ gramtools _________________________#
-pip3 install git+https://github.com/iqbal-lab-org/gramtools@415a71f6f1f23f4500ada32b585db177f9c8506b
+pip3 install git+https://github.com/iqbal-lab-org/gramtools@97b3a4950ce463cce07155beb962ae5deb25921c
 
 #________________________ mummer ____________________________#
 cd $install_root
@@ -170,5 +170,5 @@ make install
 
 
 #________________________ minos _____________________________#
-pip3 install bio-minos==0.0.2
+pip3 install bio-minos==0.2.0
 
