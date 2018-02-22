@@ -44,6 +44,9 @@ class TestNextflowVarcall(unittest.TestCase):
         minos_dir = os.path.join(pipeline_dir, 'minos')
         self.assertTrue(os.path.exists(minos_dir))
         self.assertTrue(os.path.exists(os.path.join(minos_dir, 'final.vcf')))
+        simple_merge_dir = os.path.join(pipeline_dir, 'simple_merge')
+        self.assertTrue(os.path.exists(simple_merge_dir))
+        self.assertTrue(os.path.exists(os.path.join(simple_merge_dir, 'simple_merge.vcf')))
 
 
     def test_nextflow_variant_call_using_database(self):

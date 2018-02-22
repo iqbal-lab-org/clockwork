@@ -16,6 +16,7 @@ __all__ = [
     'remove_contam',
     'remove_contam_make_jobs_tsv',
     'samtools_qc',
+    'samtools_cortex_vcf_merge',
     'trim_reads',
     'validate_spreadsheet',
     'variant_call_make_jobs_tsv',
