@@ -309,8 +309,11 @@ process combine_variant_calls_minos {
 
     script:
     """
+    rm -rf ${tsv_fields.output_dir}/minos
     cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
-    minos adjudicate --max_read_length ${params.minos_max_read_length} --force --reads rmdup.bam ${tsv_fields.output_dir}/minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf \$cortex_vcf
+    minos adjudicate --max_read_length ${params.minos_max_read_length} --force --reads rmdup.bam minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf \$cortex_vcf
+    rsync -av minos/ ${tsv_fields.output_dir}/minos
+    rm -r minos
     """
 }
 
