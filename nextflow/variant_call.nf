@@ -263,7 +263,7 @@ process call_vars_cortex {
     set(file("rmdup.bam"), val(tsv_fields)) from call_vars_cortex_in
 
     output:
-    set(val(tsv_fields)) into combine_variant_calls_channel_from_cortex
+    val(tsv_fields) into combine_variant_calls_channel_from_cortex
 
     script:
     if (using_db_input)
@@ -293,9 +293,9 @@ process call_vars_cortex {
 call_vars_joined_channel = combine_variant_calls_channel_from_samtools.join(combine_variant_calls_channel_from_cortex, by:0)
 
 
-process combine_variant_calls {
+process combine_variant_calls_minos {
     maxForks params.max_forks_combine_variant_calls
-    memory '2 GB'
+    memory { 5.GB * task.attempt }
     if (using_db_input) {
        errorStrategy {task.attempt < 3 ? 'retry' : 'ignore'}
        maxRetries 3
@@ -305,14 +305,45 @@ process combine_variant_calls {
     set (val(tsv_fields), file("rmdup.bam")) from call_vars_joined_channel
 
     output:
-    val tsv_fields into update_db_channel_from_combine_variant_calls
+    set (val(tsv_fields), file("rmdup.bam")) into combine_variant_calls_minos_out
+
+    script:
+    """
+    rm -rf ${tsv_fields.output_dir}/minos
+    cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
+    minos adjudicate --max_read_length ${params.minos_max_read_length} --force --reads rmdup.bam minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf \$cortex_vcf
+    rsync -av minos/ ${tsv_fields.output_dir}/minos
+    rm -r minos
+    """
+}
+
+
+process combine_variant_calls_simple_merge {
+    maxForks params.max_forks_combine_variant_calls
+    memory '2 GB'
+    if (using_db_input) {
+       errorStrategy {task.attempt < 3 ? 'retry' : 'ignore'}
+       maxRetries 3
+    }
+
+    input:
+    set (val(tsv_fields), file("rmdup.bam")) from combine_variant_calls_minos_out
+
+    output:
+    val tsv_fields into update_db_channel_from_combine_variant_calls_simple_merge
 
     script:
     """
     rm -fr ${tsv_fields.output_dir}/simple_merge/
     mkdir ${tsv_fields.output_dir}/simple_merge/
-    clockwork samtools_cortex_vcf_merge ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/*FINAL*raw.vcf ${tsv_fields.output_dir}/simple_merge/simple_merge.vcf
-    minos adjudicate --max_read_length ${params.minos_max_read_length} --force --reads rmdup.bam ${tsv_fields.output_dir}/minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/*FINAL*raw.vcf
+    cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
+    samtools_vcf=\$(find ${tsv_fields.output_dir}/samtools/ -name samtools.vcf)
+    if [ \$cortex_vcf -a \$samtools_vcf -a -f \$cortex_vcf  -a -f \$samtools_vcf ]; then
+        clockwork samtools_cortex_vcf_merge ${tsv_fields.reference_dir}/ref.fa \$samtools_vcf \$cortex_vcf ${tsv_fields.output_dir}/simple_merge/simple_merge.vcf
+    else
+        touch ${tsv_fields.output_dir}/simple_merge/simple_merge.not_enough_input_files
+        touch ${tsv_fields.output_dir}/simple_merge/simple_merge.vcf
+    fi
     """
 }
 
@@ -331,7 +362,7 @@ if (using_db_input) {
         using_db_input
 
         input:
-        val tsv_fields from update_db_channel_from_combine_variant_calls
+        val tsv_fields from update_db_channel_from_combine_variant_calls_simple_merge
 
         output:
         val "${tsv_fields.isolate_id}\t${tsv_fields.seqrep_id}\t${tsv_fields.sequence_replicate_number}\t${tsv_fields.pool}" into update_database_worked
