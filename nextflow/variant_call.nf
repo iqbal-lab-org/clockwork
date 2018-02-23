@@ -263,7 +263,7 @@ process call_vars_cortex {
     set(file("rmdup.bam"), val(tsv_fields)) from call_vars_cortex_in
 
     output:
-    set(val(tsv_fields)) into combine_variant_calls_channel_from_cortex
+    val(tsv_fields) into combine_variant_calls_channel_from_cortex
 
     script:
     if (using_db_input)
