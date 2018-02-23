@@ -295,7 +295,7 @@ call_vars_joined_channel = combine_variant_calls_channel_from_samtools.join(comb
 
 process combine_variant_calls_minos {
     maxForks params.max_forks_combine_variant_calls
-    memory '2 GB'
+    memory { 5.GB * task.attempt }
     if (using_db_input) {
        errorStrategy {task.attempt < 3 ? 'retry' : 'ignore'}
        maxRetries 3
