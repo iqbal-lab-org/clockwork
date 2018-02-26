@@ -17,8 +17,7 @@ params.max_forks_samtools = 100
 params.max_forks_cortex = 100
 params.max_forks_combine_variant_calls = 100
 params.minos_max_read_length = 200
-params.keep_bam = false
-keep_bam_name = params.keep_bam ? 'rmdup.bam' : ''
+params.truth_ref = ""
 
 
 if (params.help){
@@ -65,11 +64,12 @@ if (params.help){
                                 Limit number of concurrent samtools jobs [${params.max_forks_samtools}]
           --max_forks_cortex INT
                                 Limit number of concurrent cortex jobs [${params.max_forks_cortex}]
-          --keep_bam
-                                Keep rmdup BAM file in samtools output dir
           --minos_max_read_length INT
                                 --max_read_length passed to 'minos adjudicate'
                                 when combining variant calls [${params.minos_max_read_length}]
+          --truth_ref FILENAME
+                                If this option is used, checks the called variants using this
+                                provided FASTA file as the "truth" genome
     """.stripIndent()
 
     exit 0
@@ -81,6 +81,16 @@ using_reads_input = params.ref_dir != "" && params.reads_in1 != "" && params.rea
 
 if (using_db_input == using_reads_input) {
     exit 1, "Must use either all of ref_dir,reads_in1,reads_in2,output_dir,sample_name or all of ref_id,references_root,pipeline_root,db_config_file -- aborting"
+}
+
+if (params.truth_ref) {
+    truth_ref = file(params.truth_ref).toAbsolutePath()
+    if (!truth_ref.exists()) {
+        exit 1, "Truth reference file not found: ${params.truth_ref} -- aborting"
+    }
+}
+else {
+    truth_ref = ""
 }
 
 if (using_db_input) {
@@ -246,7 +256,7 @@ process call_vars_samtools {
     samtools mpileup -ugf ${tsv_fields.reference_dir}/ref.fa "rmdup.bam" | bcftools call -vm -O v -o samtools.vcf
     rm -rf ${tsv_fields.output_dir}/samtools/
     mkdir -p ${tsv_fields.output_dir}/samtools/
-    rsync --copy-links samtools.vcf ${keep_bam_name} ${tsv_fields.output_dir}/samtools/
+    rsync --copy-links samtools.vcf rmdup.bam ${tsv_fields.output_dir}/samtools/
     """
 }
 
@@ -330,7 +340,7 @@ process combine_variant_calls_simple_merge {
     set (val(tsv_fields), file("rmdup.bam")) from combine_variant_calls_minos_out
 
     output:
-    val tsv_fields into update_db_channel_from_combine_variant_calls_simple_merge
+    val tsv_fields into combine_variant_calls_simple_merge_out
 
     script:
     """
@@ -348,6 +358,43 @@ process combine_variant_calls_simple_merge {
 }
 
 
+if (truth_ref) {
+    process check_calls_using_truth_ref {
+        memory '2 GB'
+        errorStrategy {task.attempt < 3 ? 'retry' : 'ignore'}
+        maxRetries 3
+    
+        input:
+        val tsv_fields from combine_variant_calls_simple_merge_out
+    
+        output:
+        val tsv_fields into check_calls_using_truth_ref_out
+
+        script:
+        """
+        samtools_vcf=\$(find ${tsv_fields.output_dir}/samtools/ -name samtools.vcf)
+        if [ \$samtools_vcf -a -f \$samtools_vcf ]; then
+            minos check_with_ref \$samtools_vcf ${tsv_fields.reference_dir}/ref.fa ${truth_ref} \$samtools_vcf.check
+        fi
+
+        cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
+        if [ \$cortex_vcf -a -f \$cortex_vcf ]; then
+            minos check_with_ref \$cortex_vcf ${tsv_fields.reference_dir}/ref.fa ${truth_ref} \$cortex_vcf.check
+        fi
+
+        minos_vcf=\$(find ${tsv_fields.output_dir}/minos/ -name final.vcf)
+        if [ \$minos_vcf -a -f \$minos_vcf ]; then
+            minos check_with_ref \$minos_vcf ${tsv_fields.reference_dir}/ref.fa ${truth_ref} \$minos_vcf.check
+        fi
+
+        simple_merge_vcf=\$(find ${tsv_fields.output_dir}/simple_merge/ -name simple_merge.vcf)
+        if [ \$simple_merge_vcf -a -f \$simple_merge_vcf ]; then
+            minos check_with_ref \$simple_merge_vcf ${tsv_fields.reference_dir}/ref.fa ${truth_ref} \$simple_merge_vcf.check
+        fi
+        """
+    }
+}
+
 
 if (using_db_input) {
     process update_database {
@@ -358,11 +405,19 @@ if (using_db_input) {
             maxRetries 3
         }
 
+        if (truth_ref) {
+            input_channel = check_calls_using_truth_ref_out
+        }
+        else{
+           input_channel = combine_variant_calls_simple_merge_out
+        }
+
         when:
         using_db_input
 
+
         input:
-        val tsv_fields from update_db_channel_from_combine_variant_calls_simple_merge
+        val tsv_fields from input_channel
 
         output:
         val "${tsv_fields.isolate_id}\t${tsv_fields.seqrep_id}\t${tsv_fields.sequence_replicate_number}\t${tsv_fields.pool}" into update_database_worked
