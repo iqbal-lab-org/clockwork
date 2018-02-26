@@ -48,6 +48,9 @@ fastaq to_perfect_reads --seed 54 $tmp_ref_dir/contam.fa - 200 1 1 75 | fastaq d
 fastaq to_perfect_reads --seed 55 $tmp_ref_dir/mutated2.fa - 200 1 20 75 | fastaq deinterleave - tmp.reads.6.ref.1.fq tmp.reads.6.ref.2.fq
 fastaq to_perfect_reads --seed 56 $tmp_ref_dir/contam.fa - 200 1 1 75 | fastaq deinterleave - tmp.reads.6.contam.1.fq tmp.reads.6.contam.2.fq
 
+cp $tmp_ref_dir/mutated2.fa truth_ref.fa
+bwa index truth_ref.fa
+
 for i in {1..6}; do
     for j in 1 2; do
         cat tmp.reads.$i.*.$j.fq | gzip -c > $dropbox/reads.$i.$j.fq.gz

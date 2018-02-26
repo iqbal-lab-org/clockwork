@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.19, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.21, for Linux (x86_64)
 --
 -- Host: localhost    Database: test_db
 -- ------------------------------------------------------
--- Server version	5.7.19-0ubuntu0.17.04.1
+-- Server version	5.7.21-0ubuntu0.17.10.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -66,7 +66,7 @@ CREATE TABLE `Pipeline` (
 
 LOCK TABLES `Pipeline` WRITE;
 /*!40000 ALTER TABLE `Pipeline` DISABLE KEYS */;
-INSERT INTO `Pipeline` VALUES (1,1,NULL,'0.0.1','remove_contam',1,1),(1,2,NULL,'0.0.1','remove_contam',1,1),(2,3,NULL,'0.0.1','remove_contam',1,1),(2,4,NULL,'0.0.1','remove_contam',1,1),(3,5,NULL,'0.0.1','remove_contam',1,1),(4,6,NULL,'0.0.1','remove_contam',1,1);
+INSERT INTO `Pipeline` VALUES (1,1,NULL,'0.3.1','remove_contam',1,1),(1,2,NULL,'0.3.1','remove_contam',1,1),(2,3,NULL,'0.3.1','remove_contam',1,1),(2,4,NULL,'0.3.1','remove_contam',1,1),(3,5,NULL,'0.3.1','remove_contam',1,1),(4,6,NULL,'0.3.1','remove_contam',1,1);
 /*!40000 ALTER TABLE `Pipeline` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -162,7 +162,7 @@ CREATE TABLE `Read_counts` (
 
 LOCK TABLES `Read_counts` WRITE;
 /*!40000 ALTER TABLE `Read_counts` DISABLE KEYS */;
-INSERT INTO `Read_counts` VALUES (2,278,12,266,0,266),(1,278,12,266,0,266),(3,278,12,266,0,266),(4,278,12,266,0,266),(5,278,12,266,0,266),(6,278,12,266,0,266);
+INSERT INTO `Read_counts` VALUES (2,278,12,266,0,266),(3,278,12,266,0,266),(1,278,12,266,0,266),(5,278,12,266,0,266),(6,278,12,266,0,266),(4,278,12,266,0,266);
 /*!40000 ALTER TABLE `Read_counts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -252,7 +252,7 @@ CREATE TABLE `Seqrep` (
 
 LOCK TABLES `Seqrep` WRITE;
 /*!40000 ALTER TABLE `Seqrep` DISABLE KEYS */;
-INSERT INTO `Seqrep` VALUES (1,1,1,'9b16857da5409d89228d59c0a629ea02','6a9ced25e0be1424ad79738bf08f91f6','3ea1a2cfa0665e3108c3d80508143957','589622bbfe0f42ca760364f22da14490',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(2,1,2,'c43d79c8e597a39e1d0db618591178a9','e9ae60cbb15c51283ac3f83164dfdb41','4a4337f33cdeeeee2cebea88806714c2','f1df65359a5179cd8375b05a1d3e57ad',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(3,2,1,'5b7b5447dd62f6fe8166baeb1ea43205','30654e183971f5129365249f14616d9f','e7715a4b8584d120aac9cbd3c3c6e9db','2ab477fef368fc7946a159aa5e57aa4b',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(4,2,2,'3f7881c5ba60c1d2462574c7eabc66b8','294424ea1b8165b42360b375119b76e0','d48e639d010a0c35c04bf2c0ccba6ad6','042ffbcb89f82f7980cb3d9e42020611',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(5,3,1,'2f1e0fe8c85356a1fdb770fc8f3699df','f183c7031ca79d6dd05fa57aba474b4e','ddf5eed97a61c12d9b5e32cd94894ac8','b6d7e3bf43971a94fa8672471085525e',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(6,4,1,'71c3523832f0cd3eefe9cdd20a7a3621','66ccc72067ba8edf88dc3cf0531e0964','d4a2a29fc1d7c2eb09c9dbac4acb326b','0261489783c325cb96b449dde97a81a4',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0);
+INSERT INTO `Seqrep` VALUES (1,1,1,'a8fb2b75946c0450288882d319a899f6','6be95d0e71fc87307cfa1cf2e1ae5ad6','e0c26a9253f3ae3d1cb57878c6a84a1f','9c1bae96629e1fb5d0ff9061898c9ddb',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(2,1,2,'b1631c1d31ea796f9532740b0433369b','8f5b5b897064c02074edaacd51b9eab1','fbad45fe27c43fa027a8dd7eb73bd8d1','0f625deef937bcd7fb9857627882a837',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(3,2,1,'b8ed6cf4b48625778e711bc7c72d87e8','8da457eb91dfc3e100c46e798ec39148','18503612df9a1d1fba14135e5a72904e','abe6ea0b523ed0af5921675e9507efd6',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(4,2,2,'2829f5c78ad8bdfe3917e5ab884209a8','e115212d331c6955e80a963b13b7a109','3cfd8e14fe1c7736b4392d5094c124a9','efa03b70fb15e623adca5b4a3d99feb7',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(5,3,1,'d50b925f0c1905a77103aa6a3c24da77','7a1cc1f355477923184d2feb51c96bcc','82e9a79a584179a9cbf37d53d11352c3','b7f3b7e5c5aea3fe95e6bdb2e9e8c658',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(6,4,1,'3f6b21937dec1c26632441b57dba5aa7','73b483abc12e3fc20c16f03a9eb1f195','14ae2e6bbbd71716201320c7d7134372','3ac9737b9c418fbfd1295742370bf1ee',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0);
 /*!40000 ALTER TABLE `Seqrep` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -287,4 +287,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-13 17:11:41
+-- Dump completed on 2018-02-26 12:22:33
