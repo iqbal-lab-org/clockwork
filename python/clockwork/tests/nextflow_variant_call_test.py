@@ -25,7 +25,7 @@ def vcf_to_sample(vcf_file):
 
 
 class TestNextflowVarcall(unittest.TestCase):
-    def _files_are_present_and_correct(self, pipeline_dir, expected_sample, expect_rmdup_bam=False):
+    def _files_are_present_and_correct(self, pipeline_dir, expected_sample, expect_rmdup_bam=False, expect_ref_check_files=False):
         samtools_dir = os.path.join(pipeline_dir, 'samtools')
         samtools_vcf = os.path.join(samtools_dir, 'samtools.vcf')
         self.assertEqual(expect_rmdup_bam, os.path.exists(os.path.join(samtools_dir, 'rmdup.bam')))
@@ -38,7 +38,11 @@ class TestNextflowVarcall(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(cortex_dir, 'cortex.log')))
         self.assertTrue(os.path.exists(os.path.join(cortex_dir, 'cortex.out')))
         cortex_vcf_files = [os.path.join(cortex_dir, x) for x in glob.glob(os.path.join(cortex_dir, 'cortex.out', 'vcfs', '**')) if  x.endswith('.vcf')]
-        self.assertEqual(2, len(cortex_vcf_files))
+        if expect_ref_check_files:
+            self.assertEqual(3, len(cortex_vcf_files))
+        else:
+            self.assertEqual(2, len(cortex_vcf_files))
+
         for vcf_file in cortex_vcf_files:
             self.assertEqual(expected_sample, vcf_to_sample(vcf_file))
         minos_dir = os.path.join(pipeline_dir, 'minos')
@@ -47,6 +51,11 @@ class TestNextflowVarcall(unittest.TestCase):
         simple_merge_dir = os.path.join(pipeline_dir, 'simple_merge')
         self.assertTrue(os.path.exists(simple_merge_dir))
         self.assertTrue(os.path.exists(os.path.join(simple_merge_dir, 'simple_merge.vcf')))
+
+        if expect_ref_check_files:
+            self.assertTrue(os.path.exists(samtools_vcf + '.check.stats.tsv'))
+            self.assertTrue(os.path.exists(os.path.join(minos_dir, 'final.vcf.check.stats.tsv')))
+            self.assertTrue(os.path.exists(os.path.join(simple_merge_dir, 'simple_merge.vcf.check.stats.tsv')))
 
 
     def test_nextflow_variant_call_using_database(self):
@@ -80,6 +89,7 @@ class TestNextflowVarcall(unittest.TestCase):
             '--db_config_file', db_ini_file,
             '--cortex_mem_height 17',
             '--testing',
+            '--truth_ref', os.path.join(tmp_data_dir, 'truth_ref.fa'),
             '-with-dag', dag_file,
             '-c', nextflow_helper.config_file,
             '-w', work_dir,
@@ -94,16 +104,16 @@ class TestNextflowVarcall(unittest.TestCase):
         got_rows = database.get_rows_from_table('Pipeline')
         got_rows.sort(key=itemgetter('isolate_id', 'pipeline_name'))
         expected_rows = [
-            {'isolate_id': 1, 'seqrep_id': 1, 'seqrep_pool': None, 'version': '0.0.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
-            {'isolate_id': 1, 'seqrep_id': 2, 'seqrep_pool': None, 'version': '0.0.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
+            {'isolate_id': 1, 'seqrep_id': 1, 'seqrep_pool': None, 'version': '0.3.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
+            {'isolate_id': 1, 'seqrep_id': 2, 'seqrep_pool': None, 'version': '0.3.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
             {'isolate_id': 1, 'seqrep_id': None, 'seqrep_pool': '1_2', 'version': clockwork_version, 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 2},
-            {'isolate_id': 2, 'seqrep_id': 3, 'seqrep_pool': None, 'version': '0.0.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
-            {'isolate_id': 2, 'seqrep_id': 4, 'seqrep_pool': None, 'version': '0.0.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
+            {'isolate_id': 2, 'seqrep_id': 3, 'seqrep_pool': None, 'version': '0.3.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
+            {'isolate_id': 2, 'seqrep_id': 4, 'seqrep_pool': None, 'version': '0.3.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
             {'isolate_id': 2, 'seqrep_id': 3, 'seqrep_pool': None, 'version': clockwork_version, 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 2},
             {'isolate_id': 2, 'seqrep_id': 4, 'seqrep_pool': None, 'version': clockwork_version, 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 2},
-            {'isolate_id': 3, 'seqrep_id': 5, 'seqrep_pool': None, 'version': '0.0.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
+            {'isolate_id': 3, 'seqrep_id': 5, 'seqrep_pool': None, 'version': '0.3.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
             {'isolate_id': 3, 'seqrep_id': None, 'seqrep_pool': '1', 'version': clockwork_version, 'pipeline_name': 'variant_call', 'status': -1, 'reference_id': 2},
-            {'isolate_id': 4, 'seqrep_id': 6, 'seqrep_pool': None, 'version': '0.0.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
+            {'isolate_id': 4, 'seqrep_id': 6, 'seqrep_pool': None, 'version': '0.3.1', 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1},
         ]
         self.assertEqual(expected_rows, got_rows)
 
@@ -118,7 +128,7 @@ class TestNextflowVarcall(unittest.TestCase):
             iso_dir = isolate_dir.IsolateDir(pipeline_root, id_dict['sample'], id_dict['isolate_id'])
             pipeline_dir = iso_dir.pipeline_dir(id_dict['seq_repl'], 'variant_call', clockwork_version, reference_id=2)
             expected_sample = '.'.join([str(id_dict[x]) for x in ['sample', 'isolate_id', 'seqrep_id', 'seq_repl']])
-            self._files_are_present_and_correct(pipeline_dir, expected_sample)
+            self._files_are_present_and_correct(pipeline_dir, expected_sample, expect_ref_check_files=True)
 
         shutil.rmtree(tmp_data_dir)
         nextflow_helper.clean_files()
@@ -159,7 +169,7 @@ class TestNextflowVarcall(unittest.TestCase):
             nextflow_file
         ])
         utils.syscall(command)
-        self._files_are_present_and_correct(outdir, sample_name, expect_rmdup_bam=True)
+        self._files_are_present_and_correct(outdir, sample_name, expect_rmdup_bam=True, expect_ref_check_files=False)
         os.unlink(nextflow_helper.config_file)
         shutil.rmtree(work_dir)
         shutil.rmtree(tmp_data_dir)
