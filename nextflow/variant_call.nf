@@ -18,8 +18,6 @@ params.max_forks_cortex = 100
 params.max_forks_combine_variant_calls = 100
 params.minos_max_read_length = 200
 params.truth_ref = ""
-params.keep_bam = false
-keep_bam_name = params.keep_bam ? 'rmdup.bam' : ''
 
 
 if (params.help){
@@ -66,8 +64,6 @@ if (params.help){
                                 Limit number of concurrent samtools jobs [${params.max_forks_samtools}]
           --max_forks_cortex INT
                                 Limit number of concurrent cortex jobs [${params.max_forks_cortex}]
-          --keep_bam
-                                Keep rmdup BAM file in samtools output dir
           --minos_max_read_length INT
                                 --max_read_length passed to 'minos adjudicate'
                                 when combining variant calls [${params.minos_max_read_length}]
@@ -260,7 +256,7 @@ process call_vars_samtools {
     samtools mpileup -ugf ${tsv_fields.reference_dir}/ref.fa "rmdup.bam" | bcftools call -vm -O v -o samtools.vcf
     rm -rf ${tsv_fields.output_dir}/samtools/
     mkdir -p ${tsv_fields.output_dir}/samtools/
-    rsync --copy-links samtools.vcf ${keep_bam_name} ${tsv_fields.output_dir}/samtools/
+    rsync --copy-links samtools.vcf rmdup.bam ${tsv_fields.output_dir}/samtools/
     """
 }
 

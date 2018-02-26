@@ -25,7 +25,7 @@ def vcf_to_sample(vcf_file):
 
 
 class TestNextflowVarcall(unittest.TestCase):
-    def _files_are_present_and_correct(self, pipeline_dir, expected_sample, expect_rmdup_bam=False, expect_ref_check_files=False):
+    def _files_are_present_and_correct(self, pipeline_dir, expected_sample, expect_rmdup_bam=True, expect_ref_check_files=False):
         samtools_dir = os.path.join(pipeline_dir, 'samtools')
         samtools_vcf = os.path.join(samtools_dir, 'samtools.vcf')
         self.assertEqual(expect_rmdup_bam, os.path.exists(os.path.join(samtools_dir, 'rmdup.bam')))
@@ -162,7 +162,6 @@ class TestNextflowVarcall(unittest.TestCase):
             '--sample_name', sample_name,
             '--cortex_mem_height 17',
             '--testing',
-            '--keep_bam',
             '-with-dag', dag_file,
             '-c', nextflow_helper.config_file,
             '-w', work_dir,
