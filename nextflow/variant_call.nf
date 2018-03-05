@@ -346,6 +346,13 @@ process combine_variant_calls_simple_merge {
     """
     rm -fr ${tsv_fields.output_dir}/simple_merge/
     mkdir ${tsv_fields.output_dir}/simple_merge/
+
+    if [ ${task.attempt} -eq 3 ]; then
+        touch ${tsv_fields.output_dir}/simple_merge/simple_merge.failed
+        touch ${tsv_fields.output_dir}/simple_merge/simple_merge.vcf
+        exit 0
+    fi
+
     cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
     samtools_vcf=\$(find ${tsv_fields.output_dir}/samtools/ -name samtools.vcf)
     if [ \$cortex_vcf -a \$samtools_vcf -a -f \$cortex_vcf  -a -f \$samtools_vcf ]; then
@@ -363,10 +370,10 @@ if (truth_ref) {
         memory '2 GB'
         errorStrategy {task.attempt < 3 ? 'retry' : 'ignore'}
         maxRetries 3
-    
+
         input:
         val tsv_fields from combine_variant_calls_simple_merge_out
-    
+
         output:
         val tsv_fields into check_calls_using_truth_ref_out
 
