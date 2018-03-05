@@ -225,8 +225,7 @@ process map_reads {
     if (using_db_input)
         """
         reads_string=\$(ls trimmed_reads_dir/reads*fq | sort)
-        clockwork map_reads ${tsv_fields.sample_id}.${tsv_fields.isolate_id}.${tsv_fields.seqrep_id}.${tsv_fields.sequence_replicate_number} \
-            ${tsv_fields.reference_dir}/ref.fa rmdup.bam \${reads_string}
+        clockwork map_reads ${tsv_fields.sample_id} ${tsv_fields.reference_dir}/ref.fa rmdup.bam \${reads_string}
         """
     else if (using_reads_input)
         """
@@ -278,7 +277,7 @@ process call_vars_cortex {
     script:
     if (using_db_input)
         """
-        clockwork cortex --mem_height ${params.cortex_mem_height} ${tsv_fields.reference_dir} "rmdup.bam" cortex ${tsv_fields.sample_id}.${tsv_fields.isolate_id}.${tsv_fields.seqrep_id}.${tsv_fields.sequence_replicate_number}
+        clockwork cortex --mem_height ${params.cortex_mem_height} ${tsv_fields.reference_dir} "rmdup.bam" cortex ${tsv_fields.sample_id}
         rm -fr ${tsv_fields.output_dir}/cortex/
         mkdir -p  ${tsv_fields.output_dir}
         rsync -a cortex ${tsv_fields.output_dir}/
