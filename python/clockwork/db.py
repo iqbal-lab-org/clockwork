@@ -417,8 +417,10 @@ class Db:
         seqrep_isolate_sample_join = 'Seqrep JOIN Isolate ON Seqrep.isolate_id = Isolate.isolate_id JOIN Sample ON Isolate.sample_id = Sample.sample_id'
         where_query = 'WHERE Seqrep.import_status = 1 AND Seqrep.withdrawn != 1'
         dataset_query = '' if dataset_name is None else ' AND dataset_name = "' + dataset_name + '"'
-        query = 'SELECT Isolate.isolate_id, Isolate.sample_id, Isolate.pool_sequence_replicates, Seqrep.seqrep_id, Seqrep.sequence_replicate_number FROM (' + seqrep_isolate_sample_join + ')' + where_query + dataset_query
+        query = 'SELECT Sample.site_id, Sample.subject_id, Sample.sample_id_from_lab, Isolate.isolate_id, Isolate.isolate_number_from_lab, Isolate.sample_id, Isolate.pool_sequence_replicates, Seqrep.seqrep_id, Seqrep.sequence_replicate_number FROM (' + seqrep_isolate_sample_join + ')' + where_query + dataset_query
         all_possible_rows = self.query_to_dict(query)
+        sample_data = {}
+        isolate_id_to_number_from_lab = {}
 
         # pooled: loop over each isolate. Get list of all seqreps for that isolate.
         #   1. Check if all seqreps have had remove_contam run
@@ -426,6 +428,12 @@ class Db:
         pooled_isolates_to_check = {}
 
         for seqrep_data in all_possible_rows:
+            isolate_id_to_number_from_lab[seqrep_data['isolate_id']] = seqrep_data['isolate_number_from_lab']
+            sample_data[seqrep_data['sample_id']] = {
+                'subject_id': seqrep_data['subject_id'],
+                'site_id': seqrep_data['site_id'],
+                'lab_id': seqrep_data['sample_id_from_lab'],
+            }
             if seqrep_data['pool_sequence_replicates'] == 1:
                 if seqrep_data['isolate_id'] not in pooled_isolates_to_check:
                     pooled_isolates_to_check[seqrep_data['isolate_id']] = {
@@ -463,6 +471,15 @@ class Db:
             'isolate_id', 'seqrep_id', 'sequence_replicate_number', 'reference_id', 'reference_dir', sep='\t', file=f)
 
             for data in data_to_print:
+                seqrep_numbers_string = '_'.join([str(x) for x in sorted(data['sequence_replicate_numbers'])])
+                sample_name = '.'.join([
+                    'site', sample_data[data['sample']]['site_id'],
+                    'iso', isolate_id_to_number_from_lab[data['isolate']],
+                    'subject', sample_data[data['sample']]['subject_id'],
+                    'lab_id', sample_data[data['sample']]['lab_id'],
+                    'seq_reps', seqrep_numbers_string,
+                ])
+
                 iso_dir = isolate_dir.IsolateDir(pipeline_root, data['sample'], data['isolate'])
                 reads_in1 = []
                 reads_in2 = []
@@ -470,14 +487,13 @@ class Db:
                     reads_in1.append(iso_dir.reads_filename('remove_contam', seqrep_number, 1))
                     reads_in2.append(iso_dir.reads_filename('remove_contam', seqrep_number, 2))
 
-                seqrep_numbers_string = '_'.join([str(x) for x in sorted(data['sequence_replicate_numbers'])])
                 seqrep_ids_string = '_'.join([str(x) for x in sorted(data['seqrep_ids'])])
 
                 print(
                     ' '.join(reads_in1),
                     ' '.join(reads_in2),
                     iso_dir.pipeline_dir(seqrep_numbers_string, 'variant_call', pipeline_version, reference_id=reference_id),
-                    data['sample'],
+                    sample_name,
                     1 if data['pool'] else 0,
                     data['isolate'],
                     seqrep_ids_string,

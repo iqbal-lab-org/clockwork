@@ -727,14 +727,14 @@ class TestDb(unittest.TestCase):
         expected_tsv_header = '\t'.join(['reads_in1', 'reads_in2', 'output_dir', 'sample_id', 'pool',
             'isolate_id', 'seqrep_id', 'sequence_replicate_number', 'reference_id', 'reference_dir'])
 
-        def make_expected_tsv_line(pipeline_root, i, pool, seqrep_ids, sequence_replicate_numbers, pipeline_version, reference_id, reference_dir):
+        def make_expected_tsv_line(pipeline_root, i, pool, seqrep_ids, sequence_replicate_numbers, pipeline_version, reference_id, reference_dir, sample):
             iso_dir = isolate_dir.IsolateDir(pipeline_root, i, i)
             sequence_replicate_numbers_string = '_'.join([str(x) for x in sequence_replicate_numbers])
             return '\t'.join([
                 ' '.join([iso_dir.reads_filename('remove_contam', j, 1) for j in sequence_replicate_numbers]),
                 ' '.join([iso_dir.reads_filename('remove_contam', j, 2) for j in sequence_replicate_numbers]),
                 iso_dir.pipeline_dir(sequence_replicate_numbers_string, 'variant_call', pipeline_version, reference_id=reference_id),
-                str(i),
+                sample,
                 pool,
                 str(i),
                 '_'.join([str(x) for x in seqrep_ids]),
@@ -743,14 +743,14 @@ class TestDb(unittest.TestCase):
                 reference_dir.directory,
             ])
 
-        expected_tsv_5 = make_expected_tsv_line(pipeline_root, 5, '1', [5], [1], '1.0.1', 1, refdir1)
-        expected_tsv_6 = make_expected_tsv_line(pipeline_root, 6, '0', [6], [1], '1.0.0', 1, refdir1)
-        expected_tsv_7_1_0 = make_expected_tsv_line(pipeline_root, 7, '0', [7], [1], '1.0.0', 1, refdir1)
-        expected_tsv_7_2_0 = make_expected_tsv_line(pipeline_root, 7, '0', [8], [2], '1.0.0', 1, refdir1)
-        expected_tsv_7_1_1 = make_expected_tsv_line(pipeline_root, 7, '0', [7], [1], '1.0.1', 1, refdir1)
-        expected_tsv_7_2_1 = make_expected_tsv_line(pipeline_root, 7, '0', [8], [2], '1.0.1', 1, refdir1)
-        expected_tsv_9_pool_0 = make_expected_tsv_line(pipeline_root, 8, '1', [9, 10], [1,2], '1.0.0', 1, refdir1)
-        expected_tsv_9_pool_1 = make_expected_tsv_line(pipeline_root, 8, '1', [9, 10], [1,2], '1.0.1', 1, refdir1)
+        expected_tsv_5 = make_expected_tsv_line(pipeline_root, 5, '1', [5], [1], '1.0.1', 1, refdir1, 'site.site5.iso.il5.subject.subj5.lab_id.lab5.seq_reps.1')
+        expected_tsv_6 = make_expected_tsv_line(pipeline_root, 6, '0', [6], [1], '1.0.0', 1, refdir1, 'site.site6.iso.il6.subject.subj6.lab_id.lab6.seq_reps.1')
+        expected_tsv_7_1_0 = make_expected_tsv_line(pipeline_root, 7, '0', [7], [1], '1.0.0', 1, refdir1, 'site.site7.iso.il7.subject.subj7.lab_id.lab7.seq_reps.1')
+        expected_tsv_7_2_0 = make_expected_tsv_line(pipeline_root, 7, '0', [8], [2], '1.0.0', 1, refdir1, 'site.site7.iso.il7.subject.subj7.lab_id.lab7.seq_reps.2')
+        expected_tsv_7_1_1 = make_expected_tsv_line(pipeline_root, 7, '0', [7], [1], '1.0.1', 1, refdir1, 'site.site7.iso.il7.subject.subj7.lab_id.lab7.seq_reps.1')
+        expected_tsv_7_2_1 = make_expected_tsv_line(pipeline_root, 7, '0', [8], [2], '1.0.1', 1, refdir1, 'site.site7.iso.il7.subject.subj7.lab_id.lab7.seq_reps.2')
+        expected_tsv_9_pool_0 = make_expected_tsv_line(pipeline_root, 8, '1', [9, 10], [1,2], '1.0.0', 1, refdir1, 'site.site9.iso.il9.subject.subj9.lab_id.lab9.seq_reps.1_2')
+        expected_tsv_9_pool_1 = make_expected_tsv_line(pipeline_root, 8, '1', [9, 10], [1,2], '1.0.1', 1, refdir1, 'site.site9.iso.il9.subject.subj9.lab_id.lab9.seq_reps.1_2')
 
         tmp_out = 'tmp.db_test.make_varian_call_jobs_tsv'
         self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
