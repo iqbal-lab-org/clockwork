@@ -19,6 +19,7 @@ class TestCortex(unittest.TestCase):
 
         self.assertTrue(os.path.exists(ctx.cortex_log))
         self.assertEqual(2, len([x for x in os.listdir(os.path.join(tmp_out, 'cortex.out', 'vcfs')) if x.endswith('.vcf')]))
+        self.assertTrue(os.path.exists(ctx.kmer_counts_file))
         shutil.rmtree(tmp_out)
 
 
