@@ -82,6 +82,16 @@ make
 cd ..
 cp -s fqtools-986e451/bin/fqtools .
 
+#________________________ mccortex _______________________#
+cd $install_root
+git clone --recursive https://github.com/mcveanlab/mccortex
+cd mccortex
+git checkout v0.2
+make all
+cd ..
+cp -s mccortex/bin/mccortex31 .
+
+
 #________________________ nextflow _______________________#
 cd $install_root
 wget -qO- get.nextflow.io | bash
