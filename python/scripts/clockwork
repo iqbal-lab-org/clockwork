@@ -133,6 +133,22 @@ subparser_make_empty_db.add_argument('db_config_file', help='Name of database co
 subparser_make_empty_db.set_defaults(func=clockwork.tasks.make_empty_db.run)
 
 
+#------------------------- minos_make_multi_sample_input -------------
+subparser_minos_make_multi_sample_input = subparsers.add_parser(
+    'minos_make_multi_sample_input',
+    help='Make input TSV file for minos multi_sample_pipeline',
+    usage='clockwork minos_make_multi_sample_input <db_config_file> <dataset name> <pipeline_root> <reference_id>',
+    description='Make input TSV file for minos multi_sample_pipeline',
+)
+
+subparser_minos_make_multi_sample_input.add_argument('db_config_file', help='Name of database config file')
+subparser_minos_make_multi_sample_input.add_argument('dataset_name', help='Dataset name from which to get samples')
+subparser_minos_make_multi_sample_input.add_argument('pipeline_root', help='Root directory of pipeline')
+subparser_minos_make_multi_sample_input.add_argument('reference_id', type=int, help='Reference genome database ID')
+subparser_minos_make_multi_sample_input.add_argument('--pipeline_version', help='Pipeline version to run')
+subparser_minos_make_multi_sample_input.set_defaults(func=clockwork.tasks.minos_make_multi_sample_input.run)
+
+
 #----------------------------- fastqc --------------------------------
 subparser_fastqc = subparsers.add_parser(
     'fastqc',
