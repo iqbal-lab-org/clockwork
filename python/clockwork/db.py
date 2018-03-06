@@ -630,6 +630,26 @@ class Db:
         self.commit()
 
 
+    def get_vcfs_and_reads_files_for_minos_multi_sample_calling(self, dataset_name, pipeline_root, reference_id, pipeline_version=None):
+        '''Returns a list of lines in the right format for
+        minos's multi_sample_pipeline TDV data input file'''
+        # We need the isolates that have had the variant calling pipeline run, from
+        # there get the sample id, so we can get paths to VCFs and BAMs
+        pipeline_version = clockwork_version if pipeline_version is None else pipeline_version
+        query = 'SELECT Isolate.isolate_id, Isolate.sample_id, Pipeline.seqrep_pool FROM Isolate JOIN Pipeline on Isolate.isolate_id = Pipeline.isolate_id where Pipeline.version = "' + pipeline_version + '" and Pipeline.pipeline_name = "variant_call" and Pipeline.status = 1 and Pipeline.reference_id = ' + str(reference_id)
+        all_wanted_db_rows = self.query_to_dict(query)
+        files_list = []
+
+        for row in all_wanted_db_rows:
+            iso_dir = isolate_dir.IsolateDir(pipeline_root, row['sample_id'], row['isolate_id'])
+            pipeline_dir = iso_dir.pipeline_dir(row['seqrep_pool'], 'variant_call', pipeline_version, reference_id=reference_id)
+            vcf = os.path.join(pipeline_dir, 'minos', 'final.vcf')
+            bam = os.path.join(pipeline_dir, 'samtools', 'rmdup.bam')
+            files_list.append(vcf + '\t' + bam)
+
+        return files_list
+
+
     def commit_and_close(self):
         self.commit()
 

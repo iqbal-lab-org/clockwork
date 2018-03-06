@@ -1043,6 +1043,46 @@ class TestDb(unittest.TestCase):
         self.assertEqual(100, self.db.seqrep_id_to_sequence_replicate_number(42))
 
 
+    def test_get_vcfs_and_reads_files_for_minos_multi_sample_calling(self):
+        '''test get_vcfs_and_reads_files_for_minos_multi_sample_calling'''
+        ref_id = 42
+        dataset_name = 'set1'
+        pipeline_root = os.path.abspath(os.path.join('foo', 'bar'))
+
+        self.db.add_row_to_table('Isolate', {'isolate_id': 1, 'sample_id': 1,
+            'isolate_number_from_lab': 'iso1', 'pool_sequence_replicates': 0,
+            'ena_experiment_accession': 'ENA1'})
+        self.db.add_row_to_table('Pipeline', {'isolate_id': 1, 'seqrep_id': None, 'seqrep_pool': '1',
+                'version': '1.2.3', 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 42})
+
+        self.db.add_row_to_table('Isolate', {'isolate_id': 2, 'sample_id': 2,
+            'isolate_number_from_lab': 'iso2', 'pool_sequence_replicates': 1,
+            'ena_experiment_accession': 'ENA2'})
+        self.db.add_row_to_table('Pipeline', {'isolate_id': 2, 'seqrep_id': None, 'seqrep_pool': '1_2',
+                'version': '1.2.3', 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 42})
+
+        # should be ignored because wrong reference_id
+        self.db.add_row_to_table('Isolate', {'isolate_id': 3, 'sample_id': 3,
+            'isolate_number_from_lab': 'iso3', 'pool_sequence_replicates': 1,
+            'ena_experiment_accession': 'ENA3'})
+        self.db.add_row_to_table('Pipeline', {'isolate_id': 3, 'seqrep_id': None, 'seqrep_pool': '1',
+                'version': '1.2.3', 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 43})
+
+        # should be ignored because wrong pipeline version
+        self.db.add_row_to_table('Isolate', {'isolate_id': 4, 'sample_id': 4,
+            'isolate_number_from_lab': 'iso4', 'pool_sequence_replicates': 0,
+            'ena_experiment_accession': 'ENA4'})
+        self.db.add_row_to_table('Pipeline', {'isolate_id': 4, 'seqrep_id': None, 'seqrep_pool': '1',
+                'version': '1.2.4', 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 42})
+        got = self.db.get_vcfs_and_reads_files_for_minos_multi_sample_calling(dataset_name, pipeline_root, ref_id, pipeline_version='1.2.3')
+        vcf_iso1 = os.path.join(pipeline_root, '00', '00', '00', '01', '1', 'Pipelines', '1', 'variant_call', '1.2.3.ref.42', 'minos', 'final.vcf')
+        vcf_iso2 = os.path.join(pipeline_root, '00', '00', '00', '02', '2', 'Pipelines', '1_2', 'variant_call', '1.2.3.ref.42', 'minos', 'final.vcf')
+        bam1 = os.path.join(pipeline_root, '00', '00', '00', '01', '1', 'Pipelines', '1', 'variant_call', '1.2.3.ref.42', 'samtools', 'rmdup.bam')
+        bam2 = os.path.join(pipeline_root, '00', '00', '00', '02', '2', 'Pipelines', '1_2', 'variant_call', '1.2.3.ref.42', 'samtools', 'rmdup.bam')
+        expected = [vcf_iso1 + '\t' + bam1, vcf_iso2 + '\t' + bam2]
+        self.assertEqual(expected, got)
+
+
     def test_update_remove_contam_stats(self):
         '''test _update_remove_contam_stats'''
         counts_file = os.path.join(data_dir, 'update_remove_contam_stats.counts.tsv')
