@@ -180,5 +180,5 @@ make install
 
 
 #________________________ minos _____________________________#
-pip3 install bio-minos==0.2.0
+pip3 install bio-minos==0.3.0
 
