@@ -11,6 +11,7 @@ __all__ = [
     'import_spreadsheet',
     'make_import_spreadsheet',
     'map_reads',
+    'minos_make_multi_sample_input',
     'qc_make_jobs_tsv',
     'reference_prepare',
     'remove_contam',

@@ -120,15 +120,14 @@ class TestNextflowVarcall(unittest.TestCase):
         # check VCF files etc got written. No need to check contents, trust the tools
         # We're just checking nextflow runs OK here.
         ids = [
-            {'sample': 1, 'seqrep_id': '1_2', 'isolate_id': 1, 'seq_repl': '1_2'},
-            {'sample': 2, 'seqrep_id': 3, 'isolate_id': 2, 'seq_repl': '1'},
-            {'sample': 2, 'seqrep_id': 4, 'isolate_id': 2, 'seq_repl': '2'},
+            {'sample': 1, 'seqrep_id': '1_2', 'isolate_id': 1, 'seq_repl': '1_2', 'sample_name': 'site.s1.iso.42.subject.p1.lab_id.l1.seq_reps.1_2'},
+            {'sample': 2, 'seqrep_id': 3, 'isolate_id': 2, 'seq_repl': '1', 'sample_name': 'site.s2.iso.43.subject.p2.lab_id.l2.seq_reps.1'},
+            {'sample': 2, 'seqrep_id': 4, 'isolate_id': 2, 'seq_repl': '2', 'sample_name': 'site.s2.iso.43.subject.p2.lab_id.l2.seq_reps.2'},
         ]
         for id_dict in ids:
             iso_dir = isolate_dir.IsolateDir(pipeline_root, id_dict['sample'], id_dict['isolate_id'])
             pipeline_dir = iso_dir.pipeline_dir(id_dict['seq_repl'], 'variant_call', clockwork_version, reference_id=2)
-            expected_sample = '.'.join([str(id_dict[x]) for x in ['sample', 'isolate_id', 'seqrep_id', 'seq_repl']])
-            self._files_are_present_and_correct(pipeline_dir, expected_sample, expect_ref_check_files=True)
+            self._files_are_present_and_correct(pipeline_dir, id_dict['sample_name'], expect_ref_check_files=True)
 
         shutil.rmtree(tmp_data_dir)
         nextflow_helper.clean_files()
