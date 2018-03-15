@@ -379,19 +379,24 @@ class TestDb(unittest.TestCase):
 
         # Should always get this one because there's no entry in the Pipeline table
         data_dict5 = make_data_dict(5)
-        data_dict5['dataset_name'] = 'group2'
+        data_dict5['dataset_name'] = 'group1'
         self.db.add_one_seqrep(data_dict5)
         self.db.update_row('Seqrep', {'original_reads_file_1_md5': 'md5.5.1'}, {'import_status': 1})
 
-        # Should not get this for 1.0.0 or 1.0.1
-        data_dict6 = make_data_dict(6)
+        # Should always get this one because there's no entry in the Pipeline table
+        # (but it's from group2 instead of group1)
+        data_dict5 = make_data_dict(6)
+        data_dict5['dataset_name'] = 'group2'
+        self.db.add_one_seqrep(data_dict5)
+        self.db.update_row('Seqrep', {'original_reads_file_1_md5': 'md5.6.1'}, {'import_status': 1})
+
+        # Should not get this because status=0
+        data_dict6 = make_data_dict(7)
         data_dict6['dataset_name'] = 'group2'
         self.db.add_one_seqrep(data_dict6)
-        self.db.update_row('Seqrep', {'original_reads_file_1_md5': 'md5.6.1'}, {'import_status': 1})
-        pipeline_row6 = {'isolate_id': 6, 'seqrep_id': 6, 'seqrep_pool': None, 'version': '1.0.0',
-            'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': 1}
-        self.db.add_row_to_table('Pipeline', pipeline_row6)
-        pipeline_row6['version'] = '1.0.1'
+        self.db.update_row('Seqrep', {'original_reads_file_1_md5': 'md5.7.1'}, {'import_status': 1})
+        pipeline_row6 = {'isolate_id': 7, 'seqrep_id': 7, 'seqrep_pool': None, 'version': '1.0.0',
+            'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': 1}
         self.db.add_row_to_table('Pipeline', pipeline_row6)
 
 
@@ -432,13 +437,11 @@ class TestDb(unittest.TestCase):
         expected_tsv_6 = make_expected_tsv_line(6)
 
         tmp_out = 'tmp.db_test.make_remove_contam_jobs_tsv'
-        self.db.make_remove_contam_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
-        expected_lines = [expected_tsv_header, expected_tsv_4, expected_tsv_5]
+        self.db.make_remove_contam_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, dataset_name='group1')
+        expected_lines = [expected_tsv_header, expected_tsv_5]
         self.check_tsv(expected_lines, tmp_out)
         os.unlink(tmp_out)
-        expected_rows.append({'isolate_id': 4, 'seqrep_id': 4, 'seqrep_pool': None, 'version': '1.0.0',
-            'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': 1})
-        expected_rows.append({'isolate_id': 5, 'seqrep_id': 5, 'seqrep_pool': None, 'version': '1.0.0',
+        expected_rows.append({'isolate_id': 5, 'seqrep_id': 5, 'seqrep_pool': None, 'version': clockwork_version,
             'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': 1})
         expected_rows.sort(key=itemgetter('seqrep_id'))
         got_rows = self.db.get_rows_from_table('Pipeline')
@@ -446,35 +449,19 @@ class TestDb(unittest.TestCase):
         self.assertEqual(expected_rows, got_rows)
 
         # getting jobs for the same pipeline again should return nothing
-        self.db.make_remove_contam_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
+        self.db.make_remove_contam_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, dataset_name='group1')
         got_rows = self.db.get_rows_from_table('Pipeline')
         got_rows.sort(key=itemgetter('seqrep_id'))
         self.assertEqual(expected_rows, got_rows)
         self.check_tsv([expected_tsv_header], tmp_out)
         os.unlink(tmp_out)
 
-        # different pipeline version should get more jobs
-        self.db.make_remove_contam_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.1')
-        expected_lines = [expected_tsv_header, expected_tsv_3, expected_tsv_5]
+        # different dataset_name should get more jobs
+        self.db.make_remove_contam_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, dataset_name='group2')
+        expected_lines = [expected_tsv_header, expected_tsv_6]
         self.check_tsv(expected_lines, tmp_out)
         os.unlink(tmp_out)
-        expected_rows.append({'isolate_id': 3, 'seqrep_id': 3, 'seqrep_pool': None, 'version': '1.0.1',
-            'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': 1})
-        expected_rows.append({'isolate_id': 5, 'seqrep_id': 5, 'seqrep_pool': None, 'version': '1.0.1',
-            'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': 1})
-        expected_rows.sort(key=itemgetter('seqrep_id'))
-        got_rows = self.db.get_rows_from_table('Pipeline')
-        got_rows.sort(key=itemgetter('seqrep_id'))
-        self.assertEqual(expected_rows, got_rows)
-
-        # another version, but test only get group2
-        self.db.make_remove_contam_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.2', dataset_name='group2')
-        expected_lines = [expected_tsv_header, expected_tsv_5, expected_tsv_6]
-        self.check_tsv(expected_lines, tmp_out)
-        os.unlink(tmp_out)
-        expected_rows.append({'isolate_id': 5, 'seqrep_id': 5, 'seqrep_pool': None, 'version': '1.0.2',
-            'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': 1})
-        expected_rows.append({'isolate_id': 6, 'seqrep_id': 6, 'seqrep_pool': None, 'version': '1.0.2',
+        expected_rows.append({'isolate_id': 6, 'seqrep_id': 6, 'seqrep_pool': None, 'version': clockwork_version,
             'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': 1})
         expected_rows.sort(key=itemgetter('seqrep_id'))
         got_rows = self.db.get_rows_from_table('Pipeline')

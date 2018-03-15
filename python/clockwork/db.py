@@ -285,14 +285,15 @@ class Db:
             raise Error('Error committing changes to database. Cannot continue')
 
 
-    def make_remove_contam_jobs_tsv(self, outfile, pipeline_root, reference_id, references_root, pipeline_version=None, dataset_name=None):
+    def make_remove_contam_jobs_tsv(self, outfile, pipeline_root, reference_id, references_root, dataset_name=None):
         '''Writes TSV file of job info for isolates that need to have remove_contam
-           run on them. Used by nextflow remove_contam pipeline.'''
-        pipeline_version = clockwork_version if pipeline_version is None else pipeline_version
+           run on them. Used by nextflow remove_contam pipeline.
+           remove_comtan can only be run on a sequence replicate once,
+           regardless of the version of the pipeline that was run'''
         refdir = self.get_reference_dir(reference_id, os.path.abspath(references_root))
         pipeline_root = os.path.abspath(pipeline_root)
 
-        pipeline_select = 'SELECT seqrep_id FROM Pipeline where Pipeline.version = "' + pipeline_version + '" and Pipeline.pipeline_name = "remove_contam"'
+        pipeline_select = 'SELECT seqrep_id FROM Pipeline where Pipeline.pipeline_name = "remove_contam"'
         from_query = 'FROM (Seqrep JOIN Isolate ON Seqrep.isolate_id = Isolate.isolate_id JOIN Sample ON Isolate.sample_id = Sample.sample_id) WHERE'
         if dataset_name is None:
             dataset_query = ''
@@ -330,7 +331,7 @@ class Db:
 
         for row in rows:
             db_row = {'isolate_id': row['isolate_id'], 'seqrep_id': row['seqrep_id'], 'seqrep_pool': None,
-                'version': pipeline_version, 'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': reference_id}
+                'version': clockwork_version, 'pipeline_name': 'remove_contam', 'status': 0, 'reference_id': reference_id}
             self.add_row_to_table('Pipeline', db_row)
 
         self.commit()
