@@ -39,7 +39,7 @@ class TestNextflowVarcall(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(cortex_dir, 'cortex.out')))
         cortex_vcf_files = [os.path.join(cortex_dir, x) for x in glob.glob(os.path.join(cortex_dir, 'cortex.out', 'vcfs', '**')) if  x.endswith('.vcf')]
         if expect_ref_check_files:
-            self.assertEqual(3, len(cortex_vcf_files))
+            self.assertEqual(5, len(cortex_vcf_files))
         else:
             self.assertEqual(2, len(cortex_vcf_files))
 
