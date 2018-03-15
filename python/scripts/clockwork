@@ -307,7 +307,6 @@ subparser_remove_contam_make_jobs_tsv = subparsers.add_parser(
 )
 
 subparser_remove_contam_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
-subparser_remove_contam_make_jobs_tsv.add_argument('--pipeline_version', help='Pipeline version to run')
 subparser_remove_contam_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
 subparser_remove_contam_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
 subparser_remove_contam_make_jobs_tsv.add_argument('outfile', help='Name of output file')

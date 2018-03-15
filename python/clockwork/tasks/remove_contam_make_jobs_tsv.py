@@ -9,7 +9,6 @@ def run(options):
         options.pipeline_root,
         options.reference_id,
         options.reference_root,
-        pipeline_version=options.pipeline_version,
         dataset_name=options.dataset_name,
     )
     database.commit_and_close()
