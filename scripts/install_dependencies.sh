@@ -92,6 +92,15 @@ cd ..
 cp -s mccortex/bin/mccortex31 .
 
 
+#________________________ Mykrobe ________________________#
+cd $install_root
+git clone https://github.com/Mykrobe-tools/mykrobe-atlas-cli.git mykrobe
+cd mykrobe
+git checkout fd3759a1f30aec61346b7fd7888df8e8e9d3025e
+wget -O mykrobe-data.tar.gz https://goo.gl/DXb9hN && tar -zxvf mykrobe-data.tar.gz && rm -fr src/mykrobe/data && mv mykrobe-data src/mykrobe/data
+pip3 install .
+
+
 #________________________ nextflow _______________________#
 cd $install_root
 wget -qO- get.nextflow.io | bash
