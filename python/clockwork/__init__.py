@@ -20,6 +20,7 @@ __all__ = [
     'fqtools',
     'het_snp_caller',
     'lock_file',
+    'mykrobe',
     'picard',
     'read_map',
     'read_pair_importer',
