@@ -1,4 +1,4 @@
-version = 1
+version = 2
 
 tables = {
     'Isolate': [
@@ -7,6 +7,11 @@ tables = {
         ('isolate_number_from_lab', 'text'),
         ('pool_sequence_replicates', 'integer'),
         ('ena_experiment_accession', 'text'),
+    ],
+
+    'Mykrobe_panel': [
+        ('mykrobe_panel_id', 'integer'),
+        ('panel_name', 'text'),
     ],
 
     'Pipeline': [
@@ -121,6 +126,7 @@ tables = {
 
 primary_keys = {
     'Isolate': 'isolate_id',
+    'Mykrobe_panel': 'mykrobe_panel_id',
     'Reference': 'reference_id',
     'Sample': 'sample_id',
     'Seqrep': 'seqrep_id',
