@@ -39,3 +39,17 @@ class TestMykrobe(unittest.TestCase):
             else:
                 self.assertEqual('N', suscept_data[drug]['predict'])
         shutil.rmtree(tmp_out)
+
+
+    def test_custom_panel(self):
+        '''test CustomPanel'''
+        panel_dir = 'tmp.mykrobe.panel'
+        custom_probe = os.path.join(data_dir, 'run_predict.probes.fa')
+        custom_json = os.path.join(data_dir, 'run_predict.json')
+        panel = mykrobe.CustomPanel(panel_dir)
+        panel.setup_files(custom_probe, custom_json)
+        self.assertTrue(os.path.exists(panel.probes_fasta))
+        self.assertTrue(os.path.exists(panel.var_to_res_json))
+        shutil.rmtree(panel_dir)
+
+

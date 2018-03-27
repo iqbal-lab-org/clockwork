@@ -71,3 +71,21 @@ def run_predict(reads, outdir, sample_name, species, panel=None, custom_probe_an
                 pass
 
     os.chdir(cwd)
+
+
+class CustomPanel:
+    def __init__(self, root_dir):
+        self.root_dir = os.path.abspath(root_dir)
+        self.probes_fasta = os.path.join(self.root_dir, 'probes.fa')
+        self.var_to_res_json = os.path.join(self.root_dir, 'variant_to_resistance.json')
+
+
+    def setup_files(self, probes_fasta, var_to_res_json):
+        try:
+            os.mkdir(self.root_dir)
+        except:
+            raise Error('Error mkdir ' + self.root_dir)
+
+        utils.rsync_and_md5(probes_fasta, self.probes_fasta)
+        utils.rsync_and_md5(var_to_res_json, self.var_to_res_json)
+
