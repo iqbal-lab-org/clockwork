@@ -27,14 +27,16 @@ def susceptibility_dict_from_json_file(json_file):
 
 
 def run_predict(reads, outdir, sample_name, species, panel=None, custom_probe_and_json=None, mykrobe=None, clean=True):
-    '''Runs mykrobe predict. For a custom panel, use the option
+    '''Runs mykrobe predict.
+    reads = list of reads files.
+    For a custom panel, use the option
     custom_probe_and_json, which should be a tuple of probe fasta file and
     json variant to resistance file. Using custom_probe_and_json will force
     panel='custom'.'''
     if mykrobe is None:
         mykrobe = os.environ.get('CLOCKWORK_MYKROBE', 'mykrobe')
 
-    reads = os.path.abspath(reads)
+    reads = [os.path.abspath(x) for x in reads]
     cwd = os.getcwd()
     os.mkdir(outdir)
     os.chdir(outdir)
@@ -54,7 +56,7 @@ def run_predict(reads, outdir, sample_name, species, panel=None, custom_probe_an
     if panel is not None:
         command += ['--panel', panel]
 
-    command += ['--seq', reads, '>', json_out]
+    command += ['--seq'] +  reads + ['>', json_out]
     command = ' '.join(command)
     completed_process = utils.syscall(command)
     with open('log.txt', 'w') as f:

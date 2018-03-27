@@ -11,7 +11,7 @@ class TestMykrobe(unittest.TestCase):
         '''test run_predict and susceptibility_dict_from_json_file'''
         reads_file = os.path.join(data_dir, 'run_predict.reads.fq.gz')
         tmp_out = 'tmp.mykrobe_run_predict'
-        mykrobe.run_predict(reads_file, tmp_out, 'sample_name', 'tb')
+        mykrobe.run_predict([reads_file], tmp_out, 'sample_name', 'tb')
         json_file = os.path.join(tmp_out, 'out.json')
         suscept_data = mykrobe.susceptibility_dict_from_json_file(json_file)
         for drug in suscept_data:
@@ -30,7 +30,7 @@ class TestMykrobe(unittest.TestCase):
         tmp_out = 'tmp.mykrobe_run_predict'
         custom_probe = os.path.join(data_dir, 'run_predict.probes.fa')
         custom_json = os.path.join(data_dir, 'run_predict.json')
-        mykrobe.run_predict(reads_file, tmp_out, 'sample_name', 'tb', custom_probe_and_json=(custom_probe, custom_json))
+        mykrobe.run_predict([reads_file, reads_file], tmp_out, 'sample_name', 'tb', custom_probe_and_json=(custom_probe, custom_json))
         json_file = os.path.join(tmp_out, 'out.json')
         suscept_data = mykrobe.susceptibility_dict_from_json_file(json_file)
         for drug in suscept_data:
