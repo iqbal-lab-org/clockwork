@@ -97,7 +97,10 @@ cp -s mccortex/bin/mccortex31 .
 cd $install_root
 git clone https://github.com/Mykrobe-tools/mykrobe-atlas-cli.git mykrobe
 cd mykrobe
-git checkout fd3759a1f30aec61346b7fd7888df8e8e9d3025e
+#git checkout fd3759a1f30aec61346b7fd7888df8e8e9d3025e
+
+# This is new branch with options to use own panels/probes/json:
+git checkout e96cdb0815575dc9fb1c91b20235d048dd5ce4f0
 # fix for python2: aliases is not an option so remove it
 sed -i 's/help="build variant probes", aliases=.*$/help="build variant probes")/' src/mykrobe/cli.py
 wget -O mykrobe-data.tar.gz https://goo.gl/DXb9hN && tar -zxvf mykrobe-data.tar.gz && rm -fr src/mykrobe/data && mv mykrobe-data src/mykrobe/data
