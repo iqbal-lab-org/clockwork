@@ -41,17 +41,33 @@ class TestMykrobe(unittest.TestCase):
         shutil.rmtree(tmp_out)
 
 
-    def test_custom_panel(self):
-        '''test CustomPanel'''
+    def test_custom_panel_not_built_in(self):
+        '''test CustomPanel not built-in'''
         species = 'tb'
+        name = 'panel_name'
         panel_dir = 'tmp.mykrobe.panel'
         custom_probe = os.path.join(data_dir, 'run_predict.probes.fa')
         custom_json = os.path.join(data_dir, 'run_predict.json')
         panel = mykrobe.CustomPanel(panel_dir)
-        panel.setup_files(species, custom_probe, custom_json)
+        panel.setup_files(species, name, custom_probe, custom_json)
         self.assertTrue(os.path.exists(panel.probes_fasta))
         self.assertTrue(os.path.exists(panel.var_to_res_json))
-        self.assertEqual(species, panel.species)
+        self.assertEqual(species, panel.metadata['species'])
+        self.assertEqual(name, panel.metadata['name'])
+        self.assertFalse(panel.metadata['is_built_in'])
+        shutil.rmtree(panel_dir)
+
+
+    def test_custom_panel_built_in(self):
+        '''test CustomPanel built-in'''
+        species = 'tb'
+        name = 'walker-2015'
+        panel_dir = 'tmp.mykrobe.panel'
+        panel = mykrobe.CustomPanel(panel_dir)
+        panel.setup_files(species, name, None, None)
+        self.assertEqual(species, panel.metadata['species'])
+        self.assertEqual(name, panel.metadata['name'])
+        self.assertTrue(panel.metadata['is_built_in'])
         shutil.rmtree(panel_dir)
 
 

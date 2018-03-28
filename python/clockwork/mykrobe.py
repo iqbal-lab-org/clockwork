@@ -7,6 +7,10 @@ from clockwork import utils
 class Error (Exception): pass
 
 
+built_in_panels = {
+    'tb': {'bradley-2015', 'walker-2015'},
+}
+
 def susceptibility_dict_from_json_file(json_file):
     '''Returns dict of susceptibility info from json file made by mykrobe predict'''
     with open(json_file) as f:
@@ -78,26 +82,35 @@ class CustomPanel:
         self.root_dir = os.path.abspath(root_dir)
         self.probes_fasta = os.path.join(self.root_dir, 'probes.fa')
         self.var_to_res_json = os.path.join(self.root_dir, 'variant_to_resistance.json')
-        self.species_file = os.path.join(self.root_dir, 'species.txt')
-        self._set_species()
+        self.json_file = os.path.join(self.root_dir, 'data.json')
+        self._load_json_file()
 
 
-    def setup_files(self, species, probes_fasta, var_to_res_json):
+    def setup_files(self, species, panel_name, probes_fasta, var_to_res_json):
         try:
             os.mkdir(self.root_dir)
         except:
             raise Error('Error mkdir ' + self.root_dir)
 
-        utils.rsync_and_md5(probes_fasta, self.probes_fasta)
-        utils.rsync_and_md5(var_to_res_json, self.var_to_res_json)
-        with open(self.species_file, 'w') as f:
-            print(species, file=f)
-        self._set_species()
+        self.metadata = {
+            'species': species,
+            'name': panel_name,
+            'is_built_in': species in built_in_panels and panel_name in built_in_panels[species],
+        }
+
+        with open(self.json_file, 'w') as f:
+            print(json.dumps(self.metadata), file=f)
+
+        if not self.metadata['is_built_in']:
+            utils.rsync_and_md5(probes_fasta, self.probes_fasta)
+            utils.rsync_and_md5(var_to_res_json, self.var_to_res_json)
 
 
-    def _set_species(self):
-        if os.path.exists(self.species_file):
-            with open(self.species_file) as f:
-                self.species = f.readline().rstrip()
+    def _load_json_file(self):
+        if os.path.exists(self.json_file):
+            with open(self.json_file) as f:
+                self.metadata = json.load(f)
         else:
-            self.species = None
+            self.metadata = {'species': None, 'is_built_in': False, 'name': None}
+
+

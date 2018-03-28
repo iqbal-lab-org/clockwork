@@ -1380,7 +1380,9 @@ class TestDb(unittest.TestCase):
         panel = mykrobe.CustomPanel(panel_dir.directory)
         self.assertTrue(os.path.exists(panel.probes_fasta))
         self.assertTrue(os.path.exists(panel.var_to_res_json))
-        self.assertEqual(species, panel.species)
+        self.assertEqual(species, panel.metadata['species'])
+        self.assertEqual(name, panel.metadata['name'])
+        self.assertFalse(panel.metadata['is_built_in'])
         with self.assertRaises(db.Error):
             self.db.add_mykrobe_custom_panel(species, name, ref_root, tmp_probes, tmp_json)
         shutil.rmtree(ref_root)

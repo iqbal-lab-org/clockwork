@@ -874,7 +874,7 @@ class Db:
             reference_id=reference_id,
         )
         panel = mykrobe.CustomPanel(panel_dir.directory)
-        panel.setup_files(species, probes_fasta, var_to_res_json)
+        panel.setup_files(species, name, probes_fasta, var_to_res_json)
         return reference_id
 
 
