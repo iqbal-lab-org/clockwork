@@ -8,7 +8,7 @@ def run(options):
         options.species,
         options.panel_name,
         options.pipeline_references_root,
-        options.probes_fasta,
-        options.var_to_res_json,
+        probes_fasta=options.probes_fasta,
+        var_to_res_json=options.var_to_res_json,
     )
 
