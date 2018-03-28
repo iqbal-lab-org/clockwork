@@ -597,9 +597,9 @@ class TestDb(unittest.TestCase):
         shutil.rmtree(pipeline_root)
 
 
-    def test_make_variant_call_jobs_tsv(self):
-        '''test make_variant_call_jobs_tsv'''
-        tmp_out = 'tmp.db_test.make_variant_call_jobs_tsv.tsv'
+    def test_make_variant_call_or_mykrobe_jobs_tsv(self):
+        '''test make_variant_call_or_mykrobe_jobs_tsv'''
+        tmp_out = 'tmp.db_test.make_variant_call_or_mykrobe_jobs_tsv.tsv'
         def make_data_dict(i):
             return {
                 'subject_id': 'subj' + str(i),
@@ -740,7 +740,7 @@ class TestDb(unittest.TestCase):
         expected_tsv_9_pool_1 = make_expected_tsv_line(pipeline_root, 8, '1', [9, 10], [1,2], '1.0.1', 1, refdir1, 'site.site9.iso.il9.subject.subj9.lab_id.lab9.seq_reps.1_2')
 
         tmp_out = 'tmp.db_test.make_varian_call_jobs_tsv'
-        self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
+        self.db.make_variant_call_or_mykrobe_jobs_tsv('variant_call', tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
         expected_lines = [expected_tsv_header, expected_tsv_6, expected_tsv_7_1_0, expected_tsv_7_2_0, expected_tsv_9_pool_0]
         self.check_tsv(expected_lines, tmp_out)
         os.unlink(tmp_out)
@@ -765,7 +765,7 @@ class TestDb(unittest.TestCase):
         self.assertEqual(expected_rows, got_rows)
 
         # getting jobs for the same pipeline again should return nothing
-        self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
+        self.db.make_variant_call_or_mykrobe_jobs_tsv('variant_call', tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
         got_rows = self.db.get_rows_from_table('Pipeline')
         sort_pipeline_rows(got_rows)
         self.assertEqual(expected_rows, got_rows)
@@ -773,7 +773,7 @@ class TestDb(unittest.TestCase):
         os.unlink(tmp_out)
 
         # different pipeline version should get more jobs
-        self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.1')
+        self.db.make_variant_call_or_mykrobe_jobs_tsv('variant_call', tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.1')
         expected_lines = [expected_tsv_header, expected_tsv_5, expected_tsv_7_1_1, expected_tsv_7_2_1, expected_tsv_9_pool_1]
         self.check_tsv(expected_lines, tmp_out)
         os.unlink(tmp_out)
@@ -794,7 +794,7 @@ class TestDb(unittest.TestCase):
         self.assertEqual(expected_rows, got_rows)
 
         # difference reference version (but same pipeline version) should get more jobs, but limit to group2
-        self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 2, refs_root, pipeline_version='1.0.1', dataset_name='group2')
+        self.db.make_variant_call_or_mykrobe_jobs_tsv('variant_call', tmp_out, pipeline_root, 2, refs_root, pipeline_version='1.0.1', dataset_name='group2')
         expected_lines = [expected_tsv_header, expected_tsv_9_pool_1]
         expected_lines = [x.replace('\t1\t/refs/1', '\t2\t/refs/2').replace('1.ref.1', '1.ref.2') for x in expected_lines]
         self.check_tsv(expected_lines, tmp_out)
