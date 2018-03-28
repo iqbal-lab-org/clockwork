@@ -43,13 +43,15 @@ class TestMykrobe(unittest.TestCase):
 
     def test_custom_panel(self):
         '''test CustomPanel'''
+        species = 'tb'
         panel_dir = 'tmp.mykrobe.panel'
         custom_probe = os.path.join(data_dir, 'run_predict.probes.fa')
         custom_json = os.path.join(data_dir, 'run_predict.json')
         panel = mykrobe.CustomPanel(panel_dir)
-        panel.setup_files(custom_probe, custom_json)
+        panel.setup_files(species, custom_probe, custom_json)
         self.assertTrue(os.path.exists(panel.probes_fasta))
         self.assertTrue(os.path.exists(panel.var_to_res_json))
+        self.assertEqual(species, panel.species)
         shutil.rmtree(panel_dir)
 
 

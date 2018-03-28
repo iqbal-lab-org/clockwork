@@ -861,7 +861,7 @@ class Db:
         return reference_id
 
 
-    def add_mykrobe_custom_panel(self, name, pipeline_references_root, probes_fasta, var_to_res_json):
+    def add_mykrobe_custom_panel(self, species, name, pipeline_references_root, probes_fasta, var_to_res_json):
         lock = lock_file.LockFile(os.path.join(pipeline_references_root, 'add_mykrobe_panel.lock'))
         reference_id = self.add_reference(name)
         self.commit()
@@ -871,7 +871,7 @@ class Db:
             reference_id=reference_id,
         )
         panel = mykrobe.CustomPanel(panel_dir.directory)
-        panel.setup_files(probes_fasta, var_to_res_json)
+        panel.setup_files(species, probes_fasta, var_to_res_json)
         return reference_id
 
 

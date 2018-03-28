@@ -1371,7 +1371,8 @@ class TestDb(unittest.TestCase):
         ref_root = 'tmp.test_add_mykrobe_custom_panel.refs'
         os.mkdir(ref_root)
         name = 'mykrobe_test'
-        ref_id = self.db.add_mykrobe_custom_panel(name, ref_root, tmp_probes, tmp_json)
+        species = 'tb'
+        ref_id = self.db.add_mykrobe_custom_panel(species, name, ref_root, tmp_probes, tmp_json)
         self.assertEqual(1, ref_id)
         got_rows = self.db.get_rows_from_table('Reference')
         expected_rows = [{'reference_id': 1, 'name': name}]
@@ -1379,8 +1380,9 @@ class TestDb(unittest.TestCase):
         panel = mykrobe.CustomPanel(panel_dir.directory)
         self.assertTrue(os.path.exists(panel.probes_fasta))
         self.assertTrue(os.path.exists(panel.var_to_res_json))
+        self.assertEqual(species, panel.species)
         with self.assertRaises(db.Error):
-            self.db.add_mykrobe_custom_panel(name, ref_root, tmp_probes, tmp_json)
+            self.db.add_mykrobe_custom_panel(species, name, ref_root, tmp_probes, tmp_json)
         shutil.rmtree(ref_root)
         os.unlink(tmp_probes)
         os.unlink(tmp_json)
