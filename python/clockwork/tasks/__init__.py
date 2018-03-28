@@ -1,5 +1,6 @@
 __all__ = [
     'cortex',
+    'db_add_mykrobe_panel',
     'db_finished_pipeline_update',
     'db_finished_pipeline_update_failed_jobs',
     'ena_download',

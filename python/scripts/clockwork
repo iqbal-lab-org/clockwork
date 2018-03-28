@@ -46,6 +46,24 @@ subparser_reference_prepare.add_argument('fasta_file', help='FASTA filename')
 subparser_reference_prepare.set_defaults(func=clockwork.tasks.reference_prepare.run)
 
 
+#--------------------- db_add_mykrobe_panel --------------------------
+subparser_db_add_mykrobe_panel = subparsers.add_parser(
+    'db_add_mykrobe_panel',
+    help='Add mykrobe panel to database',
+    usage='clockwork db_add_mykrobe_panel [options] <db config file> <species> <panel name> <pipeline refs root dir>',
+    description='Add custom panel to, or register built-in mykrobe panel with, database',
+    epilog='Must either use a species and panel name that is built-in to mykrobe, or provide both the --probes_fasta and --var_to_res_json options',
+)
+
+subparser_db_add_mykrobe_panel.add_argument('--probes_fasta', help='Fasta of probes. This is the file used with the --custom_probe_set_path option of mykrobe predict', metavar='FILENAME')
+subparser_db_add_mykrobe_panel.add_argument('--var_to_res_json', help='JSON file of drug resistance info. This is the file used with the --custom_variant_to_resistance_json option of mykrobe predict', metavar='FILENAME')
+subparser_db_add_mykrobe_panel.add_argument('db_config_file', help='Name of database config file')
+subparser_db_add_mykrobe_panel.add_argument('species', help='Name of species (used for species option of mykrobe predict)')
+subparser_db_add_mykrobe_panel.add_argument('panel_name', help='Name of panel (must not already be used in the database)')
+subparser_db_add_mykrobe_panel.add_argument('reference_root', help='Root directory of pipeline reference data')
+subparser_db_add_mykrobe_panel.set_defaults(func=clockwork.tasks.db_add_mykrobe_panel.run)
+
+
 #--------------------- db_finished_pipeline_update -------------------
 subparser_db_finished_pipeline_update = subparsers.add_parser(
     'db_finished_pipeline_update',
