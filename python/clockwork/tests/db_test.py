@@ -1370,24 +1370,42 @@ class TestDb(unittest.TestCase):
         with open(tmp_json, 'w'): pass
         ref_root = 'tmp.test_add_mykrobe_custom_panel.refs'
         os.mkdir(ref_root)
-        name = 'mykrobe_test'
+        name1 = 'mykrobe_test'
         species = 'tb'
-        ref_id = self.db.add_mykrobe_custom_panel(species, name, ref_root, tmp_probes, tmp_json)
+        ref_id = self.db.add_mykrobe_custom_panel(species, name1, ref_root, probes_fasta=tmp_probes, var_to_res_json=tmp_json)
         self.assertEqual(1, ref_id)
         got_rows = self.db.get_rows_from_table('Reference')
-        expected_rows = [{'reference_id': 1, 'name': name}]
+        expected_rows = [{'reference_id': 1, 'name': name1}]
         panel_dir = self.db.get_reference_dir(ref_id, ref_root)
         panel = mykrobe.CustomPanel(panel_dir.directory)
         self.assertTrue(os.path.exists(panel.probes_fasta))
         self.assertTrue(os.path.exists(panel.var_to_res_json))
         self.assertEqual(species, panel.metadata['species'])
-        self.assertEqual(name, panel.metadata['name'])
+        self.assertEqual(name1, panel.metadata['name'])
         self.assertFalse(panel.metadata['is_built_in'])
         with self.assertRaises(db.Error):
-            self.db.add_mykrobe_custom_panel(species, name, ref_root, tmp_probes, tmp_json)
-        shutil.rmtree(ref_root)
+            self.db.add_mykrobe_custom_panel(species, name1, ref_root, tmp_probes, tmp_json)
         os.unlink(tmp_probes)
         os.unlink(tmp_json)
+
+        # Test adding a panel that is built-in to mykrobe
+        name2 = 'walker-2015'
+        ref_id = self.db.add_mykrobe_custom_panel(species, name2, ref_root)
+        self.assertEqual(2, ref_id)
+        got_rows = self.db.get_rows_from_table('Reference')
+        expected_rows = [
+            {'reference_id': 1, 'name': name1},
+            {'reference_id': 2, 'name': name2},
+        ]
+        panel_dir = self.db.get_reference_dir(ref_id, ref_root)
+        panel = mykrobe.CustomPanel(panel_dir.directory)
+        self.assertFalse(os.path.exists(panel.probes_fasta))
+        self.assertFalse(os.path.exists(panel.var_to_res_json))
+        self.assertEqual(species, panel.metadata['species'])
+        self.assertEqual(name2, panel.metadata['name'])
+        self.assertTrue(panel.metadata['is_built_in'])
+        shutil.rmtree(ref_root)
+
 
 
     def test_has_reference(self):

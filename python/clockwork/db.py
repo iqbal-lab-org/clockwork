@@ -864,9 +864,14 @@ class Db:
         return reference_id
 
 
-    def add_mykrobe_custom_panel(self, species, name, pipeline_references_root, probes_fasta, var_to_res_json):
-        lock = lock_file.LockFile(os.path.join(pipeline_references_root, 'add_mykrobe_panel.lock'))
-        reference_id = self.add_reference(name)
+    def add_mykrobe_custom_panel(self, species, name, pipeline_references_root, probes_fasta=None, var_to_res_json=None):
+        lock = lock_file.LockFile(os.path.join(pipeline_references_root, 'add_reference.lock'))
+        try:
+            reference_id = self.add_reference(name)
+        except:
+            lock.stop()
+            raise Error('Error adding reference with name "' + name + '". Cannot continue')
+
         self.commit()
         lock.stop()
         panel_dir = reference_dir.ReferenceDir(
