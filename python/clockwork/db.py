@@ -6,7 +6,7 @@ import re
 import sys
 import tempfile
 from operator import attrgetter, itemgetter
-from clockwork import db_connection, db_schema, isolate_dir, fastqc, reference_dir, samtools_qc, utils
+from clockwork import db_connection, db_schema, isolate_dir, fastqc, lock_file, mykrobe, reference_dir, samtools_qc, utils
 from clockwork import __version__ as clockwork_version
 
 class Error (Exception): pass
@@ -858,6 +858,20 @@ class Db:
         self.add_row_to_table('Reference', {'reference_id': None, 'name': name})
         reference_id = self.cursor.lastrowid
         self.commit()
+        return reference_id
+
+
+    def add_mykrobe_custom_panel(self, name, pipeline_references_root, probes_fasta, var_to_res_json):
+        lock = lock_file.LockFile(os.path.join(pipeline_references_root, 'add_mykrobe_panel.lock'))
+        reference_id = self.add_reference(name)
+        self.commit()
+        lock.stop()
+        panel_dir = reference_dir.ReferenceDir(
+            pipeline_references_root_dir=pipeline_references_root,
+            reference_id=reference_id,
+        )
+        panel = mykrobe.CustomPanel(panel_dir.directory)
+        panel.setup_files(probes_fasta, var_to_res_json)
         return reference_id
 
 

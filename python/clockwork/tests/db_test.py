@@ -6,7 +6,7 @@ import os
 import shutil
 import pyfastaq
 from operator import itemgetter
-from clockwork import db, db_connection, db_maker, db_schema, isolate_dir, reference_dir, utils
+from clockwork import db, db_connection, db_maker, db_schema, isolate_dir, mykrobe, reference_dir, utils
 
 modules_dir = os.path.dirname(os.path.abspath(db.__file__))
 data_dir = os.path.join(modules_dir, 'tests', 'data', 'db')
@@ -1360,6 +1360,30 @@ class TestDb(unittest.TestCase):
         got_rows = self.db.get_rows_from_table('Reference')
         got_rows.sort(key=itemgetter('reference_id'))
         self.assertEqual(expected_rows, got_rows)
+
+
+    def test_add_mykrobe_custom_panel(self):
+        '''test add_mykrobe_custom_panel'''
+        tmp_probes = 'tmp.test_add_mykrobe_custom_panel.probes.fa'
+        tmp_json = 'tmp.test_add_mykrobe_custom_panel.json'
+        with open(tmp_probes, 'w'): pass
+        with open(tmp_json, 'w'): pass
+        ref_root = 'tmp.test_add_mykrobe_custom_panel.refs'
+        os.mkdir(ref_root)
+        name = 'mykrobe_test'
+        ref_id = self.db.add_mykrobe_custom_panel(name, ref_root, tmp_probes, tmp_json)
+        self.assertEqual(1, ref_id)
+        got_rows = self.db.get_rows_from_table('Reference')
+        expected_rows = [{'reference_id': 1, 'name': name}]
+        panel_dir = self.db.get_reference_dir(ref_id, ref_root)
+        panel = mykrobe.CustomPanel(panel_dir.directory)
+        self.assertTrue(os.path.exists(panel.probes_fasta))
+        self.assertTrue(os.path.exists(panel.var_to_res_json))
+        with self.assertRaises(db.Error):
+            self.db.add_mykrobe_custom_panel(name, ref_root, tmp_probes, tmp_json)
+        shutil.rmtree(ref_root)
+        os.unlink(tmp_probes)
+        os.unlink(tmp_json)
 
 
     def test_has_reference(self):
