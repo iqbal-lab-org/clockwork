@@ -41,6 +41,33 @@ class TestMykrobe(unittest.TestCase):
         shutil.rmtree(tmp_out)
 
 
+    def test_run_predict_and_check_susceptibility_fake_run_resistant(self):
+        '''test run_predict and susceptibility_dict_from_json_file in unittest mode with resistant call'''
+        reads_file = os.path.join(data_dir, 'run_predict.reads.fq.gz')
+        tmp_out = 'tmp.mykrobe_run_predict'
+        mykrobe.run_predict([reads_file], tmp_out, 'sample_name', 'tb', unittest=True, unittest_resistant=True)
+        json_file = os.path.join(tmp_out, 'out.json')
+        suscept_data = mykrobe.susceptibility_dict_from_json_file(json_file)
+        for drug in suscept_data:
+            if drug == 'Isoniazid':
+                self.assertEqual('R', suscept_data[drug]['predict'])
+            else:
+                self.assertEqual('S', suscept_data[drug]['predict'])
+        shutil.rmtree(tmp_out)
+
+
+    def test_run_predict_and_check_susceptibility_fake_run_susceptible(self):
+        '''test run_predict and susceptibility_dict_from_json_file in unittest mode with no resistant calls'''
+        reads_file = os.path.join(data_dir, 'run_predict.reads.fq.gz')
+        tmp_out = 'tmp.mykrobe_run_predict'
+        mykrobe.run_predict([reads_file], tmp_out, 'sample_name', 'tb', unittest=True, unittest_resistant=False)
+        json_file = os.path.join(tmp_out, 'out.json')
+        suscept_data = mykrobe.susceptibility_dict_from_json_file(json_file)
+        for drug in suscept_data:
+            self.assertEqual('S', suscept_data[drug]['predict'])
+        shutil.rmtree(tmp_out)
+
+
     def test_panel_not_built_in(self):
         '''test Panel not built-in'''
         species = 'tb'
