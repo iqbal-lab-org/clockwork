@@ -27,6 +27,40 @@ subparser_cortex.add_argument('sample_name', help='Name of sample (is put into V
 subparser_cortex.set_defaults(func=clockwork.tasks.cortex.run)
 
 
+#----------------------------- mykrobe_predict ------------------------
+subparser_mykrobe_predict = subparsers.add_parser(
+    'mykrobe_predict',
+    help='Runs mykrobe predict',
+    usage='clockwork mykrobe_predict [options] <sample name> <outdir> <panel dir> <reads input file list>',
+    description='Runs mykrobe predict',
+)
+
+subparser_mykrobe_predict.add_argument('--testing', action='store_true', help='Used for test suite', default=argparse.SUPPRESS)
+subparser_mykrobe_predict.add_argument('sample_name', help='Name of sample (is put into output JSON file')
+subparser_mykrobe_predict.add_argument('output_dir', help='Name of output directory')
+subparser_mykrobe_predict.add_argument('panel_dir', help='Reference directory made when registering panel with database')
+subparser_mykrobe_predict.add_argument('reads_files', nargs='*', help='List of reads files')
+subparser_mykrobe_predict.set_defaults(func=clockwork.tasks.mykrobe_predict.run)
+
+
+#---------------- mykrobe_predict_make_jobs_tsv ----------------------
+subparser_mykrobe_predict_make_jobs_tsv = subparsers.add_parser(
+    'mykrobe_predict_make_jobs_tsv',
+    help='Finds which sample need running mykrobe_predict pipeline',
+    usage='clockwork mykrobe_predict_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>',
+    description='Writes TSV file of mykrobe_predict jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline mykrobe_predict',
+)
+
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('--pipeline_version', help='Pipeline version to run')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('outfile', help='Name of output file')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('reference_id', type=int, help='Reference genome database ID')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('reference_root', help='Root directory of pipeline reference genomes')
+subparser_mykrobe_predict_make_jobs_tsv.set_defaults(func=clockwork.tasks.mykrobe_predict_make_jobs_tsv.run)
+
+
 #----------------------- reference_prepare ---------------------------
 subparser_reference_prepare = subparsers.add_parser(
     'reference_prepare',

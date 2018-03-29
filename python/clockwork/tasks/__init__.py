@@ -13,6 +13,8 @@ __all__ = [
     'make_import_spreadsheet',
     'map_reads',
     'minos_make_multi_sample_input',
+    'mykrobe_predict',
+    'mykrobe_predict_make_jobs_tsv',
     'qc_make_jobs_tsv',
     'reference_prepare',
     'remove_contam',
