@@ -1,4 +1,4 @@
-version = 2
+version = 1
 
 tables = {
     'Isolate': [
@@ -7,11 +7,6 @@ tables = {
         ('isolate_number_from_lab', 'text'),
         ('pool_sequence_replicates', 'integer'),
         ('ena_experiment_accession', 'text'),
-    ],
-
-    'Mykrobe_panel': [
-        ('mykrobe_panel_id', 'integer'),
-        ('panel_name', 'text'),
     ],
 
     'Pipeline': [
