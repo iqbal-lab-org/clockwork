@@ -1,0 +1,5 @@
+Name	Is_contam	Reads
+contaminants	1	12
+reference	0	26
+Unmapped	0	0
+Reads_kept_after_remove_contam	0	26

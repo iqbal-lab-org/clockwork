@@ -1,0 +1,313 @@
+-- MySQL dump 10.13  Distrib 5.7.21, for Linux (x86_64)
+--
+-- Host: localhost    Database: test_db
+-- ------------------------------------------------------
+-- Server version	5.7.21-0ubuntu0.17.10.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Isolate`
+--
+
+DROP TABLE IF EXISTS `Isolate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Isolate` (
+  `isolate_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sample_id` int(11) DEFAULT NULL,
+  `isolate_number_from_lab` text,
+  `pool_sequence_replicates` int(11) DEFAULT NULL,
+  `ena_experiment_accession` text,
+  PRIMARY KEY (`isolate_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Isolate`
+--
+
+LOCK TABLES `Isolate` WRITE;
+/*!40000 ALTER TABLE `Isolate` DISABLE KEYS */;
+INSERT INTO `Isolate` VALUES (1,1,'42',1,NULL),(2,2,'43',0,NULL),(3,3,'44',1,NULL),(4,4,'45',1,NULL);
+/*!40000 ALTER TABLE `Isolate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Mykrobe_panel`
+--
+
+DROP TABLE IF EXISTS `Mykrobe_panel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Mykrobe_panel` (
+  `mykrobe_panel_id` int(11) NOT NULL AUTO_INCREMENT,
+  `panel_name` text,
+  PRIMARY KEY (`mykrobe_panel_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Mykrobe_panel`
+--
+
+LOCK TABLES `Mykrobe_panel` WRITE;
+/*!40000 ALTER TABLE `Mykrobe_panel` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Mykrobe_panel` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Pipeline`
+--
+
+DROP TABLE IF EXISTS `Pipeline`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Pipeline` (
+  `isolate_id` int(11) DEFAULT NULL,
+  `seqrep_id` int(11) DEFAULT NULL,
+  `seqrep_pool` text,
+  `version` text,
+  `pipeline_name` text,
+  `status` int(11) DEFAULT NULL,
+  `reference_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Pipeline`
+--
+
+LOCK TABLES `Pipeline` WRITE;
+/*!40000 ALTER TABLE `Pipeline` DISABLE KEYS */;
+INSERT INTO `Pipeline` VALUES (1,1,NULL,'0.4.0','remove_contam',1,1),(1,2,NULL,'0.4.0','remove_contam',1,1),(2,3,NULL,'0.4.0','remove_contam',1,1),(2,4,NULL,'0.4.0','remove_contam',1,1),(3,5,NULL,'0.4.0','remove_contam',1,1),(4,6,NULL,'0.4.0','remove_contam',1,1);
+/*!40000 ALTER TABLE `Pipeline` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `QC`
+--
+
+DROP TABLE IF EXISTS `QC`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `QC` (
+  `seqrep_id` int(11) DEFAULT NULL,
+  `pipeline_version` text,
+  `fastqc1_gc` float DEFAULT NULL,
+  `fastqc1_adapter_content` text,
+  `fastqc1_basic_statistics` text,
+  `fastqc1_kmer_content` text,
+  `fastqc1_max_sequence_length` int(11) DEFAULT NULL,
+  `fastqc1_min_sequence_length` int(11) DEFAULT NULL,
+  `fastqc1_overrepresented_sequences` text,
+  `fastqc1_per_base_n_content` text,
+  `fastqc1_per_base_sequence_content` text,
+  `fastqc1_per_base_sequence_quality` text,
+  `fastqc1_per_sequence_gc_content` text,
+  `fastqc1_per_sequence_quality_scores` text,
+  `fastqc1_sequence_duplication_levels` text,
+  `fastqc1_sequence_length_distribution` text,
+  `fastqc1_sequences_flagged_as_poor_quality` int(11) DEFAULT NULL,
+  `fastqc1_total_sequences` int(11) DEFAULT NULL,
+  `fastqc2_gc` float DEFAULT NULL,
+  `fastqc2_adapter_content` text,
+  `fastqc2_basic_statistics` text,
+  `fastqc2_kmer_content` text,
+  `fastqc2_max_sequence_length` int(11) DEFAULT NULL,
+  `fastqc2_min_sequence_length` int(11) DEFAULT NULL,
+  `fastqc2_overrepresented_sequences` text,
+  `fastqc2_per_base_n_content` text,
+  `fastqc2_per_base_sequence_content` text,
+  `fastqc2_per_base_sequence_quality` text,
+  `fastqc2_per_sequence_gc_content` text,
+  `fastqc2_per_sequence_quality_scores` text,
+  `fastqc2_sequence_duplication_levels` text,
+  `fastqc2_sequence_length_distribution` text,
+  `fastqc2_sequences_flagged_as_poor_quality` int(11) DEFAULT NULL,
+  `fastqc2_total_sequences` int(11) DEFAULT NULL,
+  `samtools_raw_total_sequences` int(11) DEFAULT NULL,
+  `samtools_reads_mapped` int(11) DEFAULT NULL,
+  `samtools_reads_duplicated` int(11) DEFAULT NULL,
+  `samtools_bases_mapped_cigar` int(11) DEFAULT NULL,
+  `samtools_bases_trimmed` int(11) DEFAULT NULL,
+  `samtools_error_rate` float DEFAULT NULL,
+  `samtools_average_quality` float DEFAULT NULL,
+  `samtools_insert_size_average` float DEFAULT NULL,
+  `samtools_insert_size_standard_deviation` float DEFAULT NULL,
+  `samtools_inward_oriented_pairs` int(11) DEFAULT NULL,
+  `samtools_outward_oriented_pairs` int(11) DEFAULT NULL,
+  `samtools_pairs_with_other_orientation` int(11) DEFAULT NULL,
+  `het_snp_positions` int(11) DEFAULT NULL,
+  `het_snp_total_snps` int(11) DEFAULT NULL,
+  `het_snp_het_calls` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `QC`
+--
+
+LOCK TABLES `QC` WRITE;
+/*!40000 ALTER TABLE `QC` DISABLE KEYS */;
+/*!40000 ALTER TABLE `QC` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Read_counts`
+--
+
+DROP TABLE IF EXISTS `Read_counts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Read_counts` (
+  `seqrep_id` int(11) DEFAULT NULL,
+  `original_total` int(11) DEFAULT NULL,
+  `contamination` int(11) DEFAULT NULL,
+  `not_contamination` int(11) DEFAULT NULL,
+  `unmapped` int(11) DEFAULT NULL,
+  `total_after_remove_contam` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Read_counts`
+--
+
+LOCK TABLES `Read_counts` WRITE;
+/*!40000 ALTER TABLE `Read_counts` DISABLE KEYS */;
+INSERT INTO `Read_counts` VALUES (1,38,12,26,0,26),(2,38,12,26,0,26),(4,38,12,26,0,26),(3,38,12,26,0,26),(5,38,12,26,0,26),(6,38,12,26,0,26);
+/*!40000 ALTER TABLE `Read_counts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Reference`
+--
+
+DROP TABLE IF EXISTS `Reference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Reference` (
+  `reference_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` text,
+  PRIMARY KEY (`reference_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Reference`
+--
+
+LOCK TABLES `Reference` WRITE;
+/*!40000 ALTER TABLE `Reference` DISABLE KEYS */;
+INSERT INTO `Reference` VALUES (1,'remove_contam_ref'),(2,'walker-2015');
+/*!40000 ALTER TABLE `Reference` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Sample`
+--
+
+DROP TABLE IF EXISTS `Sample`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Sample` (
+  `sample_id` int(11) NOT NULL AUTO_INCREMENT,
+  `subject_id` text,
+  `site_id` text,
+  `sample_id_from_lab` text,
+  `dataset_name` text,
+  `ena_center_name` text,
+  `ena_sample_accession` text,
+  `ena_study_accession` text,
+  PRIMARY KEY (`sample_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Sample`
+--
+
+LOCK TABLES `Sample` WRITE;
+/*!40000 ALTER TABLE `Sample` DISABLE KEYS */;
+INSERT INTO `Sample` VALUES (1,'p1','s1','l1','g1','Center 42',NULL,NULL),(2,'p2','s2','l2','g1','Center 42',NULL,NULL),(3,'p3','s3','l3','g1','Center 42',NULL,NULL),(4,'p4','s4','l4','g2','Center 42',NULL,NULL);
+/*!40000 ALTER TABLE `Sample` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Seqrep`
+--
+
+DROP TABLE IF EXISTS `Seqrep`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Seqrep` (
+  `seqrep_id` int(11) NOT NULL AUTO_INCREMENT,
+  `isolate_id` int(11) DEFAULT NULL,
+  `sequence_replicate_number` int(11) DEFAULT NULL,
+  `original_reads_file_1_md5` text,
+  `original_reads_file_2_md5` text,
+  `remove_contam_reads_file_1_md5` text,
+  `remove_contam_reads_file_2_md5` text,
+  `withdrawn` int(11) DEFAULT NULL,
+  `import_status` int(11) DEFAULT NULL,
+  `submission_date` date DEFAULT NULL,
+  `submit_to_ena` int(11) DEFAULT NULL,
+  `instrument_model` text,
+  `ena_run_accession` text,
+  `ena_on_hold` int(11) DEFAULT NULL,
+  PRIMARY KEY (`seqrep_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Seqrep`
+--
+
+LOCK TABLES `Seqrep` WRITE;
+/*!40000 ALTER TABLE `Seqrep` DISABLE KEYS */;
+INSERT INTO `Seqrep` VALUES (1,1,1,'c1ad11f0346c2bf58c2c21ddecfd7254','aefade5af5db1183afcce0c367a35e83','57c8f8354a6d071e5f595b688b796a03','952d7f665011a3e988b78e0a382b4d84',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(2,1,2,'5e719c04430d15b5181da71c6ea03e70','ac66c4b1dfbae344ac49017b4ffa25ec','47789a002d9a0dbe1ed200545e8a90a3','080e8996bed8771258f14b56068b6b76',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(3,2,1,'a4d7adeff795910e6f74ecf0bc7dd796','154ed12e6e5e5527c2322471f9609f8a','13c4814fb2e7d092137ddd5d8d844054','6724c2fe5b801e2b65cc94fa50a7a28b',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(4,2,2,'eddd8cfce7ee97961f8e9cd80f7db74e','2701261cd46817d7cd9eec9e22050e7d','4569e0a546762ba136567a511ac5d204','0657034da26955cd0a4f9a6ed5c1b12d',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(5,3,1,'787a408f5ffdd619f86641763ab86531','62e3fbf1395d52927e1da914399cd038','89feb9daa66657e4488dbea66c9fccbf','d0b074de509ed1822445f7af1b8d6cc2',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(6,4,1,'d326d9ee131b3324a5d8170bc74763d6','c76102a2dd9177dc5043c459dde9c438','5a446387951103075e975df11093a000','c743f2fc03fbb668b43660e715780812',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0);
+/*!40000 ALTER TABLE `Seqrep` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Version`
+--
+
+DROP TABLE IF EXISTS `Version`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Version` (
+  `version` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Version`
+--
+
+LOCK TABLES `Version` WRITE;
+/*!40000 ALTER TABLE `Version` DISABLE KEYS */;
+INSERT INTO `Version` VALUES (2);
+/*!40000 ALTER TABLE `Version` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2018-03-29  5:50:57
