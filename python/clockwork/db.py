@@ -393,7 +393,7 @@ class Db:
         variant_call or mykrobe pipeline run on them.
         Used by nextflow variant_call or mykrobe pipeline.
         pipeline_name must be 'variant_call', or 'mykrobe'.'''
-        assert pipeline_name in {'mykrobe', 'variant_call'}
+        assert pipeline_name in {'mykrobe_predict', 'variant_call'}
         pipeline_version = clockwork_version if pipeline_version is None else pipeline_version
         refdir = self.get_reference_dir(reference_id, os.path.abspath(references_root))
         pipeline_root = os.path.abspath(pipeline_root)
