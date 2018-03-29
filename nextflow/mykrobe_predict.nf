@@ -15,10 +15,10 @@ else {
 
 if (params.help){
     log.info"""
-        Clockwork mykrobe pipeline.
+        Clockwork mykrobe_predict pipeline.
         Runs mykrobe predict on all samples.
 
-        Usage: nextflow run mykrobe.nf <arguments>
+        Usage: nextflow run mykrobe_predict.nf <arguments>
 
         Required arguments:
 
@@ -66,7 +66,7 @@ else {
 
 
 
-/* This writes a tsv file, one line per mykrobe job to be run
+/* This writes a tsv file, one line per mykrobe predict job to be run
    (plus a header line).
 */
 process make_jobs_tsv {
