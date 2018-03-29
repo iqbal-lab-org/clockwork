@@ -1377,7 +1377,7 @@ class TestDb(unittest.TestCase):
         got_rows = self.db.get_rows_from_table('Reference')
         expected_rows = [{'reference_id': 1, 'name': name1}]
         panel_dir = self.db.get_reference_dir(ref_id, ref_root)
-        panel = mykrobe.CustomPanel(panel_dir.directory)
+        panel = mykrobe.Panel(panel_dir.directory)
         self.assertTrue(os.path.exists(panel.probes_fasta))
         self.assertTrue(os.path.exists(panel.var_to_res_json))
         self.assertEqual(species, panel.metadata['species'])
@@ -1398,7 +1398,7 @@ class TestDb(unittest.TestCase):
             {'reference_id': 2, 'name': name2},
         ]
         panel_dir = self.db.get_reference_dir(ref_id, ref_root)
-        panel = mykrobe.CustomPanel(panel_dir.directory)
+        panel = mykrobe.Panel(panel_dir.directory)
         self.assertFalse(os.path.exists(panel.probes_fasta))
         self.assertFalse(os.path.exists(panel.var_to_res_json))
         self.assertEqual(species, panel.metadata['species'])

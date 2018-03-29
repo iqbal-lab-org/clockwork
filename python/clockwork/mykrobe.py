@@ -77,7 +77,7 @@ def run_predict(reads, outdir, sample_name, species, panel=None, custom_probe_an
     os.chdir(cwd)
 
 
-class CustomPanel:
+class Panel:
     def __init__(self, root_dir):
         self.root_dir = os.path.abspath(root_dir)
         self.probes_fasta = os.path.join(self.root_dir, 'probes.fa')

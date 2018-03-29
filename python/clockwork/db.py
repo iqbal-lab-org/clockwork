@@ -878,7 +878,7 @@ class Db:
             pipeline_references_root_dir=pipeline_references_root,
             reference_id=reference_id,
         )
-        panel = mykrobe.CustomPanel(panel_dir.directory)
+        panel = mykrobe.Panel(panel_dir.directory)
         panel.setup_files(species, name, probes_fasta, var_to_res_json)
         return reference_id
 
