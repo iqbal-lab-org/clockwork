@@ -1,5 +1,6 @@
 __all__ = [
     'cortex',
+    'db_add_mykrobe_panel',
     'db_finished_pipeline_update',
     'db_finished_pipeline_update_failed_jobs',
     'ena_download',
@@ -12,6 +13,8 @@ __all__ = [
     'make_import_spreadsheet',
     'map_reads',
     'minos_make_multi_sample_input',
+    'mykrobe_predict',
+    'mykrobe_predict_make_jobs_tsv',
     'qc_make_jobs_tsv',
     'reference_prepare',
     'remove_contam',

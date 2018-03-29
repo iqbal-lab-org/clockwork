@@ -27,6 +27,40 @@ subparser_cortex.add_argument('sample_name', help='Name of sample (is put into V
 subparser_cortex.set_defaults(func=clockwork.tasks.cortex.run)
 
 
+#----------------------------- mykrobe_predict ------------------------
+subparser_mykrobe_predict = subparsers.add_parser(
+    'mykrobe_predict',
+    help='Runs mykrobe predict',
+    usage='clockwork mykrobe_predict [options] <sample name> <outdir> <panel dir> <reads input file list>',
+    description='Runs mykrobe predict',
+)
+
+subparser_mykrobe_predict.add_argument('--testing', action='store_true', help='Used for test suite', default=argparse.SUPPRESS)
+subparser_mykrobe_predict.add_argument('sample_name', help='Name of sample (is put into output JSON file')
+subparser_mykrobe_predict.add_argument('output_dir', help='Name of output directory')
+subparser_mykrobe_predict.add_argument('panel_dir', help='Reference directory made when registering panel with database')
+subparser_mykrobe_predict.add_argument('reads_files', nargs='*', help='List of reads files')
+subparser_mykrobe_predict.set_defaults(func=clockwork.tasks.mykrobe_predict.run)
+
+
+#---------------- mykrobe_predict_make_jobs_tsv ----------------------
+subparser_mykrobe_predict_make_jobs_tsv = subparsers.add_parser(
+    'mykrobe_predict_make_jobs_tsv',
+    help='Finds which sample need running mykrobe_predict pipeline',
+    usage='clockwork mykrobe_predict_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>',
+    description='Writes TSV file of mykrobe_predict jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline mykrobe_predict',
+)
+
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('--pipeline_version', help='Pipeline version to run')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('outfile', help='Name of output file')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('reference_id', type=int, help='Reference genome database ID')
+subparser_mykrobe_predict_make_jobs_tsv.add_argument('reference_root', help='Root directory of pipeline reference genomes')
+subparser_mykrobe_predict_make_jobs_tsv.set_defaults(func=clockwork.tasks.mykrobe_predict_make_jobs_tsv.run)
+
+
 #----------------------- reference_prepare ---------------------------
 subparser_reference_prepare = subparsers.add_parser(
     'reference_prepare',
@@ -44,6 +78,24 @@ subparser_reference_prepare.add_argument('--name', help='Name of reference', met
 subparser_reference_prepare.add_argument('--outdir', help='Name of output directory (must not already exist)', metavar='DIRNAME')
 subparser_reference_prepare.add_argument('fasta_file', help='FASTA filename')
 subparser_reference_prepare.set_defaults(func=clockwork.tasks.reference_prepare.run)
+
+
+#--------------------- db_add_mykrobe_panel --------------------------
+subparser_db_add_mykrobe_panel = subparsers.add_parser(
+    'db_add_mykrobe_panel',
+    help='Add mykrobe panel to database',
+    usage='clockwork db_add_mykrobe_panel [options] <db config file> <species> <panel name> <pipeline refs root dir>',
+    description='Add custom panel to, or register built-in mykrobe panel with, database',
+    epilog='Must either use a species and panel name that is built-in to mykrobe, or provide both the --probes_fasta and --var_to_res_json options',
+)
+
+subparser_db_add_mykrobe_panel.add_argument('--probes_fasta', help='Fasta of probes. This is the file used with the --custom_probe_set_path option of mykrobe predict', metavar='FILENAME')
+subparser_db_add_mykrobe_panel.add_argument('--var_to_res_json', help='JSON file of drug resistance info. This is the file used with the --custom_variant_to_resistance_json option of mykrobe predict', metavar='FILENAME')
+subparser_db_add_mykrobe_panel.add_argument('db_config_file', help='Name of database config file')
+subparser_db_add_mykrobe_panel.add_argument('species', help='Name of species (used for species option of mykrobe predict)')
+subparser_db_add_mykrobe_panel.add_argument('panel_name', help='Name of panel (must not already be used in the database)')
+subparser_db_add_mykrobe_panel.add_argument('reference_root', help='Root directory of pipeline reference data')
+subparser_db_add_mykrobe_panel.set_defaults(func=clockwork.tasks.db_add_mykrobe_panel.run)
 
 
 #--------------------- db_finished_pipeline_update -------------------

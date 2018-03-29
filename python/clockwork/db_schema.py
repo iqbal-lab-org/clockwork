@@ -121,6 +121,7 @@ tables = {
 
 primary_keys = {
     'Isolate': 'isolate_id',
+    'Mykrobe_panel': 'mykrobe_panel_id',
     'Reference': 'reference_id',
     'Sample': 'sample_id',
     'Seqrep': 'seqrep_id',

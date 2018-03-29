@@ -6,7 +6,7 @@ import re
 import sys
 import tempfile
 from operator import attrgetter, itemgetter
-from clockwork import db_connection, db_schema, isolate_dir, fastqc, reference_dir, samtools_qc, utils
+from clockwork import db_connection, db_schema, isolate_dir, fastqc, lock_file, mykrobe, reference_dir, samtools_qc, utils
 from clockwork import __version__ as clockwork_version
 
 class Error (Exception): pass
@@ -388,9 +388,12 @@ class Db:
 
 
 
-    def make_variant_call_jobs_tsv(self, outfile, pipeline_root, reference_id, references_root, pipeline_version=None, dataset_name=None):
+    def make_variant_call_or_mykrobe_jobs_tsv(self, pipeline_name, outfile, pipeline_root, reference_id, references_root, pipeline_version=None, dataset_name=None):
         '''Writes TSV file of job info for isolates that need to have
-        variant_call pipeline run on them. Used by nextflow variant_call pipeline'''
+        variant_call or mykrobe pipeline run on them.
+        Used by nextflow variant_call or mykrobe pipeline.
+        pipeline_name must be 'variant_call', or 'mykrobe'.'''
+        assert pipeline_name in {'mykrobe_predict', 'variant_call'}
         pipeline_version = clockwork_version if pipeline_version is None else pipeline_version
         refdir = self.get_reference_dir(reference_id, os.path.abspath(references_root))
         pipeline_root = os.path.abspath(pipeline_root)
@@ -399,7 +402,7 @@ class Db:
         # for each run: check if it was run using all sequence replicates. If not,
         # then need to rerun it. Also, must check that each of the sequence
         # replicates have had remove_contam run already, and that there is
-        # not a pending variant_call run (ie pipeline status = 0).
+        # not a pending variant_call/mykrobe run (ie pipeline status = 0).
         # This could probably be done with some awesome mysql-fu. I'll
         # use python dicts instead (maybe less efficient?)
 
@@ -407,14 +410,14 @@ class Db:
         isolates_and_seqreps_remove_contam_run = self.get_rows_from_table('Pipeline', columns='isolate_id,seqrep_id,seqrep_pool', where='pipeline_name = "remove_contam" AND status = 1')
         seqreps_have_had_remove_contam_run = {x['seqrep_id'] for x in isolates_and_seqreps_remove_contam_run}
 
-        # Get all variant_call jobs for this pipeline version
+        # Get all variant_call/mykrobe jobs for this pipeline version
         # that have been run or are pending to run
-        jobs_run_already = self.query_to_dict('SELECT isolate_id, seqrep_id, seqrep_pool FROM Pipeline where pipeline_name = "variant_call" AND reference_id = ' + str(reference_id) + ' AND version = "' + pipeline_version + '"')
-        pools_have_had_variant_call_run = {(x['isolate_id'], x['seqrep_pool']) for x in jobs_run_already if x['seqrep_pool'] is not None}
-        unpooled_seqreps_have_had_variant_call_run = {x['seqrep_id'] for x in jobs_run_already if x['seqrep_id'] is not None}
+        jobs_run_already = self.query_to_dict('SELECT isolate_id, seqrep_id, seqrep_pool FROM Pipeline where pipeline_name = "' + pipeline_name + '" AND reference_id = ' + str(reference_id) + ' AND version = "' + pipeline_version + '"')
+        pools_have_had_pipeline_run = {(x['isolate_id'], x['seqrep_pool']) for x in jobs_run_already if x['seqrep_pool'] is not None}
+        unpooled_seqreps_have_had_pipeline_run = {x['seqrep_id'] for x in jobs_run_already if x['seqrep_id'] is not None}
 
         # Get isolates/seqreps, for filtering later for those that could have
-        # variant_call run on them
+        # the pipeline run on them
         seqrep_isolate_sample_join = 'Seqrep JOIN Isolate ON Seqrep.isolate_id = Isolate.isolate_id JOIN Sample ON Isolate.sample_id = Sample.sample_id'
         where_query = 'WHERE Seqrep.import_status = 1 AND Seqrep.withdrawn != 1'
         dataset_query = '' if dataset_name is None else ' AND dataset_name = "' + dataset_name + '"'
@@ -425,7 +428,7 @@ class Db:
 
         # pooled: loop over each isolate. Get list of all seqreps for that isolate.
         #   1. Check if all seqreps have had remove_contam run
-        #   2. Check if variant_call has been run for that pool of seqreps
+        #   2. Check if pipeline has been run for that pool of seqreps
         pooled_isolates_to_check = {}
 
         for seqrep_data in all_possible_rows:
@@ -451,16 +454,16 @@ class Db:
                 continue
 
             seqrep_string = '_'.join([str(x) for x in sorted(isolate_data['sequence_replicate_numbers'])])
-            if (isolate_id, seqrep_string) not in pools_have_had_variant_call_run:
+            if (isolate_id, seqrep_string) not in pools_have_had_pipeline_run:
                 data_to_print.append({'sample': isolate_data['sample_id'], 'isolate': isolate_id, 'seqrep_ids': isolate_data['seqrep_ids'], 'sequence_replicate_numbers': isolate_data['sequence_replicate_numbers'], 'pool': True})
 
 
 
         # not pooled: loop over each seqrep and check if it's:
         #   1. had remove_contam run
-        #   2. not had variant_call run (or pending to run)
+        #   2. not had pipeline run (or pending to run)
         for seqrep_data in all_possible_rows:
-            if seqrep_data['pool_sequence_replicates'] == 0 and seqrep_data['seqrep_id'] in seqreps_have_had_remove_contam_run and seqrep_data['seqrep_id'] not in unpooled_seqreps_have_had_variant_call_run:
+            if seqrep_data['pool_sequence_replicates'] == 0 and seqrep_data['seqrep_id'] in seqreps_have_had_remove_contam_run and seqrep_data['seqrep_id'] not in unpooled_seqreps_have_had_pipeline_run:
                 data_to_print.append({'sample': seqrep_data['sample_id'], 'isolate': seqrep_data['isolate_id'], 'seqrep_ids': [seqrep_data['seqrep_id']], 'sequence_replicate_numbers': [seqrep_data['sequence_replicate_number']], 'pool': False})
 
 
@@ -493,7 +496,7 @@ class Db:
                 print(
                     ' '.join(reads_in1),
                     ' '.join(reads_in2),
-                    iso_dir.pipeline_dir(seqrep_numbers_string, 'variant_call', pipeline_version, reference_id=reference_id),
+                    iso_dir.pipeline_dir(seqrep_numbers_string, pipeline_name, pipeline_version, reference_id=reference_id),
                     sample_name,
                     1 if data['pool'] else 0,
                     data['isolate'],
@@ -509,7 +512,7 @@ class Db:
                     'isolate_id': data['isolate'],
                     'seqrep_id': None if data['pool'] else data['seqrep_ids'][0],
                     'version': pipeline_version,
-                    'pipeline_name': 'variant_call',
+                    'pipeline_name': pipeline_name,
                     'status': 0,
                     'seqrep_pool': seqrep_numbers_string if data['pool'] else None,
                     'reference_id': reference_id,
@@ -858,6 +861,25 @@ class Db:
         self.add_row_to_table('Reference', {'reference_id': None, 'name': name})
         reference_id = self.cursor.lastrowid
         self.commit()
+        return reference_id
+
+
+    def add_mykrobe_custom_panel(self, species, name, pipeline_references_root, probes_fasta=None, var_to_res_json=None):
+        lock = lock_file.LockFile(os.path.join(pipeline_references_root, 'add_reference.lock'))
+        try:
+            reference_id = self.add_reference(name)
+        except:
+            lock.stop()
+            raise Error('Error adding reference with name "' + name + '". Cannot continue')
+
+        self.commit()
+        lock.stop()
+        panel_dir = reference_dir.ReferenceDir(
+            pipeline_references_root_dir=pipeline_references_root,
+            reference_id=reference_id,
+        )
+        panel = mykrobe.Panel(panel_dir.directory)
+        panel.setup_files(species, name, probes_fasta, var_to_res_json)
         return reference_id
 
 

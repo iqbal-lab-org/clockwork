@@ -6,7 +6,7 @@ import os
 import shutil
 import pyfastaq
 from operator import itemgetter
-from clockwork import db, db_connection, db_maker, db_schema, isolate_dir, reference_dir, utils
+from clockwork import db, db_connection, db_maker, db_schema, isolate_dir, mykrobe, reference_dir, utils
 
 modules_dir = os.path.dirname(os.path.abspath(db.__file__))
 data_dir = os.path.join(modules_dir, 'tests', 'data', 'db')
@@ -597,9 +597,9 @@ class TestDb(unittest.TestCase):
         shutil.rmtree(pipeline_root)
 
 
-    def test_make_variant_call_jobs_tsv(self):
-        '''test make_variant_call_jobs_tsv'''
-        tmp_out = 'tmp.db_test.make_variant_call_jobs_tsv.tsv'
+    def test_make_variant_call_or_mykrobe_jobs_tsv(self):
+        '''test make_variant_call_or_mykrobe_jobs_tsv'''
+        tmp_out = 'tmp.db_test.make_variant_call_or_mykrobe_jobs_tsv.tsv'
         def make_data_dict(i):
             return {
                 'subject_id': 'subj' + str(i),
@@ -740,7 +740,7 @@ class TestDb(unittest.TestCase):
         expected_tsv_9_pool_1 = make_expected_tsv_line(pipeline_root, 8, '1', [9, 10], [1,2], '1.0.1', 1, refdir1, 'site.site9.iso.il9.subject.subj9.lab_id.lab9.seq_reps.1_2')
 
         tmp_out = 'tmp.db_test.make_varian_call_jobs_tsv'
-        self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
+        self.db.make_variant_call_or_mykrobe_jobs_tsv('variant_call', tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
         expected_lines = [expected_tsv_header, expected_tsv_6, expected_tsv_7_1_0, expected_tsv_7_2_0, expected_tsv_9_pool_0]
         self.check_tsv(expected_lines, tmp_out)
         os.unlink(tmp_out)
@@ -765,7 +765,7 @@ class TestDb(unittest.TestCase):
         self.assertEqual(expected_rows, got_rows)
 
         # getting jobs for the same pipeline again should return nothing
-        self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
+        self.db.make_variant_call_or_mykrobe_jobs_tsv('variant_call', tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.0')
         got_rows = self.db.get_rows_from_table('Pipeline')
         sort_pipeline_rows(got_rows)
         self.assertEqual(expected_rows, got_rows)
@@ -773,7 +773,7 @@ class TestDb(unittest.TestCase):
         os.unlink(tmp_out)
 
         # different pipeline version should get more jobs
-        self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.1')
+        self.db.make_variant_call_or_mykrobe_jobs_tsv('variant_call', tmp_out, pipeline_root, 1, refs_root, pipeline_version='1.0.1')
         expected_lines = [expected_tsv_header, expected_tsv_5, expected_tsv_7_1_1, expected_tsv_7_2_1, expected_tsv_9_pool_1]
         self.check_tsv(expected_lines, tmp_out)
         os.unlink(tmp_out)
@@ -794,7 +794,7 @@ class TestDb(unittest.TestCase):
         self.assertEqual(expected_rows, got_rows)
 
         # difference reference version (but same pipeline version) should get more jobs, but limit to group2
-        self.db.make_variant_call_jobs_tsv(tmp_out, pipeline_root, 2, refs_root, pipeline_version='1.0.1', dataset_name='group2')
+        self.db.make_variant_call_or_mykrobe_jobs_tsv('variant_call', tmp_out, pipeline_root, 2, refs_root, pipeline_version='1.0.1', dataset_name='group2')
         expected_lines = [expected_tsv_header, expected_tsv_9_pool_1]
         expected_lines = [x.replace('\t1\t/refs/1', '\t2\t/refs/2').replace('1.ref.1', '1.ref.2') for x in expected_lines]
         self.check_tsv(expected_lines, tmp_out)
@@ -1360,6 +1360,52 @@ class TestDb(unittest.TestCase):
         got_rows = self.db.get_rows_from_table('Reference')
         got_rows.sort(key=itemgetter('reference_id'))
         self.assertEqual(expected_rows, got_rows)
+
+
+    def test_add_mykrobe_custom_panel(self):
+        '''test add_mykrobe_custom_panel'''
+        tmp_probes = 'tmp.test_add_mykrobe_custom_panel.probes.fa'
+        tmp_json = 'tmp.test_add_mykrobe_custom_panel.json'
+        with open(tmp_probes, 'w'): pass
+        with open(tmp_json, 'w'): pass
+        ref_root = 'tmp.test_add_mykrobe_custom_panel.refs'
+        os.mkdir(ref_root)
+        name1 = 'mykrobe_test'
+        species = 'tb'
+        ref_id = self.db.add_mykrobe_custom_panel(species, name1, ref_root, probes_fasta=tmp_probes, var_to_res_json=tmp_json)
+        self.assertEqual(1, ref_id)
+        got_rows = self.db.get_rows_from_table('Reference')
+        expected_rows = [{'reference_id': 1, 'name': name1}]
+        panel_dir = self.db.get_reference_dir(ref_id, ref_root)
+        panel = mykrobe.Panel(panel_dir.directory)
+        self.assertTrue(os.path.exists(panel.probes_fasta))
+        self.assertTrue(os.path.exists(panel.var_to_res_json))
+        self.assertEqual(species, panel.metadata['species'])
+        self.assertEqual(name1, panel.metadata['name'])
+        self.assertFalse(panel.metadata['is_built_in'])
+        with self.assertRaises(db.Error):
+            self.db.add_mykrobe_custom_panel(species, name1, ref_root, tmp_probes, tmp_json)
+        os.unlink(tmp_probes)
+        os.unlink(tmp_json)
+
+        # Test adding a panel that is built-in to mykrobe
+        name2 = 'walker-2015'
+        ref_id = self.db.add_mykrobe_custom_panel(species, name2, ref_root)
+        self.assertEqual(2, ref_id)
+        got_rows = self.db.get_rows_from_table('Reference')
+        expected_rows = [
+            {'reference_id': 1, 'name': name1},
+            {'reference_id': 2, 'name': name2},
+        ]
+        panel_dir = self.db.get_reference_dir(ref_id, ref_root)
+        panel = mykrobe.Panel(panel_dir.directory)
+        self.assertFalse(os.path.exists(panel.probes_fasta))
+        self.assertFalse(os.path.exists(panel.var_to_res_json))
+        self.assertEqual(species, panel.metadata['species'])
+        self.assertEqual(name2, panel.metadata['name'])
+        self.assertTrue(panel.metadata['is_built_in'])
+        shutil.rmtree(ref_root)
+
 
 
     def test_has_reference(self):
