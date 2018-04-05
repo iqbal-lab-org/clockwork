@@ -173,6 +173,25 @@ subparser_ena_submit_reads.add_argument('pipeline_root', help='Pipeline root dir
 subparser_ena_submit_reads.set_defaults(func=clockwork.tasks.ena_submit_reads.run)
 
 
+#---------------------------- find_data ------------------------------
+find_data_allowed_pipelines = ['remove_contam', 'qc', 'variant_call', 'mykrobe_predict']
+subparser_find_data = subparsers.add_parser(
+    'find_data',
+    help='Report IDs from database and files on disk',
+    usage='clockwork find_data [options] <db_config_file> <pipeline_root>',
+    description='Report IDs from database and files on disk',
+)
+
+subparser_find_data.add_argument('--include_withdrawn', action='store_true', help='Include withdrawn sequencing replicates')
+subparser_find_data.add_argument('--include_internal_ids', action='store_true', help='Include internal IDs used in tracking database in output')
+subparser_find_data.add_argument('--dataset_name', help='Limit to the given dataset', metavar='STR')
+subparser_find_data.add_argument('--pipeline_version', help='Only used with --pipeline option. Limit to the given pipeline version', metavar='STR')
+subparser_find_data.add_argument('--pipeline', choices=find_data_allowed_pipelines, help='Report on the given pipeline')
+subparser_find_data.add_argument('--reference_id', help='Only used with --pipeline option. Limit to the given reference_id for that pipeline', metavar='INT')
+subparser_find_data.add_argument('--outfile', help='Write output to file. Default is to stdout', default='-', metavar='FILENAME')
+subparser_find_data.add_argument('db_config_file', help='Name of database config file')
+subparser_find_data.add_argument('pipeline_root', help='Pipeline root directory')
+
 #----------------------------- make_empty_db -------------------------
 subparser_make_empty_db = subparsers.add_parser(
     'make_empty_db',
