@@ -9,13 +9,12 @@ def run(options):
         dataset_name=options.dataset_name
     )
 
-    if options.pipeline_name:
+    if options.pipeline:
         finder.write_pipeline_data_to_file(
             options.outfile,
-            options.pipeline_name,
+            options.pipeline,
             pipeline_version=options.pipeline_version,
             reference_id=options.reference_id
         )
     else:
-        finder.write_seqrep_data_to_file(outfile)
-
+        finder.write_seqrep_data_to_file(options.outfile)
