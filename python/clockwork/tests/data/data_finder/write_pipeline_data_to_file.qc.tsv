@@ -1,0 +1,5 @@
+pipeline_name	version	dataset_name	reference_id	site_id	subject_id	sample_id_from_lab	isolate_number_from_lab	sequence_replicate_number	pipeline_directory
+qc	0.1.1	set1	3	01	subject_1	lab_id_1	1	1	PIPEROOT/00/00/00/01/1/Pipelines/1/qc/0.1.1
+qc	0.1.1	set1	3	01	subject_2	lab_id_2	1	1	PIPEROOT/00/00/00/02/2/Pipelines/1/qc/0.1.1
+qc	0.1.3	set2	4	02	subject_3	lab_id_3	1	1	PIPEROOT/00/00/00/03/3/Pipelines/1/qc/0.1.3
+qc	0.1.3	set2	4	02	subject_3	lab_id_3	1	2	PIPEROOT/00/00/00/03/3/Pipelines/2/qc/0.1.3

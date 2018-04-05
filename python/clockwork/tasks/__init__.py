@@ -7,6 +7,7 @@ __all__ = [
     'ena_submit_reads',
     'make_empty_db',
     'fastqc',
+    'find_data',
     'generic_pipeline_make_jobs_tsv',
     'import_read_pair',
     'import_spreadsheet',

@@ -1,0 +1,4 @@
+pipeline_name	version	dataset_name	reference_id	site_id	subject_id	sample_id_from_lab	isolate_number_from_lab	sequence_replicate_numbers	pipeline_directory
+mykrobe_predict	1.2.3	set1	10	01	subject_1	lab_id_1	1	1	PIPEROOT/00/00/00/01/1/Pipelines/1/mykrobe_predict/1.2.3.ref.10
+mykrobe_predict	1.2.3	set1	10	01	subject_2	lab_id_2	1	2	PIPEROOT/00/00/00/02/2/Pipelines/2/mykrobe_predict/1.2.3.ref.10
+mykrobe_predict	1.2.3	set2	10	02	subject_3	lab_id_3	1	1_2	PIPEROOT/00/00/00/03/3/Pipelines/1_2/mykrobe_predict/1.2.3.ref.10
