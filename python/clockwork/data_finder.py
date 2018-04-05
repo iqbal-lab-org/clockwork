@@ -128,7 +128,8 @@ class DataFinder:
 
         for row in rows:
             iso_dir_obj = isolate_dir.IsolateDir(self.pipeline_root, row['sample_id'], row['isolate_id'])
-            row['pipeline_directory'] = iso_dir_obj.pipeline_dir(row['sequence_replicate_number'], pipeline_name, row['version'], reference_id=row['reference_id'])
+            ref_id = None if pipeline_name == 'qc' else row['reference_id']
+            row['pipeline_directory'] = iso_dir_obj.pipeline_dir(row['sequence_replicate_number'], pipeline_name, row['version'], reference_id=ref_id)
             if pipeline_name == 'remove_contam':
                 row['remove_contam_reads_1'] = iso_dir_obj.reads_filename('remove_contam', row['sequence_replicate_number'], 1)
                 row['remove_contam_reads_2'] = iso_dir_obj.reads_filename('remove_contam', row['sequence_replicate_number'], 2)

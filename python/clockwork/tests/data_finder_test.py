@@ -131,6 +131,9 @@ class TestDataFinder(unittest.TestCase):
             d = {'isolate_id': isolate, 'seqrep_id': seqrep, 'seqrep_pool': None,
                  'version': version, 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': ref_id}
             self.db.add_row_to_table('Pipeline', d)
+            d = {'isolate_id': isolate, 'seqrep_id': seqrep, 'seqrep_pool': None,
+                 'version': version, 'pipeline_name': 'qc', 'status': 1, 'reference_id': ref_id + 2}
+            self.db.add_row_to_table('Pipeline', d)
 
         self.db.commit()
 
@@ -229,3 +232,17 @@ class TestDataFinder(unittest.TestCase):
         self.assertTrue(filecmp.cmp(tmp_expected, tmpfile, shallow=False))
         os.unlink(tmpfile)
         os.unlink(tmp_expected)
+
+
+    def test_write_pipeline_data_to_file_qc_pipeline(self):
+        '''test write_pipeline_data_to_file for qc pipeline'''
+        finder = data_finder.DataFinder(ini_file, self.pipeline_root)
+        tmpfile = 'tmp.data_finder.write_pipeline_data_to_file.qc.out'
+        finder.write_pipeline_data_to_file(tmpfile, 'qc')
+        expected_file = os.path.join(data_dir, 'write_pipeline_data_to_file.qc.tsv')
+        tmp_expected = 'tmp.data_finder.write_pipeline_data_to_file.qc.expect'
+        fix_pipeline_root_in_file(expected_file, tmp_expected, self.pipeline_root)
+        self.assertTrue(filecmp.cmp(tmp_expected, tmpfile, shallow=False))
+        os.unlink(tmpfile)
+        os.unlink(tmp_expected)
+
