@@ -21,7 +21,7 @@ def fix_pipeline_root_in_file(infile, outfile, pipeline_root):
             print(line.replace('PIPEROOT', pipeline_root), end='', file=f_out)
 
 
-class TestFileFinder(unittest.TestCase):
+class TestDataFinder(unittest.TestCase):
     def setUp(self):
         self.pipeline_root = os.path.abspath('piperoot')
         os.mkdir(self.pipeline_root)
@@ -123,6 +123,15 @@ class TestFileFinder(unittest.TestCase):
             }
             self.db.update_row('Seqrep', where_dict, update_dict)
 
+
+        seqrep_to_isolate = {1: 1, 2: 2, 3: 3, 4: 3}
+        for seqrep, isolate in seqrep_to_isolate.items():
+            ref_id = 1 if seqrep in {1,2} else 2
+            version = '0.1.1' if seqrep in {1,2} else '0.1.3'
+            d = {'isolate_id': isolate, 'seqrep_id': seqrep, 'seqrep_pool': None,
+                 'version': version, 'pipeline_name': 'remove_contam', 'status': 1, 'reference_id': ref_id}
+            self.db.add_row_to_table('Pipeline', d)
+
         self.db.commit()
 
 
@@ -156,3 +165,67 @@ class TestFileFinder(unittest.TestCase):
         os.unlink(tmpfile)
         os.unlink(tmp_expected)
 
+
+    def test_write_pipeline_data_to_file_remove_contam_pipeline(self):
+        '''test write_pipeline_data_to_file for remove_contam pipeline'''
+        finder = data_finder.DataFinder(ini_file, self.pipeline_root)
+        tmpfile = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.out'
+        expected_file = os.path.join(data_dir, 'write_pipeline_data_to_file.remove_contam.tsv')
+        tmp_expected = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.expect'
+        fix_pipeline_root_in_file(expected_file, tmp_expected, self.pipeline_root)
+        finder.write_pipeline_data_to_file(tmpfile, 'remove_contam')
+        self.assertTrue(filecmp.cmp(tmp_expected, tmpfile, shallow=False))
+        os.unlink(tmpfile)
+        os.unlink(tmp_expected)
+
+
+    def test_write_pipeline_data_to_file_remove_contam_pipeline_with_internal_ids(self):
+        '''test write_pipeline_data_to_file for remove_contam pipeline with internal ids'''
+        finder = data_finder.DataFinder(ini_file, self.pipeline_root, include_internal_ids=True)
+        tmpfile = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.with_internal_ids.out'
+        expected_file = os.path.join(data_dir, 'write_pipeline_data_to_file.remove_contam.with_internal_ids.tsv')
+        tmp_expected = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.expect'
+        fix_pipeline_root_in_file(expected_file, tmp_expected, self.pipeline_root)
+        finder.write_pipeline_data_to_file(tmpfile, 'remove_contam')
+        self.assertTrue(filecmp.cmp(tmp_expected, tmpfile, shallow=False))
+        os.unlink(tmpfile)
+        os.unlink(tmp_expected)
+
+
+    def test_write_pipeline_data_to_file_remove_contam_pipeline_dataset_option(self):
+        '''test write_pipeline_data_to_file for remove_contam pipeline limit to one dataset'''
+        finder = data_finder.DataFinder(ini_file, self.pipeline_root, dataset_name='set2')
+        tmpfile = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.set2.out'
+        expected_file = os.path.join(data_dir, 'write_pipeline_data_to_file.remove_contam.set2.tsv')
+        tmp_expected = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.set2.expect'
+        fix_pipeline_root_in_file(expected_file, tmp_expected, self.pipeline_root)
+        finder.write_pipeline_data_to_file(tmpfile, 'remove_contam')
+        self.assertTrue(filecmp.cmp(tmp_expected, tmpfile, shallow=False))
+        os.unlink(tmpfile)
+        os.unlink(tmp_expected)
+
+
+    def test_write_pipeline_data_to_file_remove_contam_pipeline_version_option(self):
+        '''test write_pipeline_data_to_file for remove_contam pipeline use version option'''
+        finder = data_finder.DataFinder(ini_file, self.pipeline_root)
+        tmpfile = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.v0.1.1.out'
+        expected_file = os.path.join(data_dir, 'write_pipeline_data_to_file.remove_contam.v0.1.1.tsv')
+        tmp_expected = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.v0.1.1.expect'
+        fix_pipeline_root_in_file(expected_file, tmp_expected, self.pipeline_root)
+        finder.write_pipeline_data_to_file(tmpfile, 'remove_contam', pipeline_version='0.1.1')
+        self.assertTrue(filecmp.cmp(tmp_expected, tmpfile, shallow=False))
+        os.unlink(tmpfile)
+        os.unlink(tmp_expected)
+
+
+    def test_write_pipeline_data_to_file_remove_contam_pipeline_reference_option(self):
+        '''test write_pipeline_data_to_file for remove_contam pipeline use reference option'''
+        finder = data_finder.DataFinder(ini_file, self.pipeline_root)
+        tmpfile = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.ref.1.out'
+        expected_file = os.path.join(data_dir, 'write_pipeline_data_to_file.remove_contam.ref.1.tsv')
+        tmp_expected = 'tmp.data_finder.write_pipeline_data_to_file.remove_contam.ref.1.expect'
+        fix_pipeline_root_in_file(expected_file, tmp_expected, self.pipeline_root)
+        finder.write_pipeline_data_to_file(tmpfile, 'remove_contam', reference_id=1)
+        self.assertTrue(filecmp.cmp(tmp_expected, tmpfile, shallow=False))
+        os.unlink(tmpfile)
+        os.unlink(tmp_expected)
