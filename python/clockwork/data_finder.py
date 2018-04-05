@@ -84,6 +84,8 @@ class DataFinder:
 
     def write_pipeline_data_to_file(self, outfile, pipeline_name, pipeline_version=None, reference_id=None):
         where_fields = ['pipeline_name="' + pipeline_name + '"']
+        pooling_seqreps = pipeline_name in {'mykrobe_predict', 'variant_call'}
+        seqreps_column = 'sequence_replicate_numbers' if pooling_seqreps else 'sequence_replicate_number'
 
         if pipeline_version is not None:
             where_fields.append('version="' + pipeline_version + '"')
@@ -103,7 +105,7 @@ class DataFinder:
             'subject_id',
             'sample_id_from_lab', # = lab_id in import spreadsheet
             'isolate_number_from_lab', # = isolate_number in import spreadhseet
-            'sequence_replicate_number',
+            seqreps_column,
             'pipeline_directory',
         ]
 
@@ -118,7 +120,12 @@ class DataFinder:
         if self.include_internal_ids:
             columns.extend(['sample_id', 'isolate_id', 'seqrep_id'])
 
-        query = 'select * from ' + mysql_seqrep_isolate_sample_join + ' join Pipeline on Pipeline.seqrep_id = Seqrep.seqrep_id' + \
+        if pooling_seqreps:
+            pipeline_join = ' join Pipeline on Pipeline.isolate_id = Isolate.isolate_id'
+        else:
+            pipeline_join = ' join Pipeline on Pipeline.seqrep_id = Seqrep.seqrep_id'
+
+        query = 'select * from ' + mysql_seqrep_isolate_sample_join + ' ' + pipeline_join + \
           ' where ' + ' AND '.join(where_fields)
 
         rows = self.db.query_to_dict(query)
@@ -126,10 +133,22 @@ class DataFinder:
         f = pyfastaq.utils.open_file_write(outfile)
         print(*columns, sep='\t', file=f)
 
+        # The joining of tales means that if the pipelne pools samples, could
+        # have duplicate rows. eg pool is 1_2. We'll get a row for replicate
+        # 1 and replicate 2. Track what we've seen already and skip the duplicates
+        used_pools = set()
+
         for row in rows:
             iso_dir_obj = isolate_dir.IsolateDir(self.pipeline_root, row['sample_id'], row['isolate_id'])
             ref_id = None if pipeline_name == 'qc' else row['reference_id']
-            row['pipeline_directory'] = iso_dir_obj.pipeline_dir(row['sequence_replicate_number'], pipeline_name, row['version'], reference_id=ref_id)
+            if pooling_seqreps:
+                row[seqreps_column] = row['seqrep_pool']
+                pool_tuple = (row['version'], row['isolate_id'], row['seqrep_pool'], row['reference_id'])
+                if pool_tuple in used_pools:
+                    continue
+                used_pools.add(pool_tuple)
+
+            row['pipeline_directory'] = iso_dir_obj.pipeline_dir(row[seqreps_column], pipeline_name, row['version'], reference_id=ref_id)
             if pipeline_name == 'remove_contam':
                 row['remove_contam_reads_1'] = iso_dir_obj.reads_filename('remove_contam', row['sequence_replicate_number'], 1)
                 row['remove_contam_reads_2'] = iso_dir_obj.reads_filename('remove_contam', row['sequence_replicate_number'], 2)

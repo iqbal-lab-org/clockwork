@@ -135,6 +135,18 @@ class TestDataFinder(unittest.TestCase):
                  'version': version, 'pipeline_name': 'qc', 'status': 1, 'reference_id': ref_id + 2}
             self.db.add_row_to_table('Pipeline', d)
 
+        var_call_rows = [
+            {'isolate_id': 1, 'seqrep_id': None, 'seqrep_pool': '1',
+             'version': '1.2.3', 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 10},
+            {'isolate_id': 2, 'seqrep_id': None, 'seqrep_pool': '2',
+             'version': '1.2.3', 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 10},
+            {'isolate_id': 3, 'seqrep_id': None, 'seqrep_pool': '1_2',
+             'version': '1.2.3', 'pipeline_name': 'variant_call', 'status': 1, 'reference_id': 10},
+        ]
+        for d in var_call_rows:
+            self.db.add_row_to_table('Pipeline', d)
+
+
         self.db.commit()
 
 
@@ -246,3 +258,15 @@ class TestDataFinder(unittest.TestCase):
         os.unlink(tmpfile)
         os.unlink(tmp_expected)
 
+
+    def test_write_pipeline_data_to_file_variant_call_pipeline(self):
+        '''test write_pipeline_data_to_file for variant_call pipeline'''
+        finder = data_finder.DataFinder(ini_file, self.pipeline_root)
+        tmpfile = 'tmp.data_finder.write_pipeline_data_to_file.variant_call.out'
+        finder.write_pipeline_data_to_file(tmpfile, 'variant_call')
+        expected_file = os.path.join(data_dir, 'write_pipeline_data_to_file.variant_call.tsv')
+        tmp_expected = 'tmp.data_finder.write_pipeline_data_to_file.variant_call.expect'
+        fix_pipeline_root_in_file(expected_file, tmp_expected, self.pipeline_root)
+        self.assertTrue(filecmp.cmp(tmp_expected, tmpfile, shallow=False))
+        os.unlink(tmpfile)
+        os.unlink(tmp_expected)
