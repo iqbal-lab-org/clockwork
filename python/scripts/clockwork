@@ -191,6 +191,8 @@ subparser_find_data.add_argument('--reference_id', help='Only used with --pipeli
 subparser_find_data.add_argument('--outfile', help='Write output to file. Default is to stdout', default='-', metavar='FILENAME')
 subparser_find_data.add_argument('db_config_file', help='Name of database config file')
 subparser_find_data.add_argument('pipeline_root', help='Pipeline root directory')
+subparser_find_data.set_defaults(func=clockwork.tasks.find_data.run)
+
 
 #----------------------------- make_empty_db -------------------------
 subparser_make_empty_db = subparsers.add_parser(
