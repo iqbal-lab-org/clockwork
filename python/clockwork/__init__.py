@@ -14,6 +14,7 @@ __all__ = [
     'db_connection',
     'db_maker',
     'db_schema',
+    'data_finder',
     'isolate_dir',
     'ena',
     'fastqc',
