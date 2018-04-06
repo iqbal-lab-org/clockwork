@@ -138,8 +138,9 @@ cp -rp samtools-1.3.1/misc/plot-bamstats .
 
 #________________________ stampy _________________________#
 cd $install_root
-wget http://www.well.ox.ac.uk/bioinformatics/Software/Stampy-latest.tgz
-tar xf Stampy-latest.tgz
+wget http://www.well.ox.ac.uk/~gerton/software/Stampy/stampy-latest.tgz
+tar xf stampy-latest.tgz
+rm stampy-latest.tgz
 cd stampy-*
 make
 cd ..
@@ -182,7 +183,7 @@ pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyfl
 
 
 #________________________ gramtools _________________________#
-pip3 install git+https://github.com/iqbal-lab-org/gramtools@97b3a4950ce463cce07155beb962ae5deb25921c
+pip3 install git+https://github.com/iqbal-lab-org/gramtools@2c776c2a6633fdcaaebce33e47f60f460ffb418b
 
 #________________________ mummer ____________________________#
 cd $install_root
@@ -195,5 +196,5 @@ make install
 
 
 #________________________ minos _____________________________#
-pip3 install bio-minos==0.3.0
+pip3 install git+https://github.com/iqbal-lab-org/minos@1c11daccfdc96a777e5736db888a060816a7d491
 
