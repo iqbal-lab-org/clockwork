@@ -35,7 +35,7 @@ subparser_mykrobe_predict = subparsers.add_parser(
     description='Runs mykrobe predict',
 )
 
-subparser_mykrobe_predict.add_argument('--testing', action='store_true', help='Used for test suite', default=argparse.SUPPRESS)
+subparser_mykrobe_predict.add_argument('--testing', action='store_true', help='Used for test suite')
 subparser_mykrobe_predict.add_argument('sample_name', help='Name of sample (is put into output JSON file')
 subparser_mykrobe_predict.add_argument('output_dir', help='Name of output directory')
 subparser_mykrobe_predict.add_argument('panel_dir', help='Reference directory made when registering panel with database')
