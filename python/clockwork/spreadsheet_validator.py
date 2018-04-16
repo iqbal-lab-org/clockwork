@@ -72,7 +72,7 @@ class SpreadsheetValidator:
                 # input file had header line. So need to add 2 to get
                 # the row number from input file
                 lines_string = ','.join([str(x+2) for x in value])
-                errors.append('Non_unique\t' + key + '\t' + dup_key + '\t' + lines_string)
+                errors.append('Non_unique\t' + str(key) + '\t' + str(dup_key) + '\t' + lines_string)
 
         # Check no repeated combination of subject_id/site_id/lab_id/isolate_number/sequence_replicate_number
         ids_combo = ['subject_id', 'site_id', 'lab_id', 'isolate_number', 'sequence_replicate_number']
@@ -95,7 +95,7 @@ class SpreadsheetValidator:
         md5_2 = set([d['reads_file_2_md5'] for d in all_data])
         md5_intersection = sorted(list(md5_1.intersection(md5_2)))
         errors = ['Filename_in_both_columns\t' + x for x in file_intersection]
-        errors.extend(['md5_in_both_columns\t' +  x for x in md5_intersection])
+        errors.extend(['md5_in_both_columns\t' +  str(x) for x in md5_intersection])
         return errors
 
 
