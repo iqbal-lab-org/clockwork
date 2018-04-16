@@ -10,6 +10,28 @@ from clockwork import utils
 class Error (Exception): pass
 
 
+def _replace_sample_name_in_vcf(infile, outfile, sample_name):
+    changed_name = False
+
+    with open(infile) as f_in, open(outfile, 'w') as f_out:
+        for line in f_in:
+            if line.startswith('#CHROM'):
+                fields = line.rstrip().split('\t')
+                if len(fields) < 10:
+                    raise Error('Not enough columns in header line of VCF: ' + line)
+                elif len(fields) == 10:
+                    fields[9] = sample_name
+                    print(*fields, sep='\t', file=f_out)
+                    changed_name = True
+                else:
+                    raise Error('More than one sample in VCF, from header line: ' + line)
+            else:
+                print(line, end='', file=f_out)
+
+    if not changed_name:
+        raise Error('No #CHROM line found in VCF file ' + infile)
+
+
 def _find_binaries(cortex_root=None, stampy_script=None, vcftools_dir=None, mccortex=None):
     if cortex_root is None:
         cortex_root = os.environ.get('CLOCKWORK_CORTEX_DIR', '/bioinf-tools/cortex')
