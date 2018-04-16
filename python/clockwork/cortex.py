@@ -10,6 +10,28 @@ from clockwork import utils
 class Error (Exception): pass
 
 
+def _replace_sample_name_in_vcf(infile, outfile, sample_name):
+    changed_name = False
+
+    with open(infile) as f_in, open(outfile, 'w') as f_out:
+        for line in f_in:
+            if line.startswith('#CHROM'):
+                fields = line.rstrip().split('\t')
+                if len(fields) < 10:
+                    raise Error('Not enough columns in header line of VCF: ' + line)
+                elif len(fields) == 10:
+                    fields[9] = sample_name
+                    print(*fields, sep='\t', file=f_out)
+                    changed_name = True
+                else:
+                    raise Error('More than one sample in VCF, from header line: ' + line)
+            else:
+                print(line, end='', file=f_out)
+
+    if not changed_name:
+        raise Error('No #CHROM line found in VCF file ' + infile)
+
+
 def _find_binaries(cortex_root=None, stampy_script=None, vcftools_dir=None, mccortex=None):
     if cortex_root is None:
         cortex_root = os.environ.get('CLOCKWORK_CORTEX_DIR', '/bioinf-tools/cortex')
@@ -103,6 +125,12 @@ class CortexRunCalls:
         self.mem_height = mem_height
         self.kmer_counts_file = os.path.join(self.outdir, 'kmer_counts.txt.gz')
 
+        # Cortex uses the sample name in some of its output filenames.
+        # If the sample name is long, then the filename can end up too long for
+        # unix, giving the error 'File name too long'. We'll use a short name
+        # while running cortex, then rename the sample inside the VCF file at the end
+        self.tmp_sample_name = 'sample'
+
 
     def _make_input_files(self):
         try:
@@ -114,7 +142,7 @@ class CortexRunCalls:
             print(self.reads_infile, file=f)
 
         with open(self.cortex_reads_index, 'w') as f:
-            print(self.sample_name, self.cortex_reads_fofn, '.', '.', sep='\t', file=f)
+            print(self.tmp_sample_name, self.cortex_reads_fofn, '.', '.', sep='\t', file=f)
 
         with open(self.cortex_ref_fofn, 'w') as f:
             print(os.path.join(self.ref_dir, 'ref.fa'), file=f)
@@ -136,6 +164,12 @@ class CortexRunCalls:
                 os.unlink(filename)
 
         for filename in glob.glob(os.path.join(self.cortex_outdir, 'vcfs', '**')):
+            if filename.endswith('.vcf'):
+                tmp_vcf = filename + '.tmp'
+                _replace_sample_name_in_vcf(filename, tmp_vcf, self.sample_name)
+                utils.rsync_and_md5(tmp_vcf, filename)
+                os.unlink(tmp_vcf)
+
             if not ((filename.endswith('.vcf') and 'FINAL' in filename) or filename.endswith('log') or filename.endswith('aligned_branches')):
                 if os.path.isdir(filename):
                     shutil.rmtree(filename)

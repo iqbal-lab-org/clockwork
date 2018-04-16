@@ -1,3 +1,4 @@
+import filecmp
 import unittest
 import shutil
 import os
@@ -8,6 +9,26 @@ data_dir = os.path.join(modules_dir, 'tests', 'data', 'cortex')
 
 
 class TestCortex(unittest.TestCase):
+    def test_replace_sample_name_in_vcf(self):
+        '''test _replace_sample_name_in_vcf'''
+        tmp_out = 'tmp.replace_sample_name_in_vcf.out'
+        bad1 = os.path.join(data_dir, 'replace_sample_name_in_vcf.in.bad1.vcf')
+        bad2 = os.path.join(data_dir, 'replace_sample_name_in_vcf.in.bad2.vcf')
+        bad3 = os.path.join(data_dir, 'replace_sample_name_in_vcf.in.bad3.vcf')
+        with self.assertRaises(cortex.Error):
+            cortex._replace_sample_name_in_vcf(bad1, tmp_out, 'NEW_NAME')
+        with self.assertRaises(cortex.Error):
+            cortex._replace_sample_name_in_vcf(bad2, tmp_out, 'NEW_NAME')
+        with self.assertRaises(cortex.Error):
+            cortex._replace_sample_name_in_vcf(bad3, tmp_out, 'NEW_NAME')
+
+        infile = os.path.join(data_dir, 'replace_sample_name_in_vcf.in.vcf')
+        expected = os.path.join(data_dir, 'replace_sample_name_in_vcf.expect.vcf')
+        cortex._replace_sample_name_in_vcf(infile, tmp_out, 'NEW_NAME')
+        self.assertTrue(filecmp.cmp(tmp_out, expected))
+        os.unlink(tmp_out)
+
+
     def test_run_cortex_run_calls(self):
         '''test run_cortex'''
         ref_dir = os.path.join(data_dir, 'Reference')
