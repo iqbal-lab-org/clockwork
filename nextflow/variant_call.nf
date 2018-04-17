@@ -314,7 +314,7 @@ process combine_variant_calls_minos {
     set (val(tsv_fields), file("rmdup.bam")) from call_vars_joined_channel
 
     output:
-    set (val(tsv_fields), file("rmdup.bam")) into combine_variant_calls_minos_out
+    val tsv_fields into combine_variant_calls_minos_out
 
     script:
     """
@@ -327,42 +327,6 @@ process combine_variant_calls_minos {
 }
 
 
-process combine_variant_calls_simple_merge {
-    maxForks params.max_forks_combine_variant_calls
-    memory '2 GB'
-    if (using_db_input) {
-       errorStrategy {task.attempt < 3 ? 'retry' : 'ignore'}
-       maxRetries 3
-    }
-
-    input:
-    set (val(tsv_fields), file("rmdup.bam")) from combine_variant_calls_minos_out
-
-    output:
-    val tsv_fields into combine_variant_calls_simple_merge_out
-
-    script:
-    """
-    rm -fr ${tsv_fields.output_dir}/simple_merge/
-    mkdir ${tsv_fields.output_dir}/simple_merge/
-
-    if [ ${task.attempt} -eq 3 ]; then
-        touch ${tsv_fields.output_dir}/simple_merge/simple_merge.failed
-        touch ${tsv_fields.output_dir}/simple_merge/simple_merge.vcf
-        exit 0
-    fi
-
-    cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
-    samtools_vcf=\$(find ${tsv_fields.output_dir}/samtools/ -name samtools.vcf)
-    if [ \$cortex_vcf -a \$samtools_vcf -a -f \$cortex_vcf  -a -f \$samtools_vcf ]; then
-        clockwork samtools_cortex_vcf_merge ${tsv_fields.reference_dir}/ref.fa \$samtools_vcf \$cortex_vcf ${tsv_fields.output_dir}/simple_merge/simple_merge.vcf
-    else
-        touch ${tsv_fields.output_dir}/simple_merge/simple_merge.not_enough_input_files
-        touch ${tsv_fields.output_dir}/simple_merge/simple_merge.vcf
-    fi
-    """
-}
-
 
 if (truth_ref) {
     process check_calls_using_truth_ref {
@@ -371,7 +335,7 @@ if (truth_ref) {
         maxRetries 3
 
         input:
-        val tsv_fields from combine_variant_calls_simple_merge_out
+        val tsv_fields from combine_variant_calls_minos_out
 
         output:
         val tsv_fields into check_calls_using_truth_ref_out
@@ -392,11 +356,6 @@ if (truth_ref) {
         if [ \$minos_vcf -a -f \$minos_vcf ]; then
             minos check_with_ref \$minos_vcf ${tsv_fields.reference_dir}/ref.fa ${truth_ref} \$minos_vcf.check
         fi
-
-        simple_merge_vcf=\$(find ${tsv_fields.output_dir}/simple_merge/ -name simple_merge.vcf)
-        if [ \$simple_merge_vcf -a -f \$simple_merge_vcf ]; then
-            minos check_with_ref \$simple_merge_vcf ${tsv_fields.reference_dir}/ref.fa ${truth_ref} \$simple_merge_vcf.check
-        fi
         """
     }
 }
@@ -415,7 +374,7 @@ if (using_db_input) {
             input_channel = check_calls_using_truth_ref_out
         }
         else{
-           input_channel = combine_variant_calls_simple_merge_out
+           input_channel = combine_variant_calls_minos_out
         }
 
         when:
