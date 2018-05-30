@@ -6,6 +6,8 @@ __all__ = [
     'ena_download',
     'ena_submit_reads',
     'make_empty_db',
+    'fake_remove_contam',
+    'fake_remove_contam_make_jobs_tsv',
     'fastqc',
     'find_data',
     'generic_pipeline_make_jobs_tsv',

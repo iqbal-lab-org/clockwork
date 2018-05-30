@@ -350,6 +350,22 @@ subparser_qc_make_jobs_tsv.add_argument('reference_root', help='Root directory o
 subparser_qc_make_jobs_tsv.set_defaults(func=clockwork.tasks.qc_make_jobs_tsv.run)
 
 
+#----------------- fake_remove_contam --------------------------------
+subparser_fake_remove_contam = subparsers.add_parser(
+    'fake_remove_contam',
+    help='Fake remove contaminated reads',
+    usage='clockwork fake_remove_contam [options] <reads_in_1> <reads_in_2> <reads_out_1> <reads_out_2> <counts_outfile>',
+    description='Sylinks outfiles to point at infiles, writes counts file with all reads not contamination',
+)
+
+subparser_fake_remove_contam.add_argument('reads_in_1', help='Name of input reads file 1')
+subparser_fake_remove_contam.add_argument('reads_in_2', help='Name of input reads file 2')
+subparser_fake_remove_contam.add_argument('reads_out_1', help='Name of output reads file 1')
+subparser_fake_remove_contam.add_argument('reads_out_2', help='Name of output reads file 2')
+subparser_fake_remove_contam.add_argument('counts_out', help='Name of output file of read counts')
+subparser_fake_remove_contam.set_defaults(func=clockwork.tasks.fake_remove_contam.run)
+
+
 #---------------------- remove_contam --------------------------------
 subparser_remove_contam = subparsers.add_parser(
     'remove_contam',
@@ -369,6 +385,21 @@ subparser_remove_contam.add_argument('counts_out', help='Name of output file of 
 subparser_remove_contam.add_argument('reads_out_1', help='Name of output reads file 1')
 subparser_remove_contam.add_argument('reads_out_2', help='Name of output reads file 2')
 subparser_remove_contam.set_defaults(func=clockwork.tasks.remove_contam.run)
+
+
+#---------------- fake_remove_contam_make_jobs_tsv ------------------
+subparser_fake_remove_contam_make_jobs_tsv = subparsers.add_parser(
+    'fake_remove_contam_make_jobs_tsv',
+    help='Finds which sample need running fake_remove_contam pipeline',
+    usage='clockwork fake_remove_contam_make_jobs_tsv <pipeline root> <db config file> <outfile>',
+    description='Writes TSV file of fake_remove_contam jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline fake_remove_contam',
+)
+
+subparser_fake_remove_contam_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
+subparser_fake_remove_contam_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
+subparser_fake_remove_contam_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
+subparser_fake_remove_contam_make_jobs_tsv.add_argument('outfile', help='Name of output file')
+subparser_fake_remove_contam_make_jobs_tsv.set_defaults(func=clockwork.tasks.fake_remove_contam_make_jobs_tsv.run)
 
 
 #---------------- remove_contam_make_jobs_tsv -----------------------
