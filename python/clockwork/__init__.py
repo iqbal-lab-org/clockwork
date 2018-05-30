@@ -17,6 +17,7 @@ __all__ = [
     'data_finder',
     'isolate_dir',
     'ena',
+    'fake_contam_remover',
     'fastqc',
     'fqtools',
     'het_snp_caller',
