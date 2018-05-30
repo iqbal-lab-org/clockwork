@@ -21,6 +21,7 @@ class FakeContamRemover:
         with open(outfile, 'w') as f:
             print('Name', 'Is_contam', 'Reads', sep='\t', file=f)
             print('Remove_contam_not_run', '0', 2 * number_of_read_pairs, sep='\t', file=f)
+            print('Reads_kept_after_remove_contam', '0', 2 * number_of_read_pairs, sep='\t', file=f)
 
 
     @classmethod
