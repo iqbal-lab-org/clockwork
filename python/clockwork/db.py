@@ -285,12 +285,23 @@ class Db:
             raise Error('Error committing changes to database. Cannot continue')
 
 
-    def make_remove_contam_jobs_tsv(self, outfile, pipeline_root, reference_id, references_root, dataset_name=None):
+    def make_remove_contam_jobs_tsv(self, outfile, pipeline_root, reference_id, references_root, dataset_name=None, faking_it=False):
         '''Writes TSV file of job info for isolates that need to have remove_contam
            run on them. Used by nextflow remove_contam pipeline.
            remove_comtan can only be run on a sequence replicate once,
-           regardless of the version of the pipeline that was run'''
-        refdir = self.get_reference_dir(reference_id, os.path.abspath(references_root))
+           regardless of the version of the pipeline that was run.
+           If faking_it is True, then reference_id is forced to be zero, references_root
+           can be anything be anything, because although it's put in the output file, it
+           is not used.'''
+        if faking_it:
+            reference_id = 0
+            ref_fasta = '/fake/ref.fa'
+            remove_contam_metadata_tsv = '/fake/meta.tsv'
+        else:
+            refdir = self.get_reference_dir(reference_id, os.path.abspath(references_root))
+            ref_fasta = refdir.ref_fasta
+            remove_contam_metadata_tsv = refdir.remove_contam_metadata_tsv
+
         pipeline_root = os.path.abspath(pipeline_root)
 
         pipeline_select = 'SELECT seqrep_id FROM Pipeline where Pipeline.pipeline_name = "remove_contam"'
@@ -326,7 +337,7 @@ class Db:
                 reads_remove_contam2 = iso_dir.reads_filename('remove_contam', row['sequence_replicate_number'], 2)
                 print(reads_in1, reads_in2, counts_tsv, reads_contam1, reads_contam2, reads_remove_contam1, reads_remove_contam2,
                   row['sample_id'], row['seqrep_id'], row['isolate_id'], row['sequence_replicate_number'], reference_id,
-                  refdir.ref_fasta, refdir.remove_contam_metadata_tsv,
+                  ref_fasta, remove_contam_metadata_tsv,
                   sep='\t', file=f)
 
         for row in rows:

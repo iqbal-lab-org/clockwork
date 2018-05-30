@@ -1,0 +1,5 @@
+[client]
+user = test_user
+password = test_password
+host = localhost
+port = 3306
