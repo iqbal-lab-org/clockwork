@@ -9,7 +9,7 @@ if (params.help){
     log.info"""
         Clockwork fake_remove_contam pipeline. Fakes a run of remove_contam pipeline,
         updating database as if remove_Contam had really been run. Use this if
-        you do not want to run remove_contam pipeline. It results in "decontamined"
+        you do not want to run remove_contam pipeline. It results in "decontaminated"
         reads that are the same as the original reads.
 
         Usage: nextflow run fake_remove_contam.nf <arguments>
