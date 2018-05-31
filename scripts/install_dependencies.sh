@@ -87,7 +87,7 @@ cp -s fqtools-986e451/bin/fqtools .
 cd $install_root
 git clone --recursive https://github.com/mcveanlab/mccortex
 cd mccortex
-git checkout v0.2
+git checkout 97aba198d632ee98ac1aa496db33d1a7a8cb7e51
 make all
 cd ..
 cp -s mccortex/bin/mccortex31 .
@@ -183,7 +183,7 @@ pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyfl
 
 
 #________________________ gramtools _________________________#
-pip3 install git+https://github.com/iqbal-lab-org/gramtools@c80672642d05f2f333b0c5fcdf9025a0ceac7905
+pip3 install git+https://github.com/iqbal-lab-org/gramtools@d8a3082a921579e65081fa1932c42c4f2fb7953a
 
 #________________________ mummer ____________________________#
 cd $install_root
@@ -196,5 +196,5 @@ make install
 
 
 #________________________ minos _____________________________#
-pip3 install bio-minos==0.4.1
+pip3 install git+https://github.com/iqbal-lab-org/minos@9662d64ef83b67b62372b569d994eea28e7cbb63
 
