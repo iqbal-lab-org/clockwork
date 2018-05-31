@@ -67,7 +67,7 @@ process make_jobs_tsv {
 
 
 process fake_remove_contam {
-    maxForks params.max_forks_map_reads
+    maxForks params.max_forks
     memory '500 MB'
     errorStrategy {task.attempt < 3 ? 'retry' : 'ignore'}
     maxRetries 3
