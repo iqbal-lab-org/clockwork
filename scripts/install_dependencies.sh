@@ -183,7 +183,7 @@ pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyfl
 
 
 #________________________ gramtools _________________________#
-pip3 install git+https://github.com/iqbal-lab-org/gramtools@d8a3082a921579e65081fa1932c42c4f2fb7953a
+pip3 install git+https://github.com/iqbal-lab-org/gramtools@03ff4ff2309f25f5470816b3097d60ea7f0a9754
 
 #________________________ mummer ____________________________#
 cd $install_root
