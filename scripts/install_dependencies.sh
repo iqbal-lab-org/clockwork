@@ -14,11 +14,12 @@ apt-get install -y \
   build-essential \
   cmake \
   curl \
-  default-jre \
   gawk \
   git \
   gnuplot \
   graphviz \
+  openjdk-8-jre \
+  libarchive-dev \
   liblzma-dev \
   libbz2-dev \
   libhts-dev \
@@ -36,6 +37,8 @@ apt-get install -y \
   unzip \
   wget
 
+# Note: needed to specify java version 8 (openjdk-8-jre) because
+# default is version 10 (from default-jre), which won't work with nextflow.
 
 mkdir $install_root
 cd $install_root
@@ -97,10 +100,7 @@ cp -s mccortex/bin/mccortex31 .
 cd $install_root
 git clone https://github.com/Mykrobe-tools/mykrobe-atlas-cli.git mykrobe
 cd mykrobe
-#git checkout fd3759a1f30aec61346b7fd7888df8e8e9d3025e
-
-# This is new branch with options to use own panels/probes/json:
-git checkout e96cdb0815575dc9fb1c91b20235d048dd5ce4f0
+git checkout 9f5b7f4184a87da23592f14901c5585b223aca78
 # fix for python2: aliases is not an option so remove it
 sed -i 's/help="build variant probes", aliases=.*$/help="build variant probes")/' src/mykrobe/cli.py
 wget -O mykrobe-data.tar.gz https://goo.gl/DXb9hN && tar -zxvf mykrobe-data.tar.gz && rm -fr src/mykrobe/data && mv mykrobe-data src/mykrobe/data
@@ -183,7 +183,7 @@ pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyfl
 
 
 #________________________ gramtools _________________________#
-pip3 install git+https://github.com/iqbal-lab-org/gramtools@d8a3082a921579e65081fa1932c42c4f2fb7953a
+pip3 install git+https://github.com/iqbal-lab-org/gramtools@03ff4ff2309f25f5470816b3097d60ea7f0a9754
 
 #________________________ mummer ____________________________#
 cd $install_root
