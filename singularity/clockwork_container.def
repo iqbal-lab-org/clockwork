@@ -1,5 +1,5 @@
 BootStrap: debootstrap
-OSVersion: artful
+OSVersion: bionic
 MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
 %environment
