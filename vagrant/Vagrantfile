@@ -3,7 +3,7 @@
 
 Vagrant.configure(2) do |config|
   config.ssh.forward_x11 = true
-  config.vm.box = "generic/ubuntu1710"
+  config.vm.box = "ubuntu/bionic64"
   # Some VMs have small hard drives. generic/ubuntu1710 is
   # big enough, so don't resize. But leave the commented
   # line here so I don't have to google it again next time
