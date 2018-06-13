@@ -14,11 +14,12 @@ apt-get install -y \
   build-essential \
   cmake \
   curl \
-  default-jre \
   gawk \
   git \
   gnuplot \
   graphviz \
+  openjdk-8-jre \
+  libarchive-dev \
   liblzma-dev \
   libbz2-dev \
   libhts-dev \
@@ -36,6 +37,8 @@ apt-get install -y \
   unzip \
   wget
 
+# Note: needed to specify java version 8 (openjdk-8-jre) because
+# default is version 10 (from default-jre), which won't work with nextflow.
 
 mkdir $install_root
 cd $install_root
