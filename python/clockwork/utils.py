@@ -70,7 +70,7 @@ def rsync_and_md5(old_name, new_name, md5sum=None):
         md5sum = md5(old_name)
 
     syscall('rsync ' + old_name + ' ' + new_name)
-    new_md5sum = md5sum = md5(new_name)
+    new_md5sum = md5(new_name)
 
     if new_md5sum != md5sum:
         raise Error('Error copying file ' + old_name + ' -> ' + new_name + '\n. md5s do not match')
