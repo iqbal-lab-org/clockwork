@@ -166,7 +166,7 @@ subparser_ena_submit_reads = subparsers.add_parser(
 
 subparser_ena_submit_reads.add_argument('--fq_upload_threads', type=int, help='Threads to use when uploading fastq files [%(default)s]', default=1, metavar='INT')
 subparser_ena_submit_reads.add_argument('--use_test_server', action='store_true', help='Use test server instead of production')
-subparser_ena_submit_reads.add_argument('--taxon_id', type=int, help='Taxon ID [%(default)s]', default=1494075, metavar='INT')
+subparser_ena_submit_reads.add_argument('--taxon_id', type=int, help='Taxon ID [%(default)s]', default=1773, metavar='INT')
 subparser_ena_submit_reads.add_argument('ini_file', help='Name of ini file that has database and ENA account logins etc')
 subparser_ena_submit_reads.add_argument('dataset_name', help='Name of data dataset to be submitted')
 subparser_ena_submit_reads.add_argument('pipeline_root', help='Pipeline root directory')
