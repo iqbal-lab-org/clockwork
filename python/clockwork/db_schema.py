@@ -1,4 +1,4 @@
-version = 2
+version = 3
 
 tables = {
     'Isolate': [
@@ -99,7 +99,7 @@ tables = {
     'Seqrep': [
         ('seqrep_id', 'integer'),
         ('isolate_id', 'integer'),
-        ('sequence_replicate_number', 'integer'),
+        ('sequence_replicate_number', 'bigint unsigned'),
         ('original_reads_file_1_md5', 'text'),
         ('original_reads_file_2_md5', 'text'),
         ('remove_contam_reads_file_1_md5', 'text'),
