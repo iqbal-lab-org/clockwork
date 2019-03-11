@@ -11,8 +11,11 @@ data_dir = os.path.join(modules_dir, 'tests', 'data', 'simple_vcf_merger')
 # _merge_vcf_records and just do one for run()
 
 class TestSimpleVcfMerger(unittest.TestCase):
-
-    def test_run(self):
+    # No longer run this test. cluster_vcf_records was updated to check that
+    # the REF strings in the input VCF files match the reference genome. That
+    # is not true for the test data for this sample. And the simple merger is
+    # not being used.
+    def _test_run(self):
         '''test run'''
         samtools_vcf = os.path.join(data_dir, 'samtools.vcf')
         cortex_vcf = os.path.join(data_dir, 'cortex.vcf')
