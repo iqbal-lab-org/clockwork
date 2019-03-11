@@ -22,7 +22,7 @@ setup(
         'requests >= 2.9.1',
         'xlsxwriter >= 1.0.0',
     ],
-    license='GPLv3',
+    license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
