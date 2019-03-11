@@ -40,14 +40,14 @@ class SimpleVcfMerger:
                     flag = True
             if flag == True:
                 raise Error('Error! At least 1 key is missing from vcf_records!')
-        
+
         '''This section creates a mask of the genome by creating a list of 1's where cortext indel postions are coded as zero.
         Samtools calls in this region are then thrown out.'''
 
         mask = [1] * len(ref_seq)   #create mask vector of 1's
         indel_positions = []            #intialize variables and assign indel positions and lengths
         indel_lengths = {}
-        
+
         for vcf_record in vcf_records:
             if vcf_record.FILTER == 'PASS':
                 indel_positions.append(vcf_record.POS)
@@ -58,11 +58,11 @@ class SimpleVcfMerger:
                         indel_lengths[vcf_record.POS] = len(vcf_record.ALT[0]) - 1
                 else:
                     indel_lengths[vcf_record.POS] = abs(len(vcf_record.ALT[0]) - len(vcf_record.REF))
-        
-        
+
+
         for position in indel_positions:        #adds in cortex indel regions as [0] to mask
             mask[position:position+indel_lengths[position]] = itertools.repeat(0,((position+indel_lengths[position])-(position)))
-        
+
         new_record = []
         odd_record = []
         for record in vcf_records:
@@ -80,17 +80,17 @@ class SimpleVcfMerger:
                 if chuck == True:
                     pass
                 else:
-                    odd_record.append(record)                  
+                    odd_record.append(record)
             else:
                 new_record.append(record)   #creates new vcf of combined calls
 
-        return new_record, odd_record        
+        return new_record, odd_record
 
 
     def run(self):
         vcf_files = [self.samtools_vcf, self.cortex_vcf]
-        sample_name, vcf_headers, vcf_records = vcf_clusterer.VcfClusterer._load_vcf_files(vcf_files, homozygous_only=self.homozygous_only, max_REF_len=self.max_REF_len, min_SNP_qual=self.min_SNP_qual, min_dp4=self.min_dp4, min_GT_conf=self.min_GT_conf)
-        
+        sample_name, vcf_headers, vcf_records = vcf_clusterer.VcfClusterer._load_vcf_files(vcf_files, self.reference_seqs, homozygous_only=self.homozygous_only, max_REF_len=self.max_REF_len, min_SNP_qual=self.min_SNP_qual, min_dp4=self.min_dp4, min_GT_conf=self.min_GT_conf)
+
         f_out = pyfastaq.utils.open_file_write(self.output_vcf)
         print('##fileformat=VCFv4.2',file=f_out)
         print('##source=', self.source, sep='', file=f_out)
