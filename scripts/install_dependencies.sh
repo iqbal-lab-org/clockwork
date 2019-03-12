@@ -196,5 +196,5 @@ make install
 
 
 #________________________ minos _____________________________#
-pip3 install git+https://github.com/iqbal-lab-org/minos@9662d64ef83b67b62372b569d994eea28e7cbb63
+pip3 install bio-minos==0.5.0
 
