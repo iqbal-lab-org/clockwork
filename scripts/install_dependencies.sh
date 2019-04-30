@@ -98,9 +98,9 @@ cp -s mccortex/bin/mccortex31 .
 
 #________________________ Mykrobe ________________________#
 cd $install_root
-git clone https://github.com/Mykrobe-tools/mykrobe-atlas-cli.git mykrobe
+git clone https://github.com/Mykrobe-tools/mykrobe.git mykrobe
 cd mykrobe
-git checkout 9f5b7f4184a87da23592f14901c5585b223aca78
+git checkout 53eba7d40bfebaa8c2c58ae37eb9cca96bbb9af8
 # fix for python2: aliases is not an option so remove it
 sed -i 's/help="build variant probes", aliases=.*$/help="build variant probes")/' src/mykrobe/cli.py
 wget -O mykrobe-data.tar.gz https://goo.gl/DXb9hN && tar -zxvf mykrobe-data.tar.gz && rm -fr src/mykrobe/data && mv mykrobe-data src/mykrobe/data
@@ -196,5 +196,5 @@ make install
 
 
 #________________________ minos _____________________________#
-pip3 install bio-minos==0.5.1
+pip3 install bio-minos==0.6.0
 

@@ -49,7 +49,7 @@ def run_predict(reads, outdir, sample_name, species, panel=None, custom_probe_an
     os.mkdir(outdir)
     os.chdir(outdir)
     json_out = 'out.json'
-    command = [mykrobe, 'predict', sample_name, species]
+    command = [mykrobe, 'predict', '--format', 'json', sample_name, species]
 
     if custom_probe_and_json is not None:
         assert len(custom_probe_and_json) == 2
