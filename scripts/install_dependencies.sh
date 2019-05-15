@@ -104,7 +104,7 @@ git checkout 53eba7d40bfebaa8c2c58ae37eb9cca96bbb9af8
 # fix for python2: aliases is not an option so remove it
 sed -i 's/help="build variant probes", aliases=.*$/help="build variant probes")/' src/mykrobe/cli.py
 wget -O mykrobe-data.tar.gz https://goo.gl/DXb9hN && tar -zxvf mykrobe-data.tar.gz && rm -fr src/mykrobe/data && mv mykrobe-data src/mykrobe/data
-pip install .
+pip3 install .
 
 
 #________________________ nextflow _______________________#
