@@ -25,5 +25,10 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
     cd /clockwork/python
     python3 setup.py install
 
+
+%labels
+    Version 0.7.8
+
+
 %runscript
     clockwork
