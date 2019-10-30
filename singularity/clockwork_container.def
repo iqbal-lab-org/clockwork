@@ -25,8 +25,5 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
     cd /clockwork/python
     python3 setup.py install
 
-    #______________________ get reference genomes ___________#
-    /clockwork/scripts/make_pipeline_reference_files.pl /clockwork/reference_genomes/
-
 %runscript
     clockwork
