@@ -31,4 +31,4 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
 
 
 %runscript
-    clockwork
+    clockwork "$@"
