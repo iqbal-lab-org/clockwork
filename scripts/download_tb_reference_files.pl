@@ -37,11 +37,11 @@ my %urls = (
     'NC_000962.1.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_000962.1', # TB reference genome v1
     'NC_000962.2.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_000962.2', # TB reference genome v2
     'NC_000962.3.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_000962.3', # TB reference genome v3
-    'Saliva.tar.bz2' => 'ftp://public-ftp.hmpdacc.org/HMBSA/Saliva.tar.bz2',
-    'Throat.tar.bz2' => 'ftp://public-ftp.hmpdacc.org/HMBSA/Throat.tar.bz2',
-    'Tongue_dorsum.tar.bz2' => 'ftp://public-ftp.hmpdacc.org/HMBSA/Tongue_dorsum.tar.bz2',
-    'Buccal_mucosa.tar.bz2' => 'ftp://public-ftp.hmpdacc.org/HMBSA/Buccal_mucosa.tar.bz2',
-    'Palatine_Tonsils.tar.bz2' => 'ftp://public-ftp.hmpdacc.org/HMBSA/Palatine_Tonsils.tar.bz2',
+    'Saliva.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Saliva.tar.bz2',
+    'Throat.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Throat.tar.bz2',
+    'Tongue_dorsum.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Tongue_dorsum.tar.bz2',
+    'Buccal_mucosa.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Buccal_mucosa.tar.bz2',
+    'Palatine_Tonsils.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Palatine_Tonsils.tar.bz2',
 );
 
 my @ntm_fastas;
