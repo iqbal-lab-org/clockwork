@@ -9,11 +9,17 @@ data_dir = os.path.join(modules_dir, 'tests', 'data', 'utils')
 
 
 class TestUtils(unittest.TestCase):
-    def test_syscall_no_error(self):
+    def test_syscall_get_stdout(self):
         '''test syscall with no error'''
         got = utils.syscall("echo testing 123")
         self.assertEqual("testing 123\n", got.stdout)
+        self.assertEqual("", got.stderr)
 
+    def test_syscall_get_stderr(self):
+        '''test syscall with no error'''
+        got = utils.syscall("echo testing 123 >&2")
+        self.assertEqual("testing 123\n", got.stderr)
+        self.assertEqual("", got.stdout)
 
     def test_syscall_with_error(self):
         '''test syscall when there is an error'''
