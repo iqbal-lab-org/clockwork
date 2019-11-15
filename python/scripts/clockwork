@@ -5,15 +5,13 @@ import logging
 
 import clockwork
 
-log = logging.getLogger()
-log.setLevel(logging.INFO)
 
 parser = argparse.ArgumentParser(
     prog='clockwork',
     usage='clockwork <tasks> <options>',
     description='script to run clockwork helper tasks',
 )
-subparsers = parser.add_subparsers(title='Available tasks', help='', metavar='')
+subparsers = parser.add_subparsers(title='Available tasks', help='', metavar='', dest='subparser_name')
 
 #----------------------------- cortex --------------------------------
 subparser_cortex = subparsers.add_parser(
@@ -500,6 +498,9 @@ subparser_version.set_defaults(func=clockwork.tasks.version.run)
 
 args = parser.parse_args()
 
+logging.basicConfig(level=logging.INFO,
+    format=f"[%(asctime)s - clockwork {args.subparser_name} - %(levelname)s] %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S")
 
 if hasattr(args, 'func'):
     args.func(args)
