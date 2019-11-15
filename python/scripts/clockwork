@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
-import clockwork
 import argparse
+import logging
 
+import clockwork
+
+log = logging.getLogger()
+log.setLevel(logging.INFO)
 
 parser = argparse.ArgumentParser(
     prog='clockwork',
@@ -495,6 +499,7 @@ subparser_version = subparsers.add_parser(
 subparser_version.set_defaults(func=clockwork.tasks.version.run)
 
 args = parser.parse_args()
+
 
 if hasattr(args, 'func'):
     args.func(args)
