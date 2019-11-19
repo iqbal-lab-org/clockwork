@@ -4,6 +4,8 @@ import re
 
 import openpyxl
 
+from clockwork import spreadsheet_importer
+
 
 class Error(Exception):
     pass
@@ -105,7 +107,9 @@ def load_data_from_spreadsheet(infile):
             except:
                 raise Error(
                     "Date format error: "
-                    + SpreadsheetImporter.row_data_dict_to_string(new_data)
+                    + spreadsheet_importer.SpreadsheetImporter.row_data_dict_to_string(
+                        new_data
+                    )
                 )
 
             assert looks_like_date(str(date))

@@ -1,5 +1,3 @@
-import os
-import sys
 from clockwork import db
 
 

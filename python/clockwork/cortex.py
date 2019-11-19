@@ -1,6 +1,5 @@
 import glob
 import os
-import tarfile
 import shutil
 import sys
 

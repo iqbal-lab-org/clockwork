@@ -1,5 +1,5 @@
 import os
-from clockwork import db, utils, lock_file
+from clockwork import db, lock_file
 
 
 def run(options):

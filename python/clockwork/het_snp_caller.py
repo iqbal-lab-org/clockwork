@@ -1,5 +1,4 @@
 import os
-import glob
 import re
 import pyfastaq
 from clockwork import utils
@@ -78,7 +77,6 @@ class HetSnpCaller:
 
         adr_max = max(adr_list)
         adf_max = max(adf_list)
-        good_indexes = 0
 
         for i, adf in enumerate(adf_list):
             adr = adr_list[i]

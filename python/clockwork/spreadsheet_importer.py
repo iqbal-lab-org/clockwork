@@ -1,11 +1,8 @@
 import copy
 import datetime
-import dateutil.parser
 import os
-import re
 import string
 import xlsxwriter
-import openpyxl
 from clockwork import db, lock_file, spreadsheet_helper, utils
 from clockwork.common_data import allowed_sequencing_instruments
 

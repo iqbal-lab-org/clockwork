@@ -3,7 +3,7 @@ import itertools
 import multiprocessing
 import os
 from clockwork import db, isolate_dir
-from clockwork.ena import object_creator, submission_receipt, submit_files, xml_create
+from clockwork.ena import object_creator, submit_files
 
 
 class Error(Exception):

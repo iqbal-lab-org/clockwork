@@ -1,10 +1,7 @@
-import os
 import pyfastaq
-import logging
-import operator
 import itertools
 
-from cluster_vcf_records import vcf_file_read, vcf_record, vcf_clusterer
+from cluster_vcf_records import vcf_clusterer
 
 
 class Error(Exception):

@@ -36,7 +36,6 @@ class DataFinder:
         self.dataset_name = dataset_name
 
     def write_seqrep_data_to_file(self, outfile):
-        data_lines = []
         query = "select * from " + mysql_seqrep_isolate_sample_join
         columns = [
             "site_id",

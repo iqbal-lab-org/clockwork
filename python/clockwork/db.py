@@ -5,7 +5,7 @@ import os
 import re
 import sys
 import tempfile
-from operator import attrgetter, itemgetter
+from operator import itemgetter
 from clockwork import (
     db_connection,
     db_schema,
@@ -1388,8 +1388,6 @@ class Db:
                     raise Error(
                         'Error! column "' + column + '" not found in file ' + jobs_tsv
                     )
-
-            using_pools = "pool" in csv_reader.fieldnames
 
             for row in csv_reader:
                 pool = row.get("pool", "0") == "1"

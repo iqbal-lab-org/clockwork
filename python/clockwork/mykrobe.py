@@ -1,7 +1,6 @@
 import json
 import os
 import shutil
-import tempfile
 from clockwork import utils
 
 
