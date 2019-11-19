@@ -2,10 +2,11 @@ import unittest
 import os
 from clockwork import lock_file, utils
 
+
 class TestDbMaker(unittest.TestCase):
     def test_init_and_stop(self):
-        '''test init and stop'''
-        tmp_file = 'test.lock_file'
+        """test init and stop"""
+        tmp_file = "test.lock_file"
         utils.make_empty_file(tmp_file)
         with self.assertRaises(lock_file.Error):
             lock_file.LockFile(tmp_file)

@@ -1,5 +1,6 @@
 from clockwork import simple_vcf_merger
 
+
 def run(options):
     merger = simple_vcf_merger.SimpleVcfMerger(
         options.samtools_vcf,
@@ -13,4 +14,3 @@ def run(options):
         min_GT_conf=options.min_GT_conf,
     )
     merger.run()
-

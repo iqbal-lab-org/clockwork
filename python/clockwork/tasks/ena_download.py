@@ -1,5 +1,6 @@
 from clockwork import ena_downloader
 
+
 def run(options):
     downloader = ena_downloader.EnaDownloader(
         options.data_tsv,
@@ -12,4 +13,3 @@ def run(options):
         md5_threads=options.md5_threads,
     )
     downloader.run()
-

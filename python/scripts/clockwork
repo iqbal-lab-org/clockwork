@@ -7,503 +7,886 @@ import clockwork
 
 
 parser = argparse.ArgumentParser(
-    prog='clockwork',
-    usage='clockwork <tasks> <options>',
-    description='script to run clockwork helper tasks',
+    prog="clockwork",
+    usage="clockwork <tasks> <options>",
+    description="script to run clockwork helper tasks",
 )
-subparsers = parser.add_subparsers(title='Available tasks', help='', metavar='', dest='subparser_name')
+subparsers = parser.add_subparsers(
+    title="Available tasks", help="", metavar="", dest="subparser_name"
+)
 
-#----------------------------- cortex --------------------------------
+# ----------------------------- cortex --------------------------------
 subparser_cortex = subparsers.add_parser(
-    'cortex',
-    help='Runs cortex',
-    usage='clockwork cortex <reference files dir> <reads input file> <output dir> <sample name>',
-    description='Runs cortex',
+    "cortex",
+    help="Runs cortex",
+    usage="clockwork cortex <reference files dir> <reads input file> <output dir> <sample name>",
+    description="Runs cortex",
 )
 
-subparser_cortex.add_argument('--mem_height', type=int, help='cortex mem_height option [%(default)s]', default='22', metavar='INT')
-subparser_cortex.add_argument('ref_dir', help='Directory containing reference files')
-subparser_cortex.add_argument('reads_file', help='File containing reads')
-subparser_cortex.add_argument('output_dir', help='Name of output directory')
-subparser_cortex.add_argument('sample_name', help='Name of sample (is put into VCF files')
+subparser_cortex.add_argument(
+    "--mem_height",
+    type=int,
+    help="cortex mem_height option [%(default)s]",
+    default="22",
+    metavar="INT",
+)
+subparser_cortex.add_argument("ref_dir", help="Directory containing reference files")
+subparser_cortex.add_argument("reads_file", help="File containing reads")
+subparser_cortex.add_argument("output_dir", help="Name of output directory")
+subparser_cortex.add_argument(
+    "sample_name", help="Name of sample (is put into VCF files"
+)
 subparser_cortex.set_defaults(func=clockwork.tasks.cortex.run)
 
 
-#----------------------------- mykrobe_predict ------------------------
+# ----------------------------- mykrobe_predict ------------------------
 subparser_mykrobe_predict = subparsers.add_parser(
-    'mykrobe_predict',
-    help='Runs mykrobe predict',
-    usage='clockwork mykrobe_predict [options] <sample name> <outdir> <panel dir> <reads input file list>',
-    description='Runs mykrobe predict',
+    "mykrobe_predict",
+    help="Runs mykrobe predict",
+    usage="clockwork mykrobe_predict [options] <sample name> <outdir> <panel dir> <reads input file list>",
+    description="Runs mykrobe predict",
 )
 
-subparser_mykrobe_predict.add_argument('--testing', action='store_true', help='Used for test suite')
-subparser_mykrobe_predict.add_argument('sample_name', help='Name of sample (is put into output JSON file')
-subparser_mykrobe_predict.add_argument('output_dir', help='Name of output directory')
-subparser_mykrobe_predict.add_argument('panel_dir', help='Reference directory made when registering panel with database')
-subparser_mykrobe_predict.add_argument('reads_files', nargs='*', help='List of reads files')
+subparser_mykrobe_predict.add_argument(
+    "--testing", action="store_true", help="Used for test suite"
+)
+subparser_mykrobe_predict.add_argument(
+    "sample_name", help="Name of sample (is put into output JSON file"
+)
+subparser_mykrobe_predict.add_argument("output_dir", help="Name of output directory")
+subparser_mykrobe_predict.add_argument(
+    "panel_dir", help="Reference directory made when registering panel with database"
+)
+subparser_mykrobe_predict.add_argument(
+    "reads_files", nargs="*", help="List of reads files"
+)
 subparser_mykrobe_predict.set_defaults(func=clockwork.tasks.mykrobe_predict.run)
 
 
-#---------------- mykrobe_predict_make_jobs_tsv ----------------------
+# ---------------- mykrobe_predict_make_jobs_tsv ----------------------
 subparser_mykrobe_predict_make_jobs_tsv = subparsers.add_parser(
-    'mykrobe_predict_make_jobs_tsv',
-    help='Finds which sample need running mykrobe_predict pipeline',
-    usage='clockwork mykrobe_predict_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>',
-    description='Writes TSV file of mykrobe_predict jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline mykrobe_predict',
+    "mykrobe_predict_make_jobs_tsv",
+    help="Finds which sample need running mykrobe_predict pipeline",
+    usage="clockwork mykrobe_predict_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>",
+    description="Writes TSV file of mykrobe_predict jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline mykrobe_predict",
 )
 
-subparser_mykrobe_predict_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
-subparser_mykrobe_predict_make_jobs_tsv.add_argument('--pipeline_version', help='Pipeline version to run')
-subparser_mykrobe_predict_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
-subparser_mykrobe_predict_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
-subparser_mykrobe_predict_make_jobs_tsv.add_argument('outfile', help='Name of output file')
-subparser_mykrobe_predict_make_jobs_tsv.add_argument('reference_id', type=int, help='Reference genome database ID')
-subparser_mykrobe_predict_make_jobs_tsv.add_argument('reference_root', help='Root directory of pipeline reference genomes')
-subparser_mykrobe_predict_make_jobs_tsv.set_defaults(func=clockwork.tasks.mykrobe_predict_make_jobs_tsv.run)
+subparser_mykrobe_predict_make_jobs_tsv.add_argument(
+    "--dataset_name", help="limit to the given dataset name", metavar="STR"
+)
+subparser_mykrobe_predict_make_jobs_tsv.add_argument(
+    "--pipeline_version", help="Pipeline version to run"
+)
+subparser_mykrobe_predict_make_jobs_tsv.add_argument(
+    "pipeline_root", help="Root directory of pipeline"
+)
+subparser_mykrobe_predict_make_jobs_tsv.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_mykrobe_predict_make_jobs_tsv.add_argument(
+    "outfile", help="Name of output file"
+)
+subparser_mykrobe_predict_make_jobs_tsv.add_argument(
+    "reference_id", type=int, help="Reference genome database ID"
+)
+subparser_mykrobe_predict_make_jobs_tsv.add_argument(
+    "reference_root", help="Root directory of pipeline reference genomes"
+)
+subparser_mykrobe_predict_make_jobs_tsv.set_defaults(
+    func=clockwork.tasks.mykrobe_predict_make_jobs_tsv.run
+)
 
 
-#----------------------- reference_prepare ---------------------------
+# ----------------------- reference_prepare ---------------------------
 subparser_reference_prepare = subparsers.add_parser(
-    'reference_prepare',
-    help='Makes reference genome files for use with pipelines',
-    usage='clockwork reference_prepare [options] <fasta_file>',
-    description='Makes reference genome files for use with pipelines',
-    epilog='If adding to database, must use: --db_config_file, --pipeline_references_root, --name. Otherwise, must use --outdir.'
+    "reference_prepare",
+    help="Makes reference genome files for use with pipelines",
+    usage="clockwork reference_prepare [options] <fasta_file>",
+    description="Makes reference genome files for use with pipelines",
+    epilog="If adding to database, must use: --db_config_file, --pipeline_references_root, --name. Otherwise, must use --outdir.",
 )
 
-subparser_reference_prepare.add_argument('--cortex_mem_height', type=int, help='mem_height option for cortex [%(default)s]', metavar='INT', default=22)
-subparser_reference_prepare.add_argument('--db_config_file', help='Name of database config file', metavar='FILENAME')
-subparser_reference_prepare.add_argument('--pipeline_references_root', help='Root directory of pipeline references', metavar='DIRNAME')
-subparser_reference_prepare.add_argument('--contam_tsv', help='Contamination metadata tsv file, if this reference is to be used for remove_contam pipeline', metavar='FILENAME')
-subparser_reference_prepare.add_argument('--name', help='Name of reference', metavar='STR')
-subparser_reference_prepare.add_argument('--outdir', help='Name of output directory (must not already exist)', metavar='DIRNAME')
-subparser_reference_prepare.add_argument('fasta_file', help='FASTA filename')
+subparser_reference_prepare.add_argument(
+    "--cortex_mem_height",
+    type=int,
+    help="mem_height option for cortex [%(default)s]",
+    metavar="INT",
+    default=22,
+)
+subparser_reference_prepare.add_argument(
+    "--db_config_file", help="Name of database config file", metavar="FILENAME"
+)
+subparser_reference_prepare.add_argument(
+    "--pipeline_references_root",
+    help="Root directory of pipeline references",
+    metavar="DIRNAME",
+)
+subparser_reference_prepare.add_argument(
+    "--contam_tsv",
+    help="Contamination metadata tsv file, if this reference is to be used for remove_contam pipeline",
+    metavar="FILENAME",
+)
+subparser_reference_prepare.add_argument(
+    "--name", help="Name of reference", metavar="STR"
+)
+subparser_reference_prepare.add_argument(
+    "--outdir",
+    help="Name of output directory (must not already exist)",
+    metavar="DIRNAME",
+)
+subparser_reference_prepare.add_argument("fasta_file", help="FASTA filename")
 subparser_reference_prepare.set_defaults(func=clockwork.tasks.reference_prepare.run)
 
 
-#--------------------- db_add_mykrobe_panel --------------------------
+# --------------------- db_add_mykrobe_panel --------------------------
 subparser_db_add_mykrobe_panel = subparsers.add_parser(
-    'db_add_mykrobe_panel',
-    help='Add mykrobe panel to database',
-    usage='clockwork db_add_mykrobe_panel [options] <db config file> <species> <panel name> <pipeline refs root dir>',
-    description='Add custom panel to, or register built-in mykrobe panel with, database',
-    epilog='Must either use a species and panel name that is built-in to mykrobe, or provide both the --probes_fasta and --var_to_res_json options',
+    "db_add_mykrobe_panel",
+    help="Add mykrobe panel to database",
+    usage="clockwork db_add_mykrobe_panel [options] <db config file> <species> <panel name> <pipeline refs root dir>",
+    description="Add custom panel to, or register built-in mykrobe panel with, database",
+    epilog="Must either use a species and panel name that is built-in to mykrobe, or provide both the --probes_fasta and --var_to_res_json options",
 )
 
-subparser_db_add_mykrobe_panel.add_argument('--probes_fasta', help='Fasta of probes. This is the file used with the --custom_probe_set_path option of mykrobe predict', metavar='FILENAME')
-subparser_db_add_mykrobe_panel.add_argument('--var_to_res_json', help='JSON file of drug resistance info. This is the file used with the --custom_variant_to_resistance_json option of mykrobe predict', metavar='FILENAME')
-subparser_db_add_mykrobe_panel.add_argument('db_config_file', help='Name of database config file')
-subparser_db_add_mykrobe_panel.add_argument('species', help='Name of species (used for species option of mykrobe predict)')
-subparser_db_add_mykrobe_panel.add_argument('panel_name', help='Name of panel (must not already be used in the database)')
-subparser_db_add_mykrobe_panel.add_argument('reference_root', help='Root directory of pipeline reference data')
-subparser_db_add_mykrobe_panel.set_defaults(func=clockwork.tasks.db_add_mykrobe_panel.run)
+subparser_db_add_mykrobe_panel.add_argument(
+    "--probes_fasta",
+    help="Fasta of probes. This is the file used with the --custom_probe_set_path option of mykrobe predict",
+    metavar="FILENAME",
+)
+subparser_db_add_mykrobe_panel.add_argument(
+    "--var_to_res_json",
+    help="JSON file of drug resistance info. This is the file used with the --custom_variant_to_resistance_json option of mykrobe predict",
+    metavar="FILENAME",
+)
+subparser_db_add_mykrobe_panel.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_db_add_mykrobe_panel.add_argument(
+    "species", help="Name of species (used for species option of mykrobe predict)"
+)
+subparser_db_add_mykrobe_panel.add_argument(
+    "panel_name", help="Name of panel (must not already be used in the database)"
+)
+subparser_db_add_mykrobe_panel.add_argument(
+    "reference_root", help="Root directory of pipeline reference data"
+)
+subparser_db_add_mykrobe_panel.set_defaults(
+    func=clockwork.tasks.db_add_mykrobe_panel.run
+)
 
 
-#--------------------- db_finished_pipeline_update -------------------
+# --------------------- db_finished_pipeline_update -------------------
 subparser_db_finished_pipeline_update = subparsers.add_parser(
-    'db_finished_pipeline_update',
-    help='Update database after pipeline has been run',
-    usage='clockwork db_finished_pipeline_update <db config file> <pool> <isolate_id> <seqrep_id> <seqrep_pool> <pipeline name>',
-    description='Update database after pipeline has been run',
+    "db_finished_pipeline_update",
+    help="Update database after pipeline has been run",
+    usage="clockwork db_finished_pipeline_update <db config file> <pool> <isolate_id> <seqrep_id> <seqrep_pool> <pipeline name>",
+    description="Update database after pipeline has been run",
 )
 
-subparser_db_finished_pipeline_update.add_argument('--new_pipeline_status', type=int, help='Value of status column in Pipeline table [%(default)s]', default=1, metavar='INT')
-subparser_db_finished_pipeline_update.add_argument('--pipeline_root', help='pipeline_root directory. Required if --new_pipeline_status != -1, and pipeline_name is "qc" or "remove_contam"')
-subparser_db_finished_pipeline_update.add_argument('--pipeline_version', help='pipeline_version in database Pipeline table')
-subparser_db_finished_pipeline_update.add_argument('--reference_id', type=int, help='Reference genome ID', metavar='INT')
-subparser_db_finished_pipeline_update.add_argument('db_config_file', help='Name of database config file')
-subparser_db_finished_pipeline_update.add_argument('pool', type=int, choices=[0, 1], help='0=not pooled and seqrep_pool is ignored, 1=pooled and seqrep_id is ignored')
-subparser_db_finished_pipeline_update.add_argument('isolate_id', type=int, help='isolate_id in database Pipeline table')
-subparser_db_finished_pipeline_update.add_argument('seqrep_id', help='seqrep_id in database Pipeline table')
-subparser_db_finished_pipeline_update.add_argument('seqrep_pool', help='seqrep_pool in database Pipeline table')
-subparser_db_finished_pipeline_update.add_argument('pipeline_name', help='pipeline_name in database Pipeline table')
-subparser_db_finished_pipeline_update.set_defaults(func=clockwork.tasks.db_finished_pipeline_update.run)
+subparser_db_finished_pipeline_update.add_argument(
+    "--new_pipeline_status",
+    type=int,
+    help="Value of status column in Pipeline table [%(default)s]",
+    default=1,
+    metavar="INT",
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "--pipeline_root",
+    help='pipeline_root directory. Required if --new_pipeline_status != -1, and pipeline_name is "qc" or "remove_contam"',
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "--pipeline_version", help="pipeline_version in database Pipeline table"
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "--reference_id", type=int, help="Reference genome ID", metavar="INT"
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "pool",
+    type=int,
+    choices=[0, 1],
+    help="0=not pooled and seqrep_pool is ignored, 1=pooled and seqrep_id is ignored",
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "isolate_id", type=int, help="isolate_id in database Pipeline table"
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "seqrep_id", help="seqrep_id in database Pipeline table"
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "seqrep_pool", help="seqrep_pool in database Pipeline table"
+)
+subparser_db_finished_pipeline_update.add_argument(
+    "pipeline_name", help="pipeline_name in database Pipeline table"
+)
+subparser_db_finished_pipeline_update.set_defaults(
+    func=clockwork.tasks.db_finished_pipeline_update.run
+)
 
 
-#---------------- db_finished_pipeline_update_failed_jobs -----------
+# ---------------- db_finished_pipeline_update_failed_jobs -----------
 subparser_db_finished_pipeline_update_failed_jobs = subparsers.add_parser(
-    'db_finished_pipeline_update_failed_jobs',
-    help='Update database with failed jobs at end of pipeline',
-    usage='clockwork db_finished_pipeline_update_failed_jobs [options] <db config file> <jobs.tsv> <success file> <pipeline name>',
-    description='Update database with failed jobs after pipeline has been run',
+    "db_finished_pipeline_update_failed_jobs",
+    help="Update database with failed jobs at end of pipeline",
+    usage="clockwork db_finished_pipeline_update_failed_jobs [options] <db config file> <jobs.tsv> <success file> <pipeline name>",
+    description="Update database with failed jobs after pipeline has been run",
 )
 
-subparser_db_finished_pipeline_update_failed_jobs.add_argument('--pipeline_version', help='pipeline_version in database Pipeline table')
-subparser_db_finished_pipeline_update_failed_jobs.add_argument('--reference_id', type=int, help='Reference genome ID', metavar='INT')
-subparser_db_finished_pipeline_update_failed_jobs.add_argument('db_config_file', help='Name of database config file')
-subparser_db_finished_pipeline_update_failed_jobs.add_argument('jobs_tsv', help='Name of jobs TSV file made at start of piepline')
-subparser_db_finished_pipeline_update_failed_jobs.add_argument('success_jobs_file', help='Name of successful jobs file made by pipeline')
-subparser_db_finished_pipeline_update_failed_jobs.add_argument('pipeline_name', help='pipeline_name in database Pipeline table')
-subparser_db_finished_pipeline_update_failed_jobs.set_defaults(func=clockwork.tasks.db_finished_pipeline_update_failed_jobs.run)
+subparser_db_finished_pipeline_update_failed_jobs.add_argument(
+    "--pipeline_version", help="pipeline_version in database Pipeline table"
+)
+subparser_db_finished_pipeline_update_failed_jobs.add_argument(
+    "--reference_id", type=int, help="Reference genome ID", metavar="INT"
+)
+subparser_db_finished_pipeline_update_failed_jobs.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_db_finished_pipeline_update_failed_jobs.add_argument(
+    "jobs_tsv", help="Name of jobs TSV file made at start of piepline"
+)
+subparser_db_finished_pipeline_update_failed_jobs.add_argument(
+    "success_jobs_file", help="Name of successful jobs file made by pipeline"
+)
+subparser_db_finished_pipeline_update_failed_jobs.add_argument(
+    "pipeline_name", help="pipeline_name in database Pipeline table"
+)
+subparser_db_finished_pipeline_update_failed_jobs.set_defaults(
+    func=clockwork.tasks.db_finished_pipeline_update_failed_jobs.run
+)
 
 
-#----------------------------- ena_download -------------------------
+# ----------------------------- ena_download -------------------------
 subparser_ena_download = subparsers.add_parser(
-    'ena_download',
-    help='Download reads from the ENA',
-    usage='clockwork ena_download [options] <data_tsv> <output_dir> <site> <lab> <date> <dataset name>',
-    description='Download reads from ENA. Gets fastq files, and makes import spreadsheet for use with the import pipeline',
-    epilog='The data TSV file is one line per sample, and each line needs two columns. Column 1 is the sample name, and can be anything unique within the file. Column 2 must be a comma-separated list of run accessions.'
+    "ena_download",
+    help="Download reads from the ENA",
+    usage="clockwork ena_download [options] <data_tsv> <output_dir> <site> <lab> <date> <dataset name>",
+    description="Download reads from ENA. Gets fastq files, and makes import spreadsheet for use with the import pipeline",
+    epilog="The data TSV file is one line per sample, and each line needs two columns. Column 1 is the sample name, and can be anything unique within the file. Column 2 must be a comma-separated list of run accessions.",
 )
 
-subparser_ena_download.add_argument('--md5_threads', type=int, help='Number of files to calculate md5 in parallel [%(default)s]', default=1, metavar='INT')
-subparser_ena_download.add_argument('--download_threads', type=int, help='Number of files to download in parallel [%(default)s]', default=1, metavar='INT')
-subparser_ena_download.add_argument('data_tsv', help='Name of input TSV file with accessions. See below for description.')
-subparser_ena_download.add_argument('output_dir', help='Name of output directory')
-subparser_ena_download.add_argument('site', help='Every sample gets given this site_id in the database')
-subparser_ena_download.add_argument('lab', help='Every sample gets given this isolate_number_from_lab in the database')
-subparser_ena_download.add_argument('date', help='Date in YYYYMMDD format')
-subparser_ena_download.add_argument('dataset_name', help='Dataset name')
+subparser_ena_download.add_argument(
+    "--md5_threads",
+    type=int,
+    help="Number of files to calculate md5 in parallel [%(default)s]",
+    default=1,
+    metavar="INT",
+)
+subparser_ena_download.add_argument(
+    "--download_threads",
+    type=int,
+    help="Number of files to download in parallel [%(default)s]",
+    default=1,
+    metavar="INT",
+)
+subparser_ena_download.add_argument(
+    "data_tsv",
+    help="Name of input TSV file with accessions. See below for description.",
+)
+subparser_ena_download.add_argument("output_dir", help="Name of output directory")
+subparser_ena_download.add_argument(
+    "site", help="Every sample gets given this site_id in the database"
+)
+subparser_ena_download.add_argument(
+    "lab", help="Every sample gets given this isolate_number_from_lab in the database"
+)
+subparser_ena_download.add_argument("date", help="Date in YYYYMMDD format")
+subparser_ena_download.add_argument("dataset_name", help="Dataset name")
 subparser_ena_download.set_defaults(func=clockwork.tasks.ena_download.run)
 
 
-#----------------------------- ena_submit_reads  -------------------------
+# ----------------------------- ena_submit_reads  -------------------------
 subparser_ena_submit_reads = subparsers.add_parser(
-    'ena_submit_reads',
-    help='Submit reads to the ENA',
-    usage='clockwork ena_submit_reads  [options] <ini_file> <dataset_name> <pipeline_root>',
-    description='Submit all reads from a dataset to the ENA.',
+    "ena_submit_reads",
+    help="Submit reads to the ENA",
+    usage="clockwork ena_submit_reads  [options] <ini_file> <dataset_name> <pipeline_root>",
+    description="Submit all reads from a dataset to the ENA.",
 )
 
-subparser_ena_submit_reads.add_argument('--fq_upload_threads', type=int, help='Threads to use when uploading fastq files [%(default)s]', default=1, metavar='INT')
-subparser_ena_submit_reads.add_argument('--use_test_server', action='store_true', help='Use test server instead of production')
-subparser_ena_submit_reads.add_argument('--taxon_id', type=int, help='Taxon ID [%(default)s]', default=1773, metavar='INT')
-subparser_ena_submit_reads.add_argument('ini_file', help='Name of ini file that has database and ENA account logins etc')
-subparser_ena_submit_reads.add_argument('dataset_name', help='Name of data dataset to be submitted')
-subparser_ena_submit_reads.add_argument('pipeline_root', help='Pipeline root directory')
+subparser_ena_submit_reads.add_argument(
+    "--fq_upload_threads",
+    type=int,
+    help="Threads to use when uploading fastq files [%(default)s]",
+    default=1,
+    metavar="INT",
+)
+subparser_ena_submit_reads.add_argument(
+    "--use_test_server",
+    action="store_true",
+    help="Use test server instead of production",
+)
+subparser_ena_submit_reads.add_argument(
+    "--taxon_id", type=int, help="Taxon ID [%(default)s]", default=1773, metavar="INT"
+)
+subparser_ena_submit_reads.add_argument(
+    "ini_file", help="Name of ini file that has database and ENA account logins etc"
+)
+subparser_ena_submit_reads.add_argument(
+    "dataset_name", help="Name of data dataset to be submitted"
+)
+subparser_ena_submit_reads.add_argument("pipeline_root", help="Pipeline root directory")
 subparser_ena_submit_reads.set_defaults(func=clockwork.tasks.ena_submit_reads.run)
 
 
-#---------------------------- find_data ------------------------------
-find_data_allowed_pipelines = ['remove_contam', 'qc', 'variant_call', 'mykrobe_predict']
+# ---------------------------- find_data ------------------------------
+find_data_allowed_pipelines = ["remove_contam", "qc", "variant_call", "mykrobe_predict"]
 subparser_find_data = subparsers.add_parser(
-    'find_data',
-    help='Report IDs from database and files on disk',
-    usage='clockwork find_data [options] <db_config_file> <pipeline_root>',
-    description='Report IDs from database and files on disk',
+    "find_data",
+    help="Report IDs from database and files on disk",
+    usage="clockwork find_data [options] <db_config_file> <pipeline_root>",
+    description="Report IDs from database and files on disk",
 )
 
-subparser_find_data.add_argument('--include_withdrawn', action='store_true', help='Include withdrawn sequencing replicates')
-subparser_find_data.add_argument('--include_internal_ids', action='store_true', help='Include internal IDs used in tracking database in output')
-subparser_find_data.add_argument('--dataset_name', help='Limit to the given dataset', metavar='STR')
-subparser_find_data.add_argument('--pipeline_version', help='Only used with --pipeline option. Limit to the given pipeline version', metavar='STR')
-subparser_find_data.add_argument('--pipeline', choices=find_data_allowed_pipelines, help='Report on the given pipeline')
-subparser_find_data.add_argument('--reference_id', help='Only used with --pipeline option. Limit to the given reference_id for that pipeline', metavar='INT')
-subparser_find_data.add_argument('--outfile', help='Write output to file. Default is to stdout', default='-', metavar='FILENAME')
-subparser_find_data.add_argument('db_config_file', help='Name of database config file')
-subparser_find_data.add_argument('pipeline_root', help='Pipeline root directory')
+subparser_find_data.add_argument(
+    "--include_withdrawn",
+    action="store_true",
+    help="Include withdrawn sequencing replicates",
+)
+subparser_find_data.add_argument(
+    "--include_internal_ids",
+    action="store_true",
+    help="Include internal IDs used in tracking database in output",
+)
+subparser_find_data.add_argument(
+    "--dataset_name", help="Limit to the given dataset", metavar="STR"
+)
+subparser_find_data.add_argument(
+    "--pipeline_version",
+    help="Only used with --pipeline option. Limit to the given pipeline version",
+    metavar="STR",
+)
+subparser_find_data.add_argument(
+    "--pipeline",
+    choices=find_data_allowed_pipelines,
+    help="Report on the given pipeline",
+)
+subparser_find_data.add_argument(
+    "--reference_id",
+    help="Only used with --pipeline option. Limit to the given reference_id for that pipeline",
+    metavar="INT",
+)
+subparser_find_data.add_argument(
+    "--outfile",
+    help="Write output to file. Default is to stdout",
+    default="-",
+    metavar="FILENAME",
+)
+subparser_find_data.add_argument("db_config_file", help="Name of database config file")
+subparser_find_data.add_argument("pipeline_root", help="Pipeline root directory")
 subparser_find_data.set_defaults(func=clockwork.tasks.find_data.run)
 
 
-#----------------------------- make_empty_db -------------------------
+# ----------------------------- make_empty_db -------------------------
 subparser_make_empty_db = subparsers.add_parser(
-    'make_empty_db',
-    help='Make new database with empy tables',
-    usage='clockwork make_empty_db <db_config_file>',
-    description='Make new database with empy tables',
+    "make_empty_db",
+    help="Make new database with empy tables",
+    usage="clockwork make_empty_db <db_config_file>",
+    description="Make new database with empy tables",
 )
 
-subparser_make_empty_db.add_argument('db_config_file', help='Name of database config file')
+subparser_make_empty_db.add_argument(
+    "db_config_file", help="Name of database config file"
+)
 subparser_make_empty_db.set_defaults(func=clockwork.tasks.make_empty_db.run)
 
 
-#------------------------- minos_make_multi_sample_input -------------
+# ------------------------- minos_make_multi_sample_input -------------
 subparser_minos_make_multi_sample_input = subparsers.add_parser(
-    'minos_make_multi_sample_input',
-    help='Make input TSV file for minos multi_sample_pipeline',
-    usage='clockwork minos_make_multi_sample_input <db_config_file> <dataset name> <pipeline_root> <reference_id>',
-    description='Make input TSV file for minos multi_sample_pipeline',
+    "minos_make_multi_sample_input",
+    help="Make input TSV file for minos multi_sample_pipeline",
+    usage="clockwork minos_make_multi_sample_input <db_config_file> <dataset name> <pipeline_root> <reference_id>",
+    description="Make input TSV file for minos multi_sample_pipeline",
 )
 
-subparser_minos_make_multi_sample_input.add_argument('db_config_file', help='Name of database config file')
-subparser_minos_make_multi_sample_input.add_argument('dataset_name', help='Dataset name from which to get samples')
-subparser_minos_make_multi_sample_input.add_argument('pipeline_root', help='Root directory of pipeline')
-subparser_minos_make_multi_sample_input.add_argument('reference_id', type=int, help='Reference genome database ID')
-subparser_minos_make_multi_sample_input.add_argument('--pipeline_version', help='Pipeline version to run')
-subparser_minos_make_multi_sample_input.set_defaults(func=clockwork.tasks.minos_make_multi_sample_input.run)
+subparser_minos_make_multi_sample_input.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_minos_make_multi_sample_input.add_argument(
+    "dataset_name", help="Dataset name from which to get samples"
+)
+subparser_minos_make_multi_sample_input.add_argument(
+    "pipeline_root", help="Root directory of pipeline"
+)
+subparser_minos_make_multi_sample_input.add_argument(
+    "reference_id", type=int, help="Reference genome database ID"
+)
+subparser_minos_make_multi_sample_input.add_argument(
+    "--pipeline_version", help="Pipeline version to run"
+)
+subparser_minos_make_multi_sample_input.set_defaults(
+    func=clockwork.tasks.minos_make_multi_sample_input.run
+)
 
 
-#----------------------------- fastqc --------------------------------
+# ----------------------------- fastqc --------------------------------
 subparser_fastqc = subparsers.add_parser(
-    'fastqc',
-    help='Wrapper for FASTQC',
-    usage='clockwork fastqc <output directory> <file1> [reads file2 [reads file3...]]',
-    description='Wrapper for FASTQC',
+    "fastqc",
+    help="Wrapper for FASTQC",
+    usage="clockwork fastqc <output directory> <file1> [reads file2 [reads file3...]]",
+    description="Wrapper for FASTQC",
 )
 
-subparser_fastqc.add_argument('output_dir', help='Name of output directory (must not already exist)')
-subparser_fastqc.add_argument('reads_files', nargs='+', help='List of reads filenames (must provide at least one)')
+subparser_fastqc.add_argument(
+    "output_dir", help="Name of output directory (must not already exist)"
+)
+subparser_fastqc.add_argument(
+    "reads_files", nargs="+", help="List of reads filenames (must provide at least one)"
+)
 subparser_fastqc.set_defaults(func=clockwork.tasks.fastqc.run)
 
 
-#---------------- generic_pipeline_make_jobs_tsv -----------------------
+# ---------------- generic_pipeline_make_jobs_tsv -----------------------
 subparser_generic_pipeline_make_jobs_tsv = subparsers.add_parser(
-    'generic_pipeline_make_jobs_tsv',
-    help='Finds which sample need running a generic pipeline',
-    usage='clockwork generic_pipeline_make_jobs_tsv [options] <pipeline name> <pipeline root> <db config file> <outfile>',
-    description='Writes TSV file of generic_pipeline jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline generic_pipeline',
+    "generic_pipeline_make_jobs_tsv",
+    help="Finds which sample need running a generic pipeline",
+    usage="clockwork generic_pipeline_make_jobs_tsv [options] <pipeline name> <pipeline root> <db config file> <outfile>",
+    description="Writes TSV file of generic_pipeline jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline generic_pipeline",
 )
 
-subparser_generic_pipeline_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
-subparser_generic_pipeline_make_jobs_tsv.add_argument('--pipeline_version', help='Pipeline version to run')
-subparser_generic_pipeline_make_jobs_tsv.add_argument('pipeline_name', help='Name of pipeilne')
-subparser_generic_pipeline_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
-subparser_generic_pipeline_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
-subparser_generic_pipeline_make_jobs_tsv.add_argument('outfile', help='Name of output file')
-subparser_generic_pipeline_make_jobs_tsv.set_defaults(func=clockwork.tasks.generic_pipeline_make_jobs_tsv.run)
+subparser_generic_pipeline_make_jobs_tsv.add_argument(
+    "--dataset_name", help="limit to the given dataset name", metavar="STR"
+)
+subparser_generic_pipeline_make_jobs_tsv.add_argument(
+    "--pipeline_version", help="Pipeline version to run"
+)
+subparser_generic_pipeline_make_jobs_tsv.add_argument(
+    "pipeline_name", help="Name of pipeilne"
+)
+subparser_generic_pipeline_make_jobs_tsv.add_argument(
+    "pipeline_root", help="Root directory of pipeline"
+)
+subparser_generic_pipeline_make_jobs_tsv.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_generic_pipeline_make_jobs_tsv.add_argument(
+    "outfile", help="Name of output file"
+)
+subparser_generic_pipeline_make_jobs_tsv.set_defaults(
+    func=clockwork.tasks.generic_pipeline_make_jobs_tsv.run
+)
 
 
-#---------------------- import_read_pair -----------------------------
+# ---------------------- import_read_pair -----------------------------
 subparser_import_read_pair = subparsers.add_parser(
-    'import_read_pair',
-    help='Imports a read pair',
-    usage='clockwork import_read_pair <database config file> <pipeline root> <seqrep_id> <isolate_id> <sample_id> <sequence_replicate_number> <reads file 1> <reads file 2> <reads MD5 1> <reads MD5 2>',
-    description='rsyncs pair of FASTQ files into pipeline directory structure, updates database, deletes original FASTQ files',
+    "import_read_pair",
+    help="Imports a read pair",
+    usage="clockwork import_read_pair <database config file> <pipeline root> <seqrep_id> <isolate_id> <sample_id> <sequence_replicate_number> <reads file 1> <reads file 2> <reads MD5 1> <reads MD5 2>",
+    description="rsyncs pair of FASTQ files into pipeline directory structure, updates database, deletes original FASTQ files",
 )
 
-subparser_import_read_pair.add_argument('db_config_file', help='Name of database config file')
-subparser_import_read_pair.add_argument('pipeline_root', help='Root directory of pipeline')
-subparser_import_read_pair.add_argument('seqrep_id', type=int, help='seqrep_id in Seqrep table of database')
-subparser_import_read_pair.add_argument('isolate_id', type=int, help='isolate_id in Seqrep table of database')
-subparser_import_read_pair.add_argument('sample_id', type=int, help='sample_id in Sample table of database')
-subparser_import_read_pair.add_argument('sequence_rep_number', type=int, help='sequence_replicate_number in Seqrep table of database')
-subparser_import_read_pair.add_argument('reads_file_1', help='Name of first reads file')
-subparser_import_read_pair.add_argument('reads_file_2', help='Name of second reads file')
-subparser_import_read_pair.add_argument('reads_file_md5_1', help='MD5 of first reads file')
-subparser_import_read_pair.add_argument('reads_file_md5_2', help='MD5 of second reads file')
+subparser_import_read_pair.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_import_read_pair.add_argument(
+    "pipeline_root", help="Root directory of pipeline"
+)
+subparser_import_read_pair.add_argument(
+    "seqrep_id", type=int, help="seqrep_id in Seqrep table of database"
+)
+subparser_import_read_pair.add_argument(
+    "isolate_id", type=int, help="isolate_id in Seqrep table of database"
+)
+subparser_import_read_pair.add_argument(
+    "sample_id", type=int, help="sample_id in Sample table of database"
+)
+subparser_import_read_pair.add_argument(
+    "sequence_rep_number",
+    type=int,
+    help="sequence_replicate_number in Seqrep table of database",
+)
+subparser_import_read_pair.add_argument("reads_file_1", help="Name of first reads file")
+subparser_import_read_pair.add_argument(
+    "reads_file_2", help="Name of second reads file"
+)
+subparser_import_read_pair.add_argument(
+    "reads_file_md5_1", help="MD5 of first reads file"
+)
+subparser_import_read_pair.add_argument(
+    "reads_file_md5_2", help="MD5 of second reads file"
+)
 subparser_import_read_pair.set_defaults(func=clockwork.tasks.import_read_pair.run)
 
 
-#---------------------- make_import_spreadsheet ----------------------
+# ---------------------- make_import_spreadsheet ----------------------
 subparser_make_import_spreadsheet = subparsers.add_parser(
-    'make_import_spreadsheet',
-    help='Makes an import spreadsheet xlsx file, with just the column headings',
-    usage='clockwork make_import_spreadsheet <out.xlsx>',
-    description='Makes an import spreadsheet xlsx file, with just the column headings',
+    "make_import_spreadsheet",
+    help="Makes an import spreadsheet xlsx file, with just the column headings",
+    usage="clockwork make_import_spreadsheet <out.xlsx>",
+    description="Makes an import spreadsheet xlsx file, with just the column headings",
 )
 
-subparser_make_import_spreadsheet.add_argument('outfile', help='Name of output xlsx file')
-subparser_make_import_spreadsheet.set_defaults(func=clockwork.tasks.make_import_spreadsheet.run)
+subparser_make_import_spreadsheet.add_argument(
+    "outfile", help="Name of output xlsx file"
+)
+subparser_make_import_spreadsheet.set_defaults(
+    func=clockwork.tasks.make_import_spreadsheet.run
+)
 
-#----------------------- validate spreadhseet ------------------------
+# ----------------------- validate spreadhseet ------------------------
 subparser_validate_spreadsheet = subparsers.add_parser(
-    'validate_spreadsheet',
-    help='Validates import spreadsheet',
-    usage='clockwork validate_spreadsheet <in.xlsx> <data_dir> <errors_out.txt>',
-    description='Validates import spreadsheet, and checks files in the sheet are on disk, in the directory data_dir. Writes errors to errors_out.txt -- this will be empty if no errors found',
+    "validate_spreadsheet",
+    help="Validates import spreadsheet",
+    usage="clockwork validate_spreadsheet <in.xlsx> <data_dir> <errors_out.txt>",
+    description="Validates import spreadsheet, and checks files in the sheet are on disk, in the directory data_dir. Writes errors to errors_out.txt -- this will be empty if no errors found",
 )
 
-subparser_validate_spreadsheet.add_argument('infile', help='Name of input spreadsheet file')
-subparser_validate_spreadsheet.add_argument('data_dir', help='Name of directory containing FASTQ files')
-subparser_validate_spreadsheet.add_argument('outfile', help='Name of output file containing any errors found')
-subparser_validate_spreadsheet.add_argument('--threads', type=int, help='Number of files to calculate md5 sum in parallel. Set to zero to skip md5 checks [%(default)s]', metavar='INT', default=1)
-subparser_validate_spreadsheet.set_defaults(func=clockwork.tasks.validate_spreadsheet.run)
+subparser_validate_spreadsheet.add_argument(
+    "infile", help="Name of input spreadsheet file"
+)
+subparser_validate_spreadsheet.add_argument(
+    "data_dir", help="Name of directory containing FASTQ files"
+)
+subparser_validate_spreadsheet.add_argument(
+    "outfile", help="Name of output file containing any errors found"
+)
+subparser_validate_spreadsheet.add_argument(
+    "--threads",
+    type=int,
+    help="Number of files to calculate md5 sum in parallel. Set to zero to skip md5 checks [%(default)s]",
+    metavar="INT",
+    default=1,
+)
+subparser_validate_spreadsheet.set_defaults(
+    func=clockwork.tasks.validate_spreadsheet.run
+)
 
 
-#---------------------- import_spreadsheet ---------------------------
+# ---------------------- import_spreadsheet ---------------------------
 subparser_import_spreadsheet = subparsers.add_parser(
-    'import_spreadsheet',
-    help='Parses import spreadsheet and makes output for import_read_pair',
-    usage='clockwork import_spreadsheet <dropbox dir> <database config file> <xlsx file> <xlsx archive dir> <jobs outfile>',
-    description='Parses import spreadsheet, sanity checks it, adds new samples to database, and makes output file that is input to next stage of nextflow pipeline import_read_pair',
+    "import_spreadsheet",
+    help="Parses import spreadsheet and makes output for import_read_pair",
+    usage="clockwork import_spreadsheet <dropbox dir> <database config file> <xlsx file> <xlsx archive dir> <jobs outfile>",
+    description="Parses import spreadsheet, sanity checks it, adds new samples to database, and makes output file that is input to next stage of nextflow pipeline import_read_pair",
 )
 
-subparser_import_spreadsheet.add_argument('--db_backup_dir', help='Name of database backup files directory')
-subparser_import_spreadsheet.add_argument('dropbox_dir', help='Name of dropbox directory')
-subparser_import_spreadsheet.add_argument('db_config_file', help='Name of database config file')
-subparser_import_spreadsheet.add_argument('xlsx_file', help='Name of xlsx file. Must be in dropbox_dir')
-subparser_import_spreadsheet.add_argument('xls_archive_dir', help='Name of spreadsheet archive directory')
-subparser_import_spreadsheet.add_argument('jobs_outfile', help='Name of output jobs tsv file')
+subparser_import_spreadsheet.add_argument(
+    "--db_backup_dir", help="Name of database backup files directory"
+)
+subparser_import_spreadsheet.add_argument(
+    "dropbox_dir", help="Name of dropbox directory"
+)
+subparser_import_spreadsheet.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_import_spreadsheet.add_argument(
+    "xlsx_file", help="Name of xlsx file. Must be in dropbox_dir"
+)
+subparser_import_spreadsheet.add_argument(
+    "xls_archive_dir", help="Name of spreadsheet archive directory"
+)
+subparser_import_spreadsheet.add_argument(
+    "jobs_outfile", help="Name of output jobs tsv file"
+)
 subparser_import_spreadsheet.set_defaults(func=clockwork.tasks.import_spreadsheet.run)
 
 
-#---------------------------- map_reads ------------------------------
+# ---------------------------- map_reads ------------------------------
 subparser_map_reads = subparsers.add_parser(
-    'map_reads',
-    help='Maps reads, removes duplicates, outputs sorted BAM file',
-    usage='clockwork map_reads <sample name> <ref_fasta> <outfile> <fwd reads 1> <rev reads 1> [<fwd reads 2> <rev reads 2> ...]',
-    description='Maps reads with BWA MEM, removes duplicates with samtools rmdup, outputs sorted BAM file',
+    "map_reads",
+    help="Maps reads, removes duplicates, outputs sorted BAM file",
+    usage="clockwork map_reads <sample name> <ref_fasta> <outfile> <fwd reads 1> <rev reads 1> [<fwd reads 2> <rev reads 2> ...]",
+    description="Maps reads with BWA MEM, removes duplicates with samtools rmdup, outputs sorted BAM file",
 )
 
-subparser_map_reads.add_argument('--unsorted_sam', action='store_true', help='Make an unsorted sam file')
-subparser_map_reads.add_argument('sample_name', help='Name of sample. This is put into the final VCF files')
-subparser_map_reads.add_argument('ref_fasta', help='Name of reference FASTA file. Must be indexed with BWA')
-subparser_map_reads.add_argument('outfile', help='Name of output file')
-subparser_map_reads.add_argument('reads_files', nargs='+', help='List of pairs of fwd, rev reads filenames. Must be even number of files!')
+subparser_map_reads.add_argument(
+    "--unsorted_sam", action="store_true", help="Make an unsorted sam file"
+)
+subparser_map_reads.add_argument(
+    "sample_name", help="Name of sample. This is put into the final VCF files"
+)
+subparser_map_reads.add_argument(
+    "ref_fasta", help="Name of reference FASTA file. Must be indexed with BWA"
+)
+subparser_map_reads.add_argument("outfile", help="Name of output file")
+subparser_map_reads.add_argument(
+    "reads_files",
+    nargs="+",
+    help="List of pairs of fwd, rev reads filenames. Must be even number of files!",
+)
 subparser_map_reads.set_defaults(func=clockwork.tasks.map_reads.run)
 
 
-#--------------------- qc_make_jobs_tsv ------------------------------
+# --------------------- qc_make_jobs_tsv ------------------------------
 subparser_qc_make_jobs_tsv = subparsers.add_parser(
-    'qc_make_jobs_tsv',
-    help='Finds which samples need running qc pipeline',
-    usage='clockwork qc_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>',
-    description='Writes TSV file of qc jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline qc',
+    "qc_make_jobs_tsv",
+    help="Finds which samples need running qc pipeline",
+    usage="clockwork qc_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>",
+    description="Writes TSV file of qc jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline qc",
 )
 
-subparser_qc_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
-subparser_qc_make_jobs_tsv.add_argument('--pipeline_version', help='Pipeline version to run')
-subparser_qc_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
-subparser_qc_make_jobs_tsv.add_argument('db_config_file', help='Name of db config file')
-subparser_qc_make_jobs_tsv.add_argument('outfile', help='Name of output file')
-subparser_qc_make_jobs_tsv.add_argument('reference_id', type=int, help='Reference genome database ID')
-subparser_qc_make_jobs_tsv.add_argument('reference_root', help='Root directory of pipeline reference genomes')
+subparser_qc_make_jobs_tsv.add_argument(
+    "--dataset_name", help="limit to the given dataset name", metavar="STR"
+)
+subparser_qc_make_jobs_tsv.add_argument(
+    "--pipeline_version", help="Pipeline version to run"
+)
+subparser_qc_make_jobs_tsv.add_argument(
+    "pipeline_root", help="Root directory of pipeline"
+)
+subparser_qc_make_jobs_tsv.add_argument("db_config_file", help="Name of db config file")
+subparser_qc_make_jobs_tsv.add_argument("outfile", help="Name of output file")
+subparser_qc_make_jobs_tsv.add_argument(
+    "reference_id", type=int, help="Reference genome database ID"
+)
+subparser_qc_make_jobs_tsv.add_argument(
+    "reference_root", help="Root directory of pipeline reference genomes"
+)
 subparser_qc_make_jobs_tsv.set_defaults(func=clockwork.tasks.qc_make_jobs_tsv.run)
 
 
-#----------------- fake_remove_contam --------------------------------
+# ----------------- fake_remove_contam --------------------------------
 subparser_fake_remove_contam = subparsers.add_parser(
-    'fake_remove_contam',
-    help='Fake remove contaminated reads',
-    usage='clockwork fake_remove_contam [options] <reads_in_1> <reads_in_2> <reads_out_1> <reads_out_2> <counts_outfile>',
-    description='Sylinks outfiles to point at infiles, writes counts file with all reads not contamination',
+    "fake_remove_contam",
+    help="Fake remove contaminated reads",
+    usage="clockwork fake_remove_contam [options] <reads_in_1> <reads_in_2> <reads_out_1> <reads_out_2> <counts_outfile>",
+    description="Sylinks outfiles to point at infiles, writes counts file with all reads not contamination",
 )
 
-subparser_fake_remove_contam.add_argument('reads_in_1', help='Name of input reads file 1')
-subparser_fake_remove_contam.add_argument('reads_in_2', help='Name of input reads file 2')
-subparser_fake_remove_contam.add_argument('reads_out_1', help='Name of output reads file 1')
-subparser_fake_remove_contam.add_argument('reads_out_2', help='Name of output reads file 2')
-subparser_fake_remove_contam.add_argument('counts_out', help='Name of output file of read counts')
+subparser_fake_remove_contam.add_argument(
+    "reads_in_1", help="Name of input reads file 1"
+)
+subparser_fake_remove_contam.add_argument(
+    "reads_in_2", help="Name of input reads file 2"
+)
+subparser_fake_remove_contam.add_argument(
+    "reads_out_1", help="Name of output reads file 1"
+)
+subparser_fake_remove_contam.add_argument(
+    "reads_out_2", help="Name of output reads file 2"
+)
+subparser_fake_remove_contam.add_argument(
+    "counts_out", help="Name of output file of read counts"
+)
 subparser_fake_remove_contam.set_defaults(func=clockwork.tasks.fake_remove_contam.run)
 
 
-#---------------------- remove_contam --------------------------------
+# ---------------------- remove_contam --------------------------------
 subparser_remove_contam = subparsers.add_parser(
-    'remove_contam',
-    help='Remove contaminated reads from SAM or BAM',
-    usage='clockwork remove_contam [options] <ref seq metadata tsv> <bam file> <counts outfile> <reads_out_1> <reads_out_2>',
-    description='(SAM or BAM) -> paired FASTQ files split into OK, contaminated, and unmapped',
+    "remove_contam",
+    help="Remove contaminated reads from SAM or BAM",
+    usage="clockwork remove_contam [options] <ref seq metadata tsv> <bam file> <counts outfile> <reads_out_1> <reads_out_2>",
+    description="(SAM or BAM) -> paired FASTQ files split into OK, contaminated, and unmapped",
 )
 
-subparser_remove_contam.add_argument('--no_match_out_1', help='Name of output file 1 of reads that did not match. If not given, reads are included in reads_out_1. Must be used with --no_match_out_2')
-subparser_remove_contam.add_argument('--no_match_out_2', help='Name of output file 2 of reads that did not match. If not given, reads are included in reads_out_2. Must be used with --no_match_out_1')
-subparser_remove_contam.add_argument('--contam_out_1', help='Name of output file 1 of contamination reads. If not given, reads are discarded. Must be used with --contam_out_2')
-subparser_remove_contam.add_argument('--contam_out_2', help='Name of output file 2 of contamination reads. If not given, reads are discarded. Must be used with --contam_out_1')
-subparser_remove_contam.add_argument('--done_file', help='Write a file of the given name when the script is finished')
-subparser_remove_contam.add_argument('metadata_tsv', help='Metadata TSV file. Format: one group of ref seqs per line. Tab-delimited columns: 1) group name; 2) 1|0 for is|is not contamination; 3+) sequence names.')
-subparser_remove_contam.add_argument('bam_in', help='Name of input bam file')
-subparser_remove_contam.add_argument('counts_out', help='Name of output file of read counts')
-subparser_remove_contam.add_argument('reads_out_1', help='Name of output reads file 1')
-subparser_remove_contam.add_argument('reads_out_2', help='Name of output reads file 2')
+subparser_remove_contam.add_argument(
+    "--no_match_out_1",
+    help="Name of output file 1 of reads that did not match. If not given, reads are included in reads_out_1. Must be used with --no_match_out_2",
+)
+subparser_remove_contam.add_argument(
+    "--no_match_out_2",
+    help="Name of output file 2 of reads that did not match. If not given, reads are included in reads_out_2. Must be used with --no_match_out_1",
+)
+subparser_remove_contam.add_argument(
+    "--contam_out_1",
+    help="Name of output file 1 of contamination reads. If not given, reads are discarded. Must be used with --contam_out_2",
+)
+subparser_remove_contam.add_argument(
+    "--contam_out_2",
+    help="Name of output file 2 of contamination reads. If not given, reads are discarded. Must be used with --contam_out_1",
+)
+subparser_remove_contam.add_argument(
+    "--done_file", help="Write a file of the given name when the script is finished"
+)
+subparser_remove_contam.add_argument(
+    "metadata_tsv",
+    help="Metadata TSV file. Format: one group of ref seqs per line. Tab-delimited columns: 1) group name; 2) 1|0 for is|is not contamination; 3+) sequence names.",
+)
+subparser_remove_contam.add_argument("bam_in", help="Name of input bam file")
+subparser_remove_contam.add_argument(
+    "counts_out", help="Name of output file of read counts"
+)
+subparser_remove_contam.add_argument("reads_out_1", help="Name of output reads file 1")
+subparser_remove_contam.add_argument("reads_out_2", help="Name of output reads file 2")
 subparser_remove_contam.set_defaults(func=clockwork.tasks.remove_contam.run)
 
 
-#---------------- fake_remove_contam_make_jobs_tsv ------------------
+# ---------------- fake_remove_contam_make_jobs_tsv ------------------
 subparser_fake_remove_contam_make_jobs_tsv = subparsers.add_parser(
-    'fake_remove_contam_make_jobs_tsv',
-    help='Finds which sample need running fake_remove_contam pipeline',
-    usage='clockwork fake_remove_contam_make_jobs_tsv <pipeline root> <db config file> <outfile>',
-    description='Writes TSV file of fake_remove_contam jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline fake_remove_contam',
+    "fake_remove_contam_make_jobs_tsv",
+    help="Finds which sample need running fake_remove_contam pipeline",
+    usage="clockwork fake_remove_contam_make_jobs_tsv <pipeline root> <db config file> <outfile>",
+    description="Writes TSV file of fake_remove_contam jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline fake_remove_contam",
 )
 
-subparser_fake_remove_contam_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
-subparser_fake_remove_contam_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
-subparser_fake_remove_contam_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
-subparser_fake_remove_contam_make_jobs_tsv.add_argument('outfile', help='Name of output file')
-subparser_fake_remove_contam_make_jobs_tsv.set_defaults(func=clockwork.tasks.fake_remove_contam_make_jobs_tsv.run)
+subparser_fake_remove_contam_make_jobs_tsv.add_argument(
+    "--dataset_name", help="limit to the given dataset name", metavar="STR"
+)
+subparser_fake_remove_contam_make_jobs_tsv.add_argument(
+    "pipeline_root", help="Root directory of pipeline"
+)
+subparser_fake_remove_contam_make_jobs_tsv.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_fake_remove_contam_make_jobs_tsv.add_argument(
+    "outfile", help="Name of output file"
+)
+subparser_fake_remove_contam_make_jobs_tsv.set_defaults(
+    func=clockwork.tasks.fake_remove_contam_make_jobs_tsv.run
+)
 
 
-#---------------- remove_contam_make_jobs_tsv -----------------------
+# ---------------- remove_contam_make_jobs_tsv -----------------------
 subparser_remove_contam_make_jobs_tsv = subparsers.add_parser(
-    'remove_contam_make_jobs_tsv',
-    help='Finds which sample need running remove_contam pipeline',
-    usage='clockwork remove_contam_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>',
-    description='Writes TSV file of remove_contam jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline remove_contam',
+    "remove_contam_make_jobs_tsv",
+    help="Finds which sample need running remove_contam pipeline",
+    usage="clockwork remove_contam_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>",
+    description="Writes TSV file of remove_contam jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline remove_contam",
 )
 
-subparser_remove_contam_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
-subparser_remove_contam_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
-subparser_remove_contam_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
-subparser_remove_contam_make_jobs_tsv.add_argument('outfile', help='Name of output file')
-subparser_remove_contam_make_jobs_tsv.add_argument('reference_id', type=int, help='Reference genome database ID')
-subparser_remove_contam_make_jobs_tsv.add_argument('reference_root', help='Root directory of pipeline reference genomes')
-subparser_remove_contam_make_jobs_tsv.set_defaults(func=clockwork.tasks.remove_contam_make_jobs_tsv.run)
+subparser_remove_contam_make_jobs_tsv.add_argument(
+    "--dataset_name", help="limit to the given dataset name", metavar="STR"
+)
+subparser_remove_contam_make_jobs_tsv.add_argument(
+    "pipeline_root", help="Root directory of pipeline"
+)
+subparser_remove_contam_make_jobs_tsv.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_remove_contam_make_jobs_tsv.add_argument(
+    "outfile", help="Name of output file"
+)
+subparser_remove_contam_make_jobs_tsv.add_argument(
+    "reference_id", type=int, help="Reference genome database ID"
+)
+subparser_remove_contam_make_jobs_tsv.add_argument(
+    "reference_root", help="Root directory of pipeline reference genomes"
+)
+subparser_remove_contam_make_jobs_tsv.set_defaults(
+    func=clockwork.tasks.remove_contam_make_jobs_tsv.run
+)
 
 
-#---------------------------- samtools_qc ----------------------------
+# ---------------------------- samtools_qc ----------------------------
 subparser_samtools_qc = subparsers.add_parser(
-    'samtools_qc',
-    help='QCs reads using samtools',
-    usage='clockwork samtools_qc <reference fasta> <reads 1> <reads 2> <output directory>',
-    description='Runs BWA MEM, picard MarkDuplicates, then samtools stats and plots',
+    "samtools_qc",
+    help="QCs reads using samtools",
+    usage="clockwork samtools_qc <reference fasta> <reads 1> <reads 2> <output directory>",
+    description="Runs BWA MEM, picard MarkDuplicates, then samtools stats and plots",
 )
 
-subparser_samtools_qc.add_argument('ref_fasta', help='Name of reference fasta file. Must have had bwa index run on it')
-subparser_samtools_qc.add_argument('reads1', help='Name of reads file 1')
-subparser_samtools_qc.add_argument('reads2', help='Name of reads file 2')
-subparser_samtools_qc.add_argument('output_dir', help='Name of output directory (must not already exist)')
+subparser_samtools_qc.add_argument(
+    "ref_fasta", help="Name of reference fasta file. Must have had bwa index run on it"
+)
+subparser_samtools_qc.add_argument("reads1", help="Name of reads file 1")
+subparser_samtools_qc.add_argument("reads2", help="Name of reads file 2")
+subparser_samtools_qc.add_argument(
+    "output_dir", help="Name of output directory (must not already exist)"
+)
 subparser_samtools_qc.set_defaults(func=clockwork.tasks.samtools_qc.run)
 
 
-#--------------------- samtools_cortex_vcf_merge --------------------
+# --------------------- samtools_cortex_vcf_merge --------------------
 subparser_samtools_cortex_vcf_merge = subparsers.add_parser(
-    'samtools_cortex_vcf_merge',
-    help='Merge samtools and cortex VCF files',
-    usage='clockwork [options] samtools_cortex_vcf_merge <ref_fasta> <samtools.vcf> <cortex.vcf> <out.vcf>',
-    description='Simple merging of samtools and cortex VCF files (indels from cortex take precendence over samtools)',
+    "samtools_cortex_vcf_merge",
+    help="Merge samtools and cortex VCF files",
+    usage="clockwork [options] samtools_cortex_vcf_merge <ref_fasta> <samtools.vcf> <cortex.vcf> <out.vcf>",
+    description="Simple merging of samtools and cortex VCF files (indels from cortex take precendence over samtools)",
 )
 
-subparser_samtools_cortex_vcf_merge.add_argument('ref_fasta')
-subparser_samtools_cortex_vcf_merge.add_argument('samtools_vcf')
-subparser_samtools_cortex_vcf_merge.add_argument('cortex_vcf')
-subparser_samtools_cortex_vcf_merge.add_argument('output_vcf')
-subparser_samtools_cortex_vcf_merge.add_argument('--include_homozygous', action='store_true', help='Use this to include homozygous calls. By default they are filtered')
-subparser_samtools_cortex_vcf_merge.add_argument('--min_SNP_qual', type=float, help='Minimum SNP quality [%(default)s]', default=30, metavar='FLOAT')
-subparser_samtools_cortex_vcf_merge.add_argument('--min_dp4', type=int, help='Minimum DP4 [%(default)s]', default=4, metavar='INT')
-subparser_samtools_cortex_vcf_merge.add_argument('--min_GT_conf', type=float, help='Minimum GT_CONF [%(default)s]', default=5, metavar='FLOAT')
-subparser_samtools_cortex_vcf_merge.set_defaults(func=clockwork.tasks.samtools_cortex_vcf_merge.run)
+subparser_samtools_cortex_vcf_merge.add_argument("ref_fasta")
+subparser_samtools_cortex_vcf_merge.add_argument("samtools_vcf")
+subparser_samtools_cortex_vcf_merge.add_argument("cortex_vcf")
+subparser_samtools_cortex_vcf_merge.add_argument("output_vcf")
+subparser_samtools_cortex_vcf_merge.add_argument(
+    "--include_homozygous",
+    action="store_true",
+    help="Use this to include homozygous calls. By default they are filtered",
+)
+subparser_samtools_cortex_vcf_merge.add_argument(
+    "--min_SNP_qual",
+    type=float,
+    help="Minimum SNP quality [%(default)s]",
+    default=30,
+    metavar="FLOAT",
+)
+subparser_samtools_cortex_vcf_merge.add_argument(
+    "--min_dp4", type=int, help="Minimum DP4 [%(default)s]", default=4, metavar="INT"
+)
+subparser_samtools_cortex_vcf_merge.add_argument(
+    "--min_GT_conf",
+    type=float,
+    help="Minimum GT_CONF [%(default)s]",
+    default=5,
+    metavar="FLOAT",
+)
+subparser_samtools_cortex_vcf_merge.set_defaults(
+    func=clockwork.tasks.samtools_cortex_vcf_merge.run
+)
 
 
-#------------------------ trim reads --------------------------------
+# ------------------------ trim reads --------------------------------
 subparser_trim_reads = subparsers.add_parser(
-    'trim_reads',
-    help='Trim reads using Trimmomatic',
-    usage='clockwork trim_reads <outprefix> <fwd reads 1> <ref reads 1> [<fwd reads 2> <rev reads 2> ...]',
-    description='Adapter and quality trims N pairs of reads files using Trimmomatic',
+    "trim_reads",
+    help="Trim reads using Trimmomatic",
+    usage="clockwork trim_reads <outprefix> <fwd reads 1> <ref reads 1> [<fwd reads 2> <rev reads 2> ...]",
+    description="Adapter and quality trims N pairs of reads files using Trimmomatic",
 )
 
-subparser_trim_reads.add_argument('--trimmo_qual', help='Trimmomatic options used to quality trim reads [%(default)s]', default='LEADING:10 TRAILING:10 SLIDINGWINDOW:4:15', metavar='STRING')
-subparser_trim_reads.add_argument('outprefix', help='Prefix of output files')
-subparser_trim_reads.add_argument('reads_files', nargs='+', help='List of pairs of fwd, rev reads filenames. Must be even number of files!')
+subparser_trim_reads.add_argument(
+    "--trimmo_qual",
+    help="Trimmomatic options used to quality trim reads [%(default)s]",
+    default="LEADING:10 TRAILING:10 SLIDINGWINDOW:4:15",
+    metavar="STRING",
+)
+subparser_trim_reads.add_argument("outprefix", help="Prefix of output files")
+subparser_trim_reads.add_argument(
+    "reads_files",
+    nargs="+",
+    help="List of pairs of fwd, rev reads filenames. Must be even number of files!",
+)
 subparser_trim_reads.set_defaults(func=clockwork.tasks.trim_reads.run)
 
 
-#---------------- variant_call_make_jobs_tsv -----------------------
+# ---------------- variant_call_make_jobs_tsv -----------------------
 subparser_variant_call_make_jobs_tsv = subparsers.add_parser(
-    'variant_call_make_jobs_tsv',
-    help='Finds which sample need running variant_call pipeline',
-    usage='clockwork variant_call_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>',
-    description='Writes TSV file of variant_call jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline variant_call',
+    "variant_call_make_jobs_tsv",
+    help="Finds which sample need running variant_call pipeline",
+    usage="clockwork variant_call_make_jobs_tsv <pipeline root> <db config file> <outfile> <reference ID> <references root>",
+    description="Writes TSV file of variant_call jobs to be run, and updates the database. TSV file is meant to be used as part of nextflow pipeline variant_call",
 )
 
-subparser_variant_call_make_jobs_tsv.add_argument('--dataset_name', help='limit to the given dataset name', metavar='STR')
-subparser_variant_call_make_jobs_tsv.add_argument('--pipeline_version', help='Pipeline version to run')
-subparser_variant_call_make_jobs_tsv.add_argument('pipeline_root', help='Root directory of pipeline')
-subparser_variant_call_make_jobs_tsv.add_argument('db_config_file', help='Name of database config file')
-subparser_variant_call_make_jobs_tsv.add_argument('outfile', help='Name of output file')
-subparser_variant_call_make_jobs_tsv.add_argument('reference_id', type=int, help='Reference genome database ID')
-subparser_variant_call_make_jobs_tsv.add_argument('reference_root', help='Root directory of pipeline reference genomes')
-subparser_variant_call_make_jobs_tsv.set_defaults(func=clockwork.tasks.variant_call_make_jobs_tsv.run)
+subparser_variant_call_make_jobs_tsv.add_argument(
+    "--dataset_name", help="limit to the given dataset name", metavar="STR"
+)
+subparser_variant_call_make_jobs_tsv.add_argument(
+    "--pipeline_version", help="Pipeline version to run"
+)
+subparser_variant_call_make_jobs_tsv.add_argument(
+    "pipeline_root", help="Root directory of pipeline"
+)
+subparser_variant_call_make_jobs_tsv.add_argument(
+    "db_config_file", help="Name of database config file"
+)
+subparser_variant_call_make_jobs_tsv.add_argument("outfile", help="Name of output file")
+subparser_variant_call_make_jobs_tsv.add_argument(
+    "reference_id", type=int, help="Reference genome database ID"
+)
+subparser_variant_call_make_jobs_tsv.add_argument(
+    "reference_root", help="Root directory of pipeline reference genomes"
+)
+subparser_variant_call_make_jobs_tsv.set_defaults(
+    func=clockwork.tasks.variant_call_make_jobs_tsv.run
+)
 
 
-#----------------------------- version -------------------------------
+# ----------------------------- version -------------------------------
 subparser_version = subparsers.add_parser(
-    'version',
-    help='Get version and exit',
-    usage='clockwork version',
-    description='Print version and exit',
+    "version",
+    help="Get version and exit",
+    usage="clockwork version",
+    description="Print version and exit",
 )
 subparser_version.set_defaults(func=clockwork.tasks.version.run)
 
 args = parser.parse_args()
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(
+    level=logging.INFO,
     format=f"[%(asctime)s - clockwork {args.subparser_name} - %(levelname)s] %(message)s",
-    datefmt="%Y-%m-%dT%H:%M:%S")
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
 
-if hasattr(args, 'func'):
+if hasattr(args, "func"):
     args.func(args)
 else:
     parser.print_help()
-

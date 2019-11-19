@@ -1,6 +1,7 @@
 import sys
 from clockwork import db
 
+
 def run(options):
     if options.pool == 1:
         options.seqrep_id = None
@@ -21,4 +22,3 @@ def run(options):
     )
 
     database.commit_and_close()
-

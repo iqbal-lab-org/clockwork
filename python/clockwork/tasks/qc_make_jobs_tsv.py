@@ -1,8 +1,9 @@
 import os
 from clockwork import db, utils, lock_file
 
+
 def run(options):
-    lock = lock_file.LockFile(os.path.join(options.pipeline_root, 'qc.lock'))
+    lock = lock_file.LockFile(os.path.join(options.pipeline_root, "qc.lock"))
     database = db.Db(options.db_config_file)
     database.make_qc_jobs_tsv(
         options.outfile,
@@ -14,4 +15,3 @@ def run(options):
     )
     database.commit_and_close()
     lock.stop()
-
