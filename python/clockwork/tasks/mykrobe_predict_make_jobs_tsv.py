@@ -1,11 +1,14 @@
 import os
-from clockwork import db, utils, lock_file
+from clockwork import db, lock_file
+
 
 def run(options):
-    lock = lock_file.LockFile(os.path.join(options.pipeline_root, 'mykrobe_predict.lock'))
+    lock = lock_file.LockFile(
+        os.path.join(options.pipeline_root, "mykrobe_predict.lock")
+    )
     database = db.Db(options.db_config_file)
     database.make_variant_call_or_mykrobe_jobs_tsv(
-        'mykrobe_predict',
+        "mykrobe_predict",
         options.outfile,
         options.pipeline_root,
         options.reference_id,
@@ -15,5 +18,3 @@ def run(options):
     )
     database.commit_and_close()
     lock.stop()
-
-

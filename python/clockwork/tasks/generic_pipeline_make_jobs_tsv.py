@@ -1,8 +1,11 @@
 import os
-from clockwork import db, utils, lock_file
+from clockwork import db, lock_file
+
 
 def run(options):
-    lock = lock_file.LockFile(os.path.join(options.pipeline_root, 'generic_pipeline.lock'))
+    lock = lock_file.LockFile(
+        os.path.join(options.pipeline_root, "generic_pipeline.lock")
+    )
     database = db.Db(options.db_config_file)
     database.make_generic_pipeline_jobs_tsv(
         options.outfile,
@@ -13,4 +16,3 @@ def run(options):
     )
     database.commit_and_close()
     lock.stop()
-

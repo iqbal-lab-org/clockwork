@@ -1,5 +1,6 @@
 from clockwork import cortex
 
+
 def run(options):
     ctx = cortex.CortexRunCalls(
         options.ref_dir,
@@ -9,4 +10,3 @@ def run(options):
         mem_height=options.mem_height,
     )
     ctx.run()
-

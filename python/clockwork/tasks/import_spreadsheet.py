@@ -1,5 +1,6 @@
 from clockwork import spreadsheet_importer
 
+
 def run(options):
     importer = spreadsheet_importer.SpreadsheetImporter(
         options.dropbox_dir,
@@ -10,4 +11,3 @@ def run(options):
         db_backup_dir=options.db_backup_dir,
     )
     importer.run()
-

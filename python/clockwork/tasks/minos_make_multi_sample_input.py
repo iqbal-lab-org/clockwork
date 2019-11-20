@@ -1,5 +1,5 @@
-import sys
 from clockwork import db
+
 
 def run(options):
     database = db.Db(options.db_config_file)
@@ -10,5 +10,4 @@ def run(options):
         pipeline_version=options.pipeline_version,
     )
 
-    print(*lines, sep='\n')
-
+    print(*lines, sep="\n")

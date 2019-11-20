@@ -1,5 +1,5 @@
-import sys
 from clockwork import db
+
 
 def run(options):
     database = db.Db(options.db_config_file)
@@ -12,4 +12,3 @@ def run(options):
     )
 
     database.commit_and_close()
-

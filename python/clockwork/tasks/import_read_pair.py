@@ -1,5 +1,6 @@
 from clockwork import read_pair_importer
 
+
 def run(options):
     importer = read_pair_importer.ReadPairImporter(
         options.db_config_file,
@@ -14,4 +15,3 @@ def run(options):
         options.reads_file_md5_2,
     )
     importer.run()
-

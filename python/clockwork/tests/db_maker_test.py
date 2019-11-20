@@ -6,12 +6,13 @@ from clockwork import db_connection, db_maker, db_schema
 
 modules_dir = os.path.dirname(os.path.abspath(db_maker.__file__))
 
+
 class TestDbMaker(unittest.TestCase):
     def test_run(self):
-        '''test run'''
+        """test run"""
         # use the test ini file. But we don't want the db line,
         # because we're making a new db
-        ini_file = os.path.join(modules_dir, 'tests', 'data', 'db.ini')
+        ini_file = os.path.join(modules_dir, "tests", "data", "db.ini")
 
         # in case database already exists
         try:
@@ -22,7 +23,6 @@ class TestDbMaker(unittest.TestCase):
         with self.assertRaises(db_connection.Error):
             db_connection.DbConnection(ini_file)
 
-
         dbm = db_maker.DbMaker(ini_file)
         dbm.run()
 
@@ -31,15 +31,15 @@ class TestDbMaker(unittest.TestCase):
         # schema, methinks.
         dbc = db_connection.DbConnection(ini_file)
         cursor = dbc.connection.cursor()
-        cursor.execute('USE ' + dbc.db)
-        cursor.execute('show tables')
+        cursor.execute("USE " + dbc.db)
+        cursor.execute("show tables")
         got_tables = list(cursor.fetchall())
         got_tables.sort()
-        expected_tables = [(x, ) for x in sorted(db_schema.tables)]
+        expected_tables = [(x,) for x in sorted(db_schema.tables)]
         self.assertEqual(expected_tables, got_tables)
 
         # check version got added
-        got_rows = cursor.execute('SELECT * FROM Version;')
+        got_rows = cursor.execute("SELECT * FROM Version;")
         expected_rows = [(db_schema.version)]
         dbc.close()
         db_connection.DbConnection(ini_file, destroy=True)
