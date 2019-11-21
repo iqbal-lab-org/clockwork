@@ -1,12 +1,5 @@
 #!/usr/bin/env nextflow
 
-params.help = false
-params.pipeline_root = ""
-params.db_config_file = ""
-params.dataset_name = ""
-params.max_forks = 20
-
-
 if (params.help){
     log.info"""
         Clockwork fake_remove_contam pipeline. Fakes a run of remove_contam pipeline,

@@ -1,15 +1,5 @@
 #!/usr/bin/env nextflow
 
-params.help = false
-params.pipeline_root = ""
-params.db_config_file = ""
-params.dataset_name = ""
-params.script = ""
-params.max_forks = 100
-params.max_ram = 4
-params.pipeline_name = ""
-
-
 if (params.help){
     log.info"""
         Clockwork generic pipeline. Runs a user-provided

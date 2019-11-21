@@ -1,12 +1,5 @@
 #!/usr/bin/env nextflow
 
-params.help = false
-params.dropbox_dir = ""
-params.pipeline_root = ""
-params.db_config_file = ""
-params.xlsx_archive_dir = ""
-
-
 if (params.help){
     log.info"""
         Clockwork import pipeline. Imports data from dropbox directory.

@@ -1,21 +1,5 @@
 #!/usr/bin/env nextflow
 
-params.help = false
-params.reads_in1 = ""
-params.reads_in2 = ""
-params.outprefix = ""
-params.ref_metadata_tsv = ""
-params.pipeline_root = ""
-params.references_root = ""
-params.db_config_file = ""
-params.dataset_name = ""
-params.ref_fasta = ""
-params.ref_id = ""
-params.testing = false
-params.max_forks_map_reads = 100
-params.max_forks_sam_to_fastq_files = 100
-
-
 if (params.help){
     log.info"""
         Clockwork remove_contam pipeline. Removes reads that are contaminated.

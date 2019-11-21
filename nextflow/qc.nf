@@ -1,19 +1,5 @@
 #!/usr/bin/env nextflow
 
-params.help = false
-params.ref_id = ""
-params.references_root = ""
-params.pipeline_root = ""
-params.db_config_file = ""
-params.dataset_name = ""
-params.ref_fasta = ""
-params.reads_in1 = ""
-params.reads_in2 = ""
-params.output_dir = ""
-params.max_forks_samtools_qc = 100
-params.max_forks_fastqc = 100
-
-
 if (params.help){
     log.info"""
         Clockwork QC pipeline.
