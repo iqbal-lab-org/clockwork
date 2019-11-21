@@ -1,10 +1,4 @@
-params.help = false
-params.ref_id = ""
-params.references_root = ""
-params.pipeline_root = ""
-params.db_config_file = ""
-params.dataset_name = ""
-params.testing = false
+#!/usr/bin/env nextflow
 
 if (params.testing) {
     test_opt_string = '--testing'

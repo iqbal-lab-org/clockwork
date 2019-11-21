@@ -1,24 +1,4 @@
-params.help = false
-params.ref_id = ""
-params.references_root = ""
-params.pipeline_root = ""
-params.db_config_file = ""
-params.dataset_name = ""
-params.ref_dir = ""
-params.reads_in1 = ""
-params.reads_in2 = ""
-params.output_dir = ""
-params.sample_name = ""
-params.testing = false
-params.cortex_mem_height = 22
-params.max_forks_trim_reads = 100
-params.max_forks_map_reads = 100
-params.max_forks_samtools = 100
-params.max_forks_cortex = 100
-params.max_forks_combine_variant_calls = 100
-params.minos_max_read_length = 200
-params.truth_ref = ""
-
+#!/usr/bin/env nextflow
 
 if (params.help){
     log.info"""

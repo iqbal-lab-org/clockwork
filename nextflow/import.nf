@@ -1,9 +1,4 @@
-params.help = false
-params.dropbox_dir = ""
-params.pipeline_root = ""
-params.db_config_file = ""
-params.xlsx_archive_dir = ""
-
+#!/usr/bin/env nextflow
 
 if (params.help){
     log.info"""

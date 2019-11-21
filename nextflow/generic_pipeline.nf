@@ -1,12 +1,4 @@
-params.help = false
-params.pipeline_root = ""
-params.db_config_file = ""
-params.dataset_name = ""
-params.script = ""
-params.max_forks = 100
-params.max_ram = 4
-params.pipeline_name = ""
-
+#!/usr/bin/env nextflow
 
 if (params.help){
     log.info"""
