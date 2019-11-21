@@ -1,3 +1,5 @@
+#!/usr/bin/env nextflow
+
 params.help = false
 params.dropbox_dir = ""
 params.pipeline_root = ""

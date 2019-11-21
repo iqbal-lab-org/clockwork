@@ -1,3 +1,5 @@
+#!/usr/bin/env nextflow
+
 params.help = false
 params.ref_id = ""
 params.references_root = ""
