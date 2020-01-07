@@ -183,7 +183,7 @@ pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyfl
 
 
 #________________________ gramtools _________________________#
-pip3 install --process-dependency-links wheel git+https://github.com/iqbal-lab-org/gramtools@958fd53a4198835a99de5d0ae24399e2f1730a16
+pip3 install --process-dependency-links wheel git+https://github.com/iqbal-lab-org/gramtools@b95321b7e15c0a574863b298475c880099ea6e5d
 
 #________________________ mummer ____________________________#
 cd $install_root
