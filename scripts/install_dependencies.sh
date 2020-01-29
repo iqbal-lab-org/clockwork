@@ -10,7 +10,7 @@ apt-get update
 apt-get install -y software-properties-common
 apt-add-repository universe
 apt-get update
-apt-get install -y \
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
   build-essential \
   cmake \
   curl \
@@ -100,10 +100,7 @@ cp -s mccortex/bin/mccortex31 .
 cd $install_root
 git clone https://github.com/Mykrobe-tools/mykrobe.git mykrobe
 cd mykrobe
-git checkout b47f6241cfb2d223bb53aafd90a3f91d97248052
-# fix for python2: aliases is not an option so remove it
-sed -i 's/help="build variant probes", aliases=.*$/help="build variant probes")/' src/mykrobe/cli.py
-wget -O mykrobe-data.tar.gz https://goo.gl/DXb9hN && tar -zxvf mykrobe-data.tar.gz && rm -fr src/mykrobe/data && mv mykrobe-data src/mykrobe/data
+git checkout fa1472364de147040a76eb12a184064f7930a476
 pip3 install .
 
 
@@ -178,6 +175,7 @@ make NUM_COLS=2 cortex_var
 # note: requests needs to be here instead of as part of
 # python setup.py install, because setup.py install
 # throws an error.  This way works.
+pip3 install cython
 pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyflakes scipy XlsxWriter
 
 
