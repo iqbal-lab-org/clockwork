@@ -183,7 +183,7 @@ pip3 install python-dateutil requests pysam pyfastaq pymysql numpy openpyxl pyfl
 
 
 #________________________ gramtools _________________________#
-pip3 install --process-dependency-links wheel git+https://github.com/iqbal-lab-org/gramtools@4644135e162ff1ff333f970f1dafd919aa0fc279
+pip3 install --process-dependency-links wheel git+https://github.com/iqbal-lab-org/gramtools@b95321b7e15c0a574863b298475c880099ea6e5d
 
 #________________________ mummer ____________________________#
 cd $install_root
@@ -196,5 +196,4 @@ make install
 
 
 #________________________ minos _____________________________#
-pip3 install bio-minos==0.9.1
-
+pip3 install git+https://github.com/iqbal-lab-org/minos@5ea52abd878ede9fe6d4be49cf85d611357f9347
