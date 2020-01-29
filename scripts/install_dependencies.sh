@@ -101,6 +101,7 @@ cd $install_root
 git clone https://github.com/Mykrobe-tools/mykrobe.git mykrobe
 cd mykrobe
 git checkout fa1472364de147040a76eb12a184064f7930a476
+pip3 install requests
 pip3 install .
 
 
