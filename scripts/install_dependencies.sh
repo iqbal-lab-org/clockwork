@@ -195,4 +195,4 @@ make install
 
 
 #________________________ minos _____________________________#
-pip3 install git+https://github.com/iqbal-lab-org/minos@fd8f25d2acbb41232a07537a61bdc7e49e552fc5
+pip3 install git+https://github.com/iqbal-lab-org/minos@89fc680981652c261b0bea8bc6c0606a6239ec9f
