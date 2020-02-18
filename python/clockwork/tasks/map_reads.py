@@ -17,4 +17,5 @@ def run(options):
         options.outfile,
         rmdup=not options.unsorted_sam,
         read_group=("1", options.sample_name),
+        threads=options.threads,
     )

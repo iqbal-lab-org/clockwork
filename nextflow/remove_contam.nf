@@ -12,6 +12,7 @@ params.ref_id = ""
 params.testing = false
 params.max_forks_map_reads = 100
 params.max_forks_sam_to_fastq_files = 100
+params.mapping_threads = 1
 
 
 if (params.help){
@@ -45,6 +46,10 @@ if (params.help){
           --outprefix PATH      Prefix of name of output files
 
         Other options:
+          --mapping_threads INT
+                                Number of threads used by each read mapping process.
+                                This option is only recommended if running on one
+                                pair of FASTQ files [${params.mapping_threads}]
           --max_forks_map_reads INT
                                 Limit number of concurrent map_reads jobs [${params.max_forks_map_reads}]
           --max_forks_sam_to_fastq_files INT
@@ -171,7 +176,7 @@ process map_reads {
 
     script:
     """
-    clockwork map_reads --unsorted_sam sample_name ${tsv_fields.ref_fasta} contam_sam ${tsv_fields.reads_in1} ${tsv_fields.reads_in2}
+    clockwork map_reads --threads ${params.mapping_threads} --unsorted_sam sample_name ${tsv_fields.ref_fasta} contam_sam ${tsv_fields.reads_in1} ${tsv_fields.reads_in2}
     """
 }
 
