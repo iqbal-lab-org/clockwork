@@ -10,7 +10,7 @@ class Error(Exception):
 
 
 def map_reads(
-    ref_fasta, reads1, reads2, outfile, rmdup=False, markdup=False, read_group=None
+    ref_fasta, reads1, reads2, outfile, rmdup=False, markdup=False, read_group=None, threads=1
 ):
     """Maps reads with BWA MEM. By default, outputs SAM file in input read order.
     rmdup=True => remove duplicates using samtools rmdup. Final output is sorted bam
@@ -49,6 +49,7 @@ def map_reads(
     cmd = " ".join(
         [
             "bwa mem -M",
+            f"-t {threads}",
             R_option,
             ref_fasta,
             reads1,
@@ -113,6 +114,7 @@ def map_reads_set(
     rmdup=False,
     markdup=False,
     read_group=None,
+    threads=1,
 ):
     """Same as map reads, but takes a list of file pairs to be mapped"""
     assert len(reads1_list) == len(reads2_list)
@@ -132,6 +134,7 @@ def map_reads_set(
             rmdup=rmdup,
             markdup=markdup,
             read_group=read_group,
+            threads=threads,
         )
 
     assert len(outfiles) == len(reads1_list)
