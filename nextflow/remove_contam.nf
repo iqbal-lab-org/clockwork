@@ -161,6 +161,7 @@ process make_jobs_tsv {
 
 
 process map_reads {
+    cpus params.mapping_threads
     maxForks params.max_forks_map_reads
     memory {params.testing ? '3 GB' : '9 GB'}
     if (using_db_input) {
