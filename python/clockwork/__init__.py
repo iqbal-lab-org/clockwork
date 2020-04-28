@@ -20,6 +20,7 @@ __all__ = [
     "fake_contam_remover",
     "fastqc",
     "fqtools",
+    "gvcf",
     "het_snp_caller",
     "lock_file",
     "mykrobe",

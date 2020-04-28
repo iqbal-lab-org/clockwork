@@ -1,0 +1,23 @@
+##fileformat=VCFv4.2
+##source=minos, version 0.10.0
+##fileDate=2020-04-22
+##FORMAT=<ID=COV,Number=R,Type=Integer,Description="Number of reads on ref and alt alleles">
+##FORMAT=<ID=FRS,Number=1,Type=Float,Description="Fraction of reads that support the genotype call">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="total read depth from gramtools">
+##FORMAT=<ID=DPF,Number=1,Type=Float,Description="Depth Fraction, defined as DP divided by mean depth">
+##FORMAT=<ID=GT_CONF,Number=1,Type=Float,Description="Genotype confidence. Difference in log likelihood of most likely and next most likely genotype">
+##FILTER=<ID=MIN_GCP,Description="Minimum GT_CONF_PERCENTILE of 5.0">
+##FILTER=<ID=MIN_DP,Description="Minimum DP of 0">
+##FILTER=<ID=MIN_FRS,Description="Minimum FRS of 0.9">
+##FORMAT=<ID=GT_CONF_PERCENTILE,Number=1,Type=Float,Description="Percentile of GT_CONF">
+##minosMeanReadDepth=90.516
+##contig=<ID=ref.1,length=30>
+##contig=<ID=ref.2,length=10>
+##minos_max_read_length=200
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	sample.42
+ref.1	3	.	G	C	.	PASS	.	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:95:1.0495:0,95:1.0:768.11:69.09
+ref.1	6	.	C	T	.	PASS	.	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:80:1.0243:0,80:1.0:654.14:52.42
+ref.1	9	.	GATCTT	G	.	PASS	.	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:50:1.0001:0,50:1.0:424.42:42.43
+ref.1	30	.	C	G	.	PASS	.	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:45:1.1001:0,45:1.0:422.22:22.22
+ref.2	4	.	A	G	.	PASS	.	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	0/0:75:0.9876:1,74:1.0:234.23:23.23
