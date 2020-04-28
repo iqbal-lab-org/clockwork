@@ -307,6 +307,7 @@ class TestNextflowVarcall(unittest.TestCase):
                 "--sample_name",
                 sample_name,
                 "--cortex_mem_height 17",
+                "--gvcf",
                 "--testing",
                 "-with-dag",
                 dag_file,
@@ -321,6 +322,8 @@ class TestNextflowVarcall(unittest.TestCase):
         self._files_are_present_and_correct(
             outdir, sample_name, expect_rmdup_bam=True, expect_ref_check_files=False
         )
+        self.assertTrue(os.path.exists(os.path.join(outdir, "minos", "gvcf.fasta")))
+        self.assertTrue(os.path.exists(os.path.join(outdir, "minos", "gvcf.vcf")))
         os.unlink(nextflow_helper.config_file)
         shutil.rmtree(work_dir)
         shutil.rmtree(tmp_data_dir)
