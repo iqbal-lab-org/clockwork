@@ -6,11 +6,6 @@ import pyfastaq
 from clockwork import utils
 
 
-def samtools_gvcf_from_bam(bam_file, ref_fasta, out_vcf):
-    command = f"samtools mpileup -Iug -f {ref_fasta} {bam_file} | bcftools call -c -O v {out_vcf}"
-    utils.syscall(command)
-
-
 def _combine_minos_and_samtools_header(minos_header, samtools_header, ref_seqs):
     header_start = [
         "##fileformat=VCFv4.2",
