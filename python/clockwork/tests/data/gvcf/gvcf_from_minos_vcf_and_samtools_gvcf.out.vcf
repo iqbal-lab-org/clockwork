@@ -1,6 +1,6 @@
 ##fileformat=VCFv4.2
 ##source=clockwork merge samtools gvcf and minos vcf
-##fileDate=2020-04-28
+##fileDate=2020-04-29
 ##ALT=<ID=*,Description="Represents allele(s) other than observed.">
 ##FILTER=<ID=MIN_DP,Description="Minimum DP of 0">
 ##FILTER=<ID=MIN_FRS,Description="Minimum FRS of 0.9">
@@ -42,6 +42,7 @@
 ##contig=<ID=ref.1,length=30>
 ##contig=<ID=ref.2,length=10>
 ##contig=<ID=ref.3,length=2>
+##contig=<ID=ref.4,length=3>
 ##minosMeanReadDepth=90.516
 ##reference=file://ref.fa
 ##samtoolsCommand=samtools mpileup -Iug -f ref.fa run.bam
@@ -73,6 +74,9 @@ ref.1	27	.	T	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
 ref.1	28	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
 ref.1	29	.	A	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
 ref.1	30	.	C	G	.	PASS	CALLER=minos	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:45:1.1001:0,45:1.0:422.22:22.22
+ref.4	1	.	G	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.4	2	.	G	.	40.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:10:5,5,0,0:-29.9923:60:0
+ref.4	3	.	T	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
 ref.2	1	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
 ref.2	2	.	A	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
 ref.2	3	.	G	.	.	NO_DATA	CALLER=none	GT:DP	./.:0

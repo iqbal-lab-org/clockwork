@@ -49,74 +49,162 @@ def _move_info_fields_to_format(record):
     """Changes VCF record in place. Moves all the key/values in INFO column
     into the FORMAT column"""
     for k, v in sorted(record.INFO.items()):
-        record.set_format_key_value(k, v)
+        # INFO is allowed to have type "Flag", where there is a key but
+        # no value - the key being present meaning the Flag is true.
+        # FORMAT isn't allowed Flags. The only time I have seen this is
+        # INDEL, but this shouldn't be here anyway because assumption is
+        # that samtools mpileup has been run with -I to switch off indel calling.
+        if v is not None:
+            record.set_format_key_value(k, v)
     record.INFO = {}
+
+
+def _print_no_data_vcf_record(ref_seq, position, filehandle):
+    print(
+        ref_seq.id,
+        position + 1,
+        ".",
+        ref_seq[position],
+        ".",
+        ".",
+        "NO_DATA",
+        "CALLER=none",
+        "GT:DP",
+        "./.:0",
+        file=filehandle,
+        sep="\t",
+    )
+
+
+def _get_minos_iter_and_record(minos_records, ref_seq_name):
+    if ref_seq_name in minos_records:
+        minos_iter = iter(minos_records[ref_seq_name])
+        minos_record = next(minos_iter)
+        return minos_iter, minos_record
+    else:
+        return None, None
+
+
+def _update_minos_iter(minos_iter):
+    try:
+        minos_record = next(minos_iter)
+    except StopIteration:
+        minos_record = None
+    return minos_record
+
+
+def _print_non_samtools_seqs(ref_seqs, used_ref_seqs, minos_records, filehandle):
+    for ref_seq_name, ref_seq in sorted(ref_seqs.items()):
+        if ref_seq_name in used_ref_seqs:
+            continue
+
+        ref_pos = 0
+        minos_iter, minos_record = _get_minos_iter_and_record(
+            minos_records, ref_seq_name
+        )
+
+        while ref_pos < len(ref_seq):
+            if minos_record is None or ref_pos < minos_record.POS:
+                _print_no_data_vcf_record(ref_seq, ref_pos, filehandle)
+                ref_pos += 1
+            else:
+                minos_record.INFO["CALLER"] = "minos"
+                print(minos_record, file=filehandle)
+                ref_pos = minos_record.ref_end_pos() + 1
+                minos_record = _update_minos_iter(minos_iter)
+
+
+def _finish_contig(ref_pos, ref_seq, minos_record, minos_iter, filehandle):
+    while ref_pos < len(ref_seq):
+        if minos_record is not None and minos_record.POS == ref_pos:
+            minos_record.INFO["CALLER"] = "minos"
+            print(minos_record, file=filehandle)
+            ref_pos = minos_record.ref_end_pos() + 1
+            minos_record = _update_minos_iter(minos_iter)
+        else:
+            _print_no_data_vcf_record(ref_seq, ref_pos, filehandle)
+            ref_pos += 1
 
 
 def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, out_vcf):
     minos_header, minos_records = vcf_file_read.vcf_file_to_dict(minos_vcf)
-    samtools_header, samtools_records = vcf_file_read.vcf_file_to_dict(samtools_vcf)
+    samtools_header = vcf_file_read.get_header_lines_from_vcf_file(samtools_vcf)
+
     ref_seqs = {}
     pyfastaq.tasks.file_to_dict(ref_fasta, ref_seqs)
+    used_ref_seqs = set()
+    ref_seq = None
+    ref_pos = -1
+    minos_record = None
 
-    with open(out_vcf, "w") as f:
+    with open(out_vcf, "w") as f_out, open(samtools_vcf) as f_samtools:
         print(
             *_combine_minos_and_samtools_header(
                 minos_header, samtools_header, ref_seqs
             ),
             sep="\n",
-            file=f,
+            file=f_out,
         )
-        for ref_name, ref_seq in sorted(ref_seqs.items()):
-            if ref_name in samtools_records:
-                samtools_records[ref_name] = {
-                    x.POS: x for x in samtools_records[ref_name]
-                }
-            else:
-                samtools_records[ref_name] = {}
 
-            if ref_name in minos_records:
-                minos_iter = iter(minos_records[ref_name])
-                minos_record = next(minos_iter)
-            else:
-                minos_record = None
+        # Read the samtools VCF file line by line. It's huge, so don't want
+        # to load into memory. Within each CHROM in the samtools VCF, keep
+        # track of the current position in the CHROM, and the next minos record
+        # for that CHROM (if there is one). For each position in the ref genome,
+        # we want in order of preference to write one of:
+        # 1. minos record if there is one
+        # 2. samtools record if there is one
+        # 3. a "no data" record if position is not in minos or samtools records
+        # Not loading into memory and following where we are the ref genome, and
+        # in the list of minos records, makes this a bit fiddly.
+        for line in f_samtools:
+            if line.startswith("#"):
+                continue
 
-            ref_pos = 0
+            samtools_record = vcf_record.VcfRecord(line)
 
-            while ref_pos < len(ref_seq):
-                while minos_record is None or ref_pos < minos_record.POS:
-                    if ref_pos in samtools_records[ref_name]:
-                        record = samtools_records[ref_name][ref_pos]
-                        _move_info_fields_to_format(record)
-                        record.INFO = {"CALLER": "samtools"}
-                        print(record, file=f)
-                    else:
-                        print(
-                            ref_name,
-                            ref_pos + 1,
-                            ".",
-                            ref_seqs[ref_name][ref_pos],
-                            ".",
-                            ".",
-                            "NO_DATA",
-                            "CALLER=none",
-                            "GT:DP",
-                            "./.:0",
-                            file=f,
-                            sep="\t",
-                        )
-                    ref_pos += 1
-                    if ref_pos >= len(ref_seq):
-                        break
+            # If we've found a new CHROM in the samtools VCF file
+            if ref_seq is None or ref_seq.id != samtools_record.CHROM:
+                if ref_seq is not None:
+                    _finish_contig(ref_pos, ref_seq, minos_record, minos_iter, f_out)
+                ref_seq = ref_seqs[samtools_record.CHROM]
+                used_ref_seqs.add(ref_seq.id)
+                minos_iter, minos_record = _get_minos_iter_and_record(
+                    minos_records, ref_seq.id
+                )
+                ref_pos = 0
 
-                if minos_record is not None:
+            if samtools_record.POS < ref_pos:
+                continue
+
+            # Fill in any missing gaps between current position and the samtools
+            # record using minos records if found, or if not then "no data" records.
+            while ref_pos < samtools_record.POS:
+                if minos_record is not None and ref_pos == minos_record.POS:
                     minos_record.INFO["CALLER"] = "minos"
-                    print(minos_record, file=f)
+                    print(minos_record, file=f_out)
                     ref_pos = minos_record.ref_end_pos() + 1
-                    try:
-                        minos_record = next(minos_iter)
-                    except StopIteration:
-                        minos_record = None
+                    minos_record = _update_minos_iter(minos_iter)
+                else:
+                    _print_no_data_vcf_record(ref_seq, ref_pos, f_out)
+                    ref_pos += 1
+
+            # If there's a minos record, use it instead of samtools record.
+            while minos_record is not None and minos_record.POS <= samtools_record.POS:
+                minos_record.INFO["CALLER"] = "minos"
+                print(minos_record, file=f_out)
+                ref_pos = minos_record.ref_end_pos() + 1
+                minos_record = _update_minos_iter(minos_iter)
+
+            # If we haven't used a minos record, then current ref position is
+            # same as the samtools record, and we should use the samtools record
+            if ref_pos == samtools_record.POS:
+                _move_info_fields_to_format(samtools_record)
+                samtools_record.INFO = {"CALLER": "samtools"}
+                print(samtools_record, file=f_out)
+                ref_pos = samtools_record.POS + 1
+
+        _finish_contig(ref_pos, ref_seq, minos_record, minos_iter, f_out)
+        _print_non_samtools_seqs(ref_seqs, used_ref_seqs, minos_records, f_out)
 
 
 def _samtools_vcf_record_to_frs(record, geno_index):
