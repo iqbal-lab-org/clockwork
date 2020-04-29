@@ -14,6 +14,7 @@ setup(
     test_suite="nose.collector",
     tests_require=["nose >= 1.3"],
     install_requires=[
+        "cluster_vcf_records >= 0.11.1",
         "python-dateutil >= 2.6.1",
         "openpyxl >= 2.4.7",
         "pyfastaq >= 3.14.0",
