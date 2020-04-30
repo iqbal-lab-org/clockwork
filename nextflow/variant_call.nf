@@ -332,6 +332,7 @@ process combine_variant_calls_minos {
     if ${make_gvcf}; then
         samtools mpileup -Iug -f ${tsv_fields.reference_dir}/ref.fa rmdup.bam | bcftools call -c -O v -o gvcf.samtools.vcf
         clockwork gvcf_from_minos_and_samtools ${tsv_fields.reference_dir}/ref.fa minos/final.vcf gvcf.samtools.vcf minos/gvcf.vcf
+        rm gvcf.samtools.vcf
         clockwork gvcf_to_fasta minos/gvcf.vcf minos/gvcf.fasta
     fi
     rsync -av minos/ ${tsv_fields.output_dir}/minos
