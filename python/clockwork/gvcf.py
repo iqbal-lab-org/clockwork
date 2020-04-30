@@ -280,12 +280,14 @@ def gvcf_to_fasta(gvcf_file, outfile, require_minos_pass=True, min_frs=0.9, min_
                 out_seq.extend(record.REF)
             else:
                 alt = record.ALT[geno_index - 1]
-                # This is an indel or a complex variant. VCF convetion says that
-                # the nucleotide before the variant is included, and
-                # the first nucleotide of the ref and alt is the same. We can
-                # put that first one in the FASTA, then put the rest as Ns.
-                if len(alt) == len(record.REF) == 1:
-                    out_seq.extend(record.ALT[geno_index - 1])
+                # This is an indel or a complex variant. If the ref and alt
+                # are the same length, then we can drop in the alt allele. If not,
+                # VCF convention says that the nucleotide before the variant
+                # is included, and the first nucleotide of the ref and alt is
+                # the same. We can put that first one in the FASTA,
+                # then put the rest as Ns.
+                if len(alt) == len(record.REF):
+                    out_seq.extend(alt)
                 elif len(alt) != len(record.REF) and alt[0] == record.REF[0]:
                     out_seq.extend(alt[0] + "N" * (len(record.REF) - 1))
                 else:
