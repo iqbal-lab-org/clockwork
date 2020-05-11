@@ -11,6 +11,8 @@ __all__ = [
     "fastqc",
     "find_data",
     "generic_pipeline_make_jobs_tsv",
+    "gvcf_from_minos_and_samtools",
+    "gvcf_to_fasta",
     "import_read_pair",
     "import_spreadsheet",
     "make_import_spreadsheet",

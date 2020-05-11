@@ -18,6 +18,7 @@ params.max_forks_cortex = 100
 params.max_forks_combine_variant_calls = 100
 params.minos_max_read_length = 200
 params.truth_ref = ""
+params.gvcf = false
 
 
 if (params.help){
@@ -75,6 +76,12 @@ if (params.help){
     exit 0
 }
 
+if (params.gvcf) {
+    make_gvcf = "true"
+}
+else {
+    make_gvcf = "false"
+}
 
 using_db_input = params.pipeline_root != "" && params.references_root != "" && params.db_config_file != "" && params.ref_id != ""
 using_reads_input = params.ref_dir != "" && params.reads_in1 != "" && params.reads_in2 != "" && params.output_dir != "" && params.sample_name != ""
@@ -322,6 +329,12 @@ process combine_variant_calls_minos {
     rm -rf ${tsv_fields.output_dir}/minos
     cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
     minos adjudicate --max_read_length ${params.minos_max_read_length} --force --reads rmdup.bam minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf \$cortex_vcf
+    if ${make_gvcf}; then
+        samtools mpileup -Iug -f ${tsv_fields.reference_dir}/ref.fa rmdup.bam | bcftools call -c -O v -o gvcf.samtools.vcf
+        clockwork gvcf_from_minos_and_samtools ${tsv_fields.reference_dir}/ref.fa minos/final.vcf gvcf.samtools.vcf minos/gvcf.vcf
+        rm gvcf.samtools.vcf
+        clockwork gvcf_to_fasta minos/gvcf.vcf minos/gvcf.fasta
+    fi
     rsync -av minos/ ${tsv_fields.output_dir}/minos
     rm -r minos
     """

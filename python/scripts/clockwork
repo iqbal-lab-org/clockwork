@@ -5,7 +5,6 @@ import logging
 
 import clockwork
 
-
 parser = argparse.ArgumentParser(
     prog="clockwork",
     usage="clockwork <tasks> <options>",
@@ -464,6 +463,67 @@ subparser_generic_pipeline_make_jobs_tsv.add_argument(
 subparser_generic_pipeline_make_jobs_tsv.set_defaults(
     func=clockwork.tasks.generic_pipeline_make_jobs_tsv.run
 )
+
+
+# ------------------ gvcf_from_minos_and_samtools ---------------------
+subparser_gvcf_from_minos_and_samtools = subparsers.add_parser(
+    "gvcf_from_minos_and_samtools",
+    help="Makes gVCF from minos and samtools VCF files",
+    usage="clockwork gvcf_from_minos_and_samtools <ref_fasta> <minos_vcf> <samtools_vcf> <outfile>",
+    description="Makes gVCF from minos and samtools VCF files",
+)
+
+subparser_gvcf_from_minos_and_samtools.add_argument(
+    "ref_fasta", help="Reference genome FASTA file",
+)
+subparser_gvcf_from_minos_and_samtools.add_argument(
+    "minos_vcf", help="VCF file made by minos",
+)
+subparser_gvcf_from_minos_and_samtools.add_argument(
+    "samtools_vcf", help="VCF file made by samtools",
+)
+subparser_gvcf_from_minos_and_samtools.add_argument(
+    "outfile", help="Output gVCF file",
+)
+subparser_gvcf_from_minos_and_samtools.set_defaults(
+    func=clockwork.tasks.gvcf_from_minos_and_samtools.run
+)
+
+
+# ------------------ gvcf_to_fasta ------------------------------------
+subparser_gvcf_to_fasta = subparsers.add_parser(
+    "gvcf_to_fasta",
+    help="Makes FASTA file from gVCF file made by gvcf_from_minos_and_samtools",
+    usage="clockwork gvcf_to_fasta [options] <gvcf> <outfile>",
+    description="Makes FASTA file from gVCF file made by gvcf_from_minos_and_samtools",
+)
+
+subparser_gvcf_to_fasta.add_argument(
+    "gvcf", help="Input gVCF file made by gvcf_from_minos_and_samtools",
+)
+subparser_gvcf_to_fasta.add_argument(
+    "outfile", help="Output FASTA file",
+)
+subparser_gvcf_to_fasta.add_argument(
+    "--ignore_minos_pass",
+    action="store_true",
+    help="Ignore whether or not PASS is in the FILTER column of minos calls. Default is to only use records with PASS.",
+)
+subparser_gvcf_to_fasta.add_argument(
+    "--min_frs",
+    type=float,
+    help="Minimum fraction of reads (FRS) required supporting the call. If FRS is less than the given value, then N is added to the FASTA [%(default)s]",
+    default=0.9,
+    metavar="FLOAT in [0,1]",
+)
+subparser_gvcf_to_fasta.add_argument(
+    "--min_dp",
+    type=int,
+    help="Minimum total read depth. If depth is less than this, then N is added to the FASTA [%(default)s]",
+    default=5,
+    metavar="INT",
+)
+subparser_gvcf_to_fasta.set_defaults(func=clockwork.tasks.gvcf_to_fasta.run)
 
 
 # ---------------------- import_read_pair -----------------------------

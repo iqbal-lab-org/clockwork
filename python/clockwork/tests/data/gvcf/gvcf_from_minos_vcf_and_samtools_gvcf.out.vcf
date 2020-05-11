@@ -1,0 +1,91 @@
+##fileformat=VCFv4.2
+##source=clockwork merge samtools gvcf and minos vcf
+##fileDate=2020-04-29
+##ALT=<ID=*,Description="Represents allele(s) other than observed.">
+##FILTER=<ID=MIN_DP,Description="Minimum DP of 0">
+##FILTER=<ID=MIN_FRS,Description="Minimum FRS of 0.9">
+##FILTER=<ID=MIN_GCP,Description="Minimum GT_CONF_PERCENTILE of 5.0">
+##FILTER=<ID=NO_DATA,Description="No information from minos or samtools">
+##FILTER=<ID=PASS,Description="All filters passed">
+##FORMAT=<ID=AC1,Number=1,Type=Float,Description="Max-likelihood estimate of the first ALT allele count (no HWE assumption)">
+##FORMAT=<ID=AF1,Number=1,Type=Float,Description="Max-likelihood estimate of the first ALT allele frequency (assuming HWE)">
+##FORMAT=<ID=AF2,Number=1,Type=Float,Description="Max-likelihood estimate of the first and second group ALT allele frequency (assuming HWE)">
+##FORMAT=<ID=BQB,Number=1,Type=Float,Description="Mann-Whitney U test of Base Quality Bias (bigger is better)">
+##FORMAT=<ID=COV,Number=R,Type=Integer,Description="Number of reads on ref and alt alleles">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Raw read depth">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="total read depth from gramtools">
+##FORMAT=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-forward , ref-reverse, alt-forward and alt-reverse bases">
+##FORMAT=<ID=DPF,Number=1,Type=Float,Description="Depth Fraction, defined as DP divided by mean depth">
+##FORMAT=<ID=FQ,Number=1,Type=Float,Description="Phred probability of all samples being the same">
+##FORMAT=<ID=FRS,Number=1,Type=Float,Description="Fraction of reads that support the genotype call">
+##FORMAT=<ID=G3,Number=3,Type=Float,Description="ML estimate of genotype frequencies">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=GT_CONF,Number=1,Type=Float,Description="Genotype confidence. Difference in log likelihood of most likely and next most likely genotype">
+##FORMAT=<ID=GT_CONF_PERCENTILE,Number=1,Type=Float,Description="Percentile of GT_CONF">
+##FORMAT=<ID=HWE,Number=1,Type=Float,Description="Chi^2 based HWE test P-value based on G3">
+##FORMAT=<ID=IDV,Number=1,Type=Integer,Description="Maximum number of reads supporting an indel">
+##FORMAT=<ID=IMF,Number=1,Type=Float,Description="Maximum fraction of reads supporting an indel">
+##FORMAT=<ID=INDEL,Number=0,Type=Flag,Description="Indicates that the variant is an INDEL.">
+##FORMAT=<ID=MQ,Number=1,Type=Integer,Description="Root-mean-square mapping quality of covering reads">
+##FORMAT=<ID=MQ0F,Number=1,Type=Float,Description="Fraction of MQ0 reads (smaller is better)">
+##FORMAT=<ID=MQB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality Bias (bigger is better)">
+##FORMAT=<ID=MQSB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality vs Strand Bias (bigger is better)">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="List of Phred-scaled genotype likelihoods">
+##FORMAT=<ID=PV4,Number=4,Type=Float,Description="P-values for strand bias, baseQ bias, mapQ bias and tail distance bias">
+##FORMAT=<ID=RPB,Number=1,Type=Float,Description="Mann-Whitney U test of Read Position Bias (bigger is better)">
+##FORMAT=<ID=SGB,Number=1,Type=Float,Description="Segregation based metric.">
+##FORMAT=<ID=VDB,Number=1,Type=Float,Description="Variant Distance Bias for filtering splice-site artefacts in RNA-seq data (bigger is better)",Version="3">
+##INFO=<ID=CALLER,Number=1,Description="Origin of call, one of minos, samtools, or none if there was no depth">
+##bcftools_callCommand=call -c -O v
+##bcftools_callVersion=1.3.1+htslib-1.3.1
+##contig=<ID=ref.1,length=30>
+##contig=<ID=ref.2,length=10>
+##contig=<ID=ref.3,length=2>
+##contig=<ID=ref.4,length=3>
+##minosMeanReadDepth=90.516
+##reference=file://ref.fa
+##samtoolsCommand=samtools mpileup -Iug -f ref.fa run.bam
+##samtoolsVersion=1.3.1+htslib-1.3.1
+##source=minos, version 0.10.0
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	sample.42
+ref.1	1	.	C	.	20.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:1:1,0,0,0:-29.9923:60:0
+ref.1	2	.	G	.	21.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:10:5,5,0,0:-29.9923:60:0
+ref.1	3	.	G	C	.	PASS	CALLER=minos	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:95:1.0495:0,95:1.0:768.11:69.09
+ref.1	4	.	A	.	23.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:12:6,6,0,0:-29.9923:60:0
+ref.1	5	.	C	.	24.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:13:7,4,0,0:-29.9923:60:0
+ref.1	6	.	C	T	.	PASS	CALLER=minos	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:80:1.0243:0,80:1.0:654.14:52.42
+ref.1	7	.	A	.	26.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:15:7,8,1,0:-29.9923:60:0
+ref.1	8	.	G	.	27.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:10:5,5,0,0:-29.9923:60:0
+ref.1	9	.	GATCTT	G	.	PASS	CALLER=minos	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:50:1.0001:0,50:1.0:424.42:42.43
+ref.1	15	.	A	.	34.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:18:10,8,0,0:-29.9923:60:0
+ref.1	16	.	T	.	35.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:19:9,10,0,0:-29.9923:60:0
+ref.1	17	.	A	.	36.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:20:10,10,0,0:-29.9923:60:0
+ref.1	18	.	T	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	19	.	A	.	38.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:10:2,3,3,2:-29.9923:60:0
+ref.1	20	.	T	.	39.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:2:1,1,0,0:-29.9923:60:0
+ref.1	21	.	A	.	40.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:10:5,5,0,0:-29.9923:60:0
+ref.1	22	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	23	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	24	.	T	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	25	.	A	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	26	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	27	.	T	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	28	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	29	.	A	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.1	30	.	C	G	.	PASS	CALLER=minos	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	1/1:45:1.1001:0,45:1.0:422.22:22.22
+ref.4	1	.	G	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.4	2	.	G	.	40.0	.	CALLER=samtools	GT:PL:AC1:AF1:DP:DP4:FQ:MQ:MQ0F	0/0:0:0:0:10:5,5,0,0:-29.9923:60:0
+ref.4	3	.	T	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	1	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	2	.	A	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	3	.	G	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	4	.	A	G	.	PASS	CALLER=minos	GT:DP:DPF:COV:FRS:GT_CONF:GT_CONF_PERCENTILE	0/0:75:0.9876:1,74:1.0:234.23:23.23
+ref.2	5	.	T	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	6	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	7	.	G	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	8	.	A	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	9	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.2	10	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.3	1	.	A	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
+ref.3	2	.	C	.	.	NO_DATA	CALLER=none	GT:DP	./.:0
