@@ -65,8 +65,8 @@ cp -s bwa-0.7.15/bwa .
 
 #_____________________ enaBrowserTools ____________________#
 cd $install_root
-wget https://github.com/enasequence/enaBrowserTools/archive/v1.4.1.tar.gz
-tar xf v1.4.1.tar.gz
+wget https://github.com/enasequence/enaBrowserTools/archive/v1.5.4.tar.gz
+tar xf v1.5.4.tar.gz
 
 
 #_________________________ FASTQC ________________________#
