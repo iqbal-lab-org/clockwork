@@ -3,6 +3,8 @@ import multiprocessing
 import os
 import re
 import requests
+import shutil
+import sys
 from clockwork import spreadsheet_helper, utils
 
 
@@ -14,13 +16,19 @@ run_pattern = re.compile("^[EDS]RR[0-9]{6,7}$")
 
 
 def _download_run(run_id, outdir):
-    cmd = " ".join(["enaDataGet", "-f fastq", "-d", outdir, run_id])
+    expected_1 = os.path.join(outdir, run_id + "_1.fastq.gz")
+    expected_2 = os.path.join(outdir, run_id + "_2.fastq.gz")
+    if os.path.exists(expected_1) and os.path.exists(expected_2):
+        print("Already got", outdir, " so do not download again")
+        return
+
+    cmd = " ".join(["enaDataGet", "-f fastq", "-d", outdir, run_id,])
     print(cmd)
     utils.syscall(cmd)
 
 
 def _download_sample(sample_id, outdir):
-    cmd = " ".join(["enaGroupGet", "-f fastq", "-d", outdir, sample_id])
+    cmd = " ".join(["enaGroupGet", "-f fastq", "-d", outdir, sample_id,])
     print(cmd)
     utils.syscall(cmd)
 
@@ -98,21 +106,35 @@ class EnaDownloader:
             filename_data[sample] = set()
 
             for accession in sorted(list(accession_set)):
+                # If we're rerunning, then the files might already be there, so
+                # no files to rename. But do still need to update the filename_data dict
+                expected_1 = os.path.join(outdir, accession + "_1.fastq.gz")
+                expected_2 = os.path.join(outdir, accession + "_2.fastq.gz")
+                print(expected_1, expected_2)
+                if os.path.exists(expected_1) and os.path.exists(expected_2):
+                    filename_data[sample].add(accession)
+                    continue
+
                 accession_dir = os.path.join(outdir, accession)
                 if run_pattern.match(accession):
-                    new_run_accessions = [accession]
+                    # new_run_accessions = [accession]
                     new_files = [
                         os.path.join(
                             accession_dir, accession + "_" + str(i) + ".fastq.gz"
                         )
                         for i in (1, 2)
                     ]
-                    filename_data[sample].add(accession)
+                    new_files = [x for x in new_files if os.path.exists(x)]
+                    if len(new_files) > 0:
+                        filename_data[sample].add(accession)
                     delete_dirs = set()
                 else:
                     new_files = []
-                    new_run_accessions = os.listdir(os.path.join(outdir, accession))
-                    filename_data[sample].update(new_run_accessions)
+                    try:
+                        new_run_accessions = os.listdir(os.path.join(outdir, accession))
+                    except:
+                        print("No files found for sample", accession)
+                        new_run_accessions = []
                     delete_dirs = set(new_run_accessions)
 
                     for run_accession in new_run_accessions:
@@ -127,20 +149,37 @@ class EnaDownloader:
                             ]
                         )
 
+                    new_files = [x for x in new_files if os.path.exists(x)]
+                    if len(new_files) > 0:
+                        filename_data[sample].update(new_run_accessions)
+
+                if len(new_files) == 0:
+                    print("No paired files for accession", accession, file=sys.stderr)
+
                 for filename in new_files:
                     basename = os.path.basename(filename)
                     new_name = os.path.join(outdir, basename)
-                    assert not os.path.exists(new_name)
-                    print("rename", filename, new_name)
-                    os.rename(filename, new_name)
+                    if not os.path.exists(new_name):
+                        print("rename", filename, new_name)
+                        os.rename(filename, new_name)
+                    else:
+                        print("skip rename, new file found already", filename, new_name)
 
                 for d in delete_dirs:
-                    os.rmdir(os.path.join(accession_dir, d))
+                    shutil.rmtree(os.path.join(accession_dir, d))
 
             for accession in sorted(list(accession_set)):
-                os.rmdir(os.path.join(outdir, accession))
+                # If there are unpaired reads, then those files will be left here.
+                # We don't want them. Hence rmtree instead rmdir.
+                # There may be no dir to delete, hence try/except pass
+                try:
+                    shutil.rmtree(os.path.join(outdir, accession))
+                except:
+                    pass
 
-        assert input_data.keys() == filename_data.keys()
+        filename_data = {
+            x: filename_data[x] for x in filename_data if len(filename_data[x]) > 0
+        }
         return filename_data
 
     @classmethod
@@ -168,7 +207,10 @@ class EnaDownloader:
                 + r.url
             )
 
-        lines = r.text.rstrip().split("\n")
+        # rstrip explicitly on newline because the center name can be empty, which
+        # means the line ends in a tab character, which we want to keep so that
+        # later when splitting on tab we end up with 3 fields, not 2.
+        lines = r.text.rstrip("\n").split("\n")
         if (
             len(lines) != 2
             or lines[0] != "sample_accession\tinstrument_model\tcenter_name"
@@ -195,7 +237,10 @@ class EnaDownloader:
             print(*spreadsheet_helper.columns, sep="\t", file=f)
 
             for sample in sorted(input_data):
-                assert sample in filename_data
+                if sample not in filename_data:
+                    print("Skipping", sample, "from final TSV file", outfile)
+                    continue
+
                 run_list = sorted(list(filename_data[sample]))
                 for i, run in enumerate(run_list):
                     if test_ena_dict is not None:
@@ -203,9 +248,25 @@ class EnaDownloader:
                         instrument_model = "Illumina HiSeq 2500"
                         center_name = "CENTER 42"
                     else:
-                        ena_sample_id, instrument_model, center_name = EnaDownloader._ena_run_to_sample_and_instrument_model(
+                        metadata = EnaDownloader._ena_run_to_sample_and_instrument_model(
                             run
                         )
+                        try:
+                            ena_sample_id, instrument_model, center_name = metadata
+                        except:
+                            print(
+                                "Error getting ENA metadata for run ",
+                                run,
+                                ". Got:",
+                                metadata,
+                                ". Skipping",
+                                sep="",
+                            )
+                            continue
+
+                    if center_name == "":
+                        print("WARNING: empty center_name for run", run)
+                        center_name = "UNKNOWN"
 
                     print(
                         sample,

@@ -62,12 +62,26 @@ class TestEnaDownloader(unittest.TestCase):
         )
         got_file_list = sorted(os.listdir(indir))
         self.assertEqual(expected_file_list, got_file_list)
+
+        # Rerun and check no errors. The code can't handle when a rerun includes
+        # samples. They end up getting ignored if they were already downloaded.
+        # The documentation of the main script says to use run accessions anyway, not
+        # sample accessions. Test rerunning here, but have to remove the data that
+        # arose from sample IDs in the input file.
+        got_dict = ena_downloader.EnaDownloader._rename_files(input_data, indir)
+        del expected_dict["id3"]
+        expected_dict["id1"].remove("ERR0000014")
+        self.assertEqual(expected_dict, got_dict)
         shutil.rmtree(indir)
 
     def test_ena_run_to_sample_and_instrument_model(self):
         """test _ena_run_to_sample_and_instrument_model"""
         run_accession = "ERR550803"
-        got_sample, got_instrument, got_center_name = ena_downloader.EnaDownloader._ena_run_to_sample_and_instrument_model(
+        (
+            got_sample,
+            got_instrument,
+            got_center_name,
+        ) = ena_downloader.EnaDownloader._ena_run_to_sample_and_instrument_model(
             run_accession
         )
         self.assertEqual("SAMEA2533482", got_sample)
@@ -76,9 +90,15 @@ class TestEnaDownloader(unittest.TestCase):
 
     def test_write_import_tsv(self):
         """Test _write_import_tsv"""
-        input_data = {"id1": {"ERS123"}, "id2": {"ERR1", "ERR2"}}
+        input_data = {
+            "id1": {"ERS123"},
+            "id2": {"ERR1", "ERR2"},
+        }
 
-        runs = {"id1": {"ERR10", "ERR11"}, "id2": {"ERR1", "ERR2"}}
+        runs = {
+            "id1": {"ERR10", "ERR11"},
+            "id2": {"ERR1", "ERR2"},
+        }
 
         outfile = "tmp.ena_downloader.write_import_tsv.out"
         test_ena_dict = {x: x + "_sample" for x in ["ERR1", "ERR2", "ERR10", "ERR11"]}
