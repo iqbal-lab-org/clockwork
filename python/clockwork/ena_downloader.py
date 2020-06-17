@@ -12,7 +12,8 @@ class Error(Exception):
     pass
 
 
-run_pattern = re.compile("^[EDS]RR[0-9]{6,7}$")
+# https://ena-docs.readthedocs.io/en/latest/submit/general-guide/accessions.html
+run_pattern = re.compile("^[EDS]RR[0-9]{6,}$")
 
 
 def _download_run(run_id, outdir):
