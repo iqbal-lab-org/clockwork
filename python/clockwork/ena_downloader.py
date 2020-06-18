@@ -16,6 +16,14 @@ class Error(Exception):
 run_pattern = re.compile("^[EDS]RR[0-9]{6,}$")
 
 
+def _download(download_cmd):
+    print(download_cmd)
+    try:
+        utils.syscall(download_cmd)
+    except Exception:
+        print("Error running: ", download_cmd)
+
+
 def _download_run(run_id, outdir):
     expected_1 = os.path.join(outdir, run_id + "_1.fastq.gz")
     expected_2 = os.path.join(outdir, run_id + "_2.fastq.gz")
@@ -24,14 +32,12 @@ def _download_run(run_id, outdir):
         return
 
     cmd = " ".join(["enaDataGet", "-f fastq", "-d", outdir, run_id,])
-    print(cmd)
-    utils.syscall(cmd)
+    _download(cmd)
 
 
 def _download_sample(sample_id, outdir):
     cmd = " ".join(["enaGroupGet", "-f fastq", "-d", outdir, sample_id,])
-    print(cmd)
-    utils.syscall(cmd)
+    _download(cmd)
 
 
 def _download_run_or_sample(accession, outdir):

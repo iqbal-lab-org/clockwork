@@ -261,7 +261,10 @@ subparser_ena_download = subparsers.add_parser(
     help="Download reads from the ENA",
     usage="clockwork ena_download [options] <data_tsv> <output_dir> <site> <lab> <date> <dataset name>",
     description="Download reads from ENA. Gets fastq files, and makes import spreadsheet for use with the import pipeline",
-    epilog="The data TSV file is one line per sample, and each line needs two columns. Column 1 is the sample name, and can be anything unique within the file. Column 2 must be a comma-separated list of run accessions.",
+    epilog="The data TSV file is one line per sample, and each line needs two columns. Column 1 is the sample name, and"
+           "can be anything unique within the file. Column 2 must be a comma-separated list of run accessions. If there"
+           "is problem downloading a sample, that sample will be skipped. Only samples downloaded successfully appear "
+           "in the import spreadsheet.",
 )
 
 subparser_ena_download.add_argument(
