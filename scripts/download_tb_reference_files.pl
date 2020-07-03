@@ -84,7 +84,7 @@ my %genomes = (
     },
     NTM => {
         fastas => \@ntm_fastas,
-        is_contam => 0,
+        is_contam => 1,
     },
 );
 
