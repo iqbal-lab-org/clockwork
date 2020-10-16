@@ -254,6 +254,12 @@ class TestNextflowQc(unittest.TestCase):
                 "het_snp_het_calls": 0,
                 "het_snp_positions": 983,
                 "het_snp_total_snps": 0,
+                "samtools_positions_with_depth_of_0": 0, #TODO
+                "samtools_positions_with_depth_atleast_2": 0, #TODO
+                "samtools_positions_with_depth_atleast_5": 0, #TODO
+                "samtools_positions_with_depth_atleast_10": 0, #TODO
+                "samtools_positions_with_depth_atleast_20": 0, #TODO
+                "samtools_positions_with_depth_atleast_100": 0, #TODO
             },
         ]
         self.assertEqual(expected_qc_rows, got_qc_rows)

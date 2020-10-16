@@ -1163,11 +1163,16 @@ class Db:
         samtools_stats = samtools_qc.SamtoolsQc.stats_from_report(
             os.path.join(qc_dir, "samtools_qc", "samtools_qc.stats")
         )
-        depth_stats = samtools_qc.SamtoolsQc.depth_stats()
+        depth_stats = samtools_qc.SamtoolsQc.depth_stats(
+             os.path.join(qc_dir, "samtools_qc", "samtools_qc.depths")
+        )
 
-        new_row["samtools_positions_with_depth_over_0"] = depth_stats["over_0"]
-        new_row["samtools_positions_with_depth_over_10"] = depth_stats["over_10"]
-        new_row["samtools_positions_with_depth_over_100"] = depth_stats["over_100"]
+        new_row["samtools_positions_with_depth_of_0"] = depth_stats["eq_0"]
+        new_row["samtools_positions_with_depth_atleast_2"] = depth_stats["atleast_2"]
+        new_row["samtools_positions_with_depth_atleast_5"] = depth_stats["atleast_5"]
+        new_row["samtools_positions_with_depth_atleast_10"] = depth_stats["atleast_10"]
+        new_row["samtools_positions_with_depth_atleast_20"] = depth_stats["atleast_20"]
+        new_row["samtools_positions_with_depth_atleast_100"] = depth_stats["atleast_100"]
 
         fastqc_stats = fastqc.Fastqc.gather_all_stats(os.path.join(qc_dir, "fastqc"))
         assert len(fastqc_stats) == 2

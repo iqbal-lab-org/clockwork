@@ -22,16 +22,39 @@ class SamtoolsQc:
         read_map.map_reads(ref_fasta, reads1, reads2, outfile, markdup=True)
 
     @classmethod
-    def _make_depth_stats(cls, samfile):
-        """TODO either process samfile with pysam or samtools depth and
-        create report for number of positions covered at various thresholds
-        """
-        pass
+    def _make_depth_stats(cls, samfile, outprefix):
+        depth_file = outprefix + ".depths"
+        cmd = " ".join(["samtools depth", "-a", samfile, ">", depth_file])
+        utils.syscall(cmd)
 
     @classmethod
-    def depth_stats(cls):
-        raise NotImplementedError
-        return {"over_0": 0, "over_10": 10, "over_100": 0}
+    def depth_stats(cls, filename):
+        depths = {
+            "eq_0": 0,
+            "atleast_2": 0,
+            "atleast_5": 0,
+            "atleast_10": 0,
+            "atleast_20": 0,
+            "atleast_100": 0,
+        }
+
+        with open(filename) as f:
+            for line in f:
+                _, _, depth = strip().split()
+                depth = int(depth)
+                if depth == 0:
+                    depths["eq_0"] += 1
+                if depth >= 2:
+                    depths["atleast_2"] += 1
+                if depth >= 5:
+                    depths["atleast_5"] += 1
+                if depth >= 10:
+                    depths["atleast_10"] += 1
+                if depth >= 20:
+                    depths["atleast_20"] += 1
+                if depth >= 100:
+                    depths["atleast_100"] += 1
+        return depths
 
     @classmethod
     def _make_stats_and_plots(cls, samfile, ref_fasta, outprefix):
@@ -113,7 +136,7 @@ class SamtoolsQc:
         outprefix = os.path.join(self.outdir, "samtools_qc")
         samfile = os.path.join(self.outdir, "tmp.sam")
         SamtoolsQc._map_reads(self.ref_fasta, self.reads1, self.reads2, samfile)
-        SamtoolsQc._make_depth_stats(samfile)
+        SamtoolsQc._make_depth_stats(samfile, outprefix)
         SamtoolsQc._make_stats_and_plots(samfile, self.ref_fasta, outprefix)
         hsc = het_snp_caller.HetSnpCaller(
             samfile, self.ref_fasta, os.path.join(self.outdir, "het_snps")
