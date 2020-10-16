@@ -16,7 +16,7 @@ setup(
     install_requires=[
         "cluster_vcf_records >= 0.11.1",
         "python-dateutil >= 2.6.1",
-        "openpyxl >= 2.4.7",
+        "openpyxl == 2.5.0",
         "pyfastaq >= 3.14.0",
         "pymysql >= 0.7.11",
         "pysam >= 0.11.2.1",
