@@ -1163,6 +1163,12 @@ class Db:
         samtools_stats = samtools_qc.SamtoolsQc.stats_from_report(
             os.path.join(qc_dir, "samtools_qc", "samtools_qc.stats")
         )
+        depth_stats = samtools_qc.SamtoolsQc.depth_stats()
+
+        new_row["samtools_positions_with_depth_over_0"] = depth_stats["over_0"]
+        new_row["samtools_positions_with_depth_over_10"] = depth_stats["over_10"]
+        new_row["samtools_positions_with_depth_over_100"] = depth_stats["over_100"]
+
         fastqc_stats = fastqc.Fastqc.gather_all_stats(os.path.join(qc_dir, "fastqc"))
         assert len(fastqc_stats) == 2
         new_row = {"seqrep_id": seqrep_id, "pipeline_version": pipeline_version}

@@ -22,6 +22,18 @@ class SamtoolsQc:
         read_map.map_reads(ref_fasta, reads1, reads2, outfile, markdup=True)
 
     @classmethod
+    def _make_depth_stats(cls, samfile):
+        """TODO either process samfile with pysam or samtools depth and
+        create report for number of positions covered at various thresholds
+        """
+        pass
+
+    @classmethod
+    def depth_stats(cls):
+        raise NotImplementedError
+        return {"over_0": 0, "over_10": 10, "over_100": 0}
+
+    @classmethod
     def _make_stats_and_plots(cls, samfile, ref_fasta, outprefix):
         stats_file = outprefix + ".stats"
 
@@ -101,6 +113,7 @@ class SamtoolsQc:
         outprefix = os.path.join(self.outdir, "samtools_qc")
         samfile = os.path.join(self.outdir, "tmp.sam")
         SamtoolsQc._map_reads(self.ref_fasta, self.reads1, self.reads2, samfile)
+        SamtoolsQc._make_depth_stats(samfile)
         SamtoolsQc._make_stats_and_plots(samfile, self.ref_fasta, outprefix)
         hsc = het_snp_caller.HetSnpCaller(
             samfile, self.ref_fasta, os.path.join(self.outdir, "het_snps")
