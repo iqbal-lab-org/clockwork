@@ -40,7 +40,7 @@ class SamtoolsQc:
 
         with open(filename) as f:
             for line in f:
-                _, _, depth = strip().split()
+                _, _, depth = line.rstrip().split("\t")
                 depth = int(depth)
                 if depth == 0:
                     depths["eq_0"] += 1

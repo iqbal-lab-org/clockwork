@@ -55,6 +55,25 @@ class TestSamtoolsQc(unittest.TestCase):
         self.assertEqual(expected_files, got_files)
         shutil.rmtree(tmp_dir)
 
+    def test_make_depth_stats(self):
+        """test _make_depth_stats"""
+        #ref_fasta = os.path.join(data_dir, "ref.fa")
+        sam_file = os.path.join(data_dir, "sam")
+        tmp_dir = "tmp.samtools_qc.make_depth_stats"
+        os.mkdir(tmp_dir)
+        outprefix = os.path.join(tmp_dir, "test")
+        samtools_qc.SamtoolsQc._make_depth_stats(sam_file, outprefix)
+
+        expected_files = [
+            "test.depths",
+        ]
+        expected_files.sort()
+
+        got_files = sorted(list(os.listdir(tmp_dir)))
+        self.assertEqual(expected_files, got_files)
+        shutil.rmtree(tmp_dir)
+
+
     def test_stats_from_report(self):
         """test stats_from_report"""
         stats_file = os.path.join(data_dir, "stats_from_report.txt")
