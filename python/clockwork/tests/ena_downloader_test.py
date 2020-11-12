@@ -14,19 +14,19 @@ class TestEnaDownloader(unittest.TestCase):
     def test_load_data_infile(self):
         """Test _load_data_infile"""
         infile_bad_columns = os.path.join(data_dir, "load_data_infile.bad_columns.tsv")
-        with self.assertRaises(ena_downloader.Error):
+        with self.assertRaises(Exception):
             ena_downloader.EnaDownloader._load_data_infile(infile_bad_columns)
 
         infile_repeat_sample_name = os.path.join(
             data_dir, "load_data_infile.repeat_sample_name.tsv"
         )
-        with self.assertRaises(ena_downloader.Error):
+        with self.assertRaises(Exception):
             ena_downloader.EnaDownloader._load_data_infile(infile_repeat_sample_name)
 
         infile_repeat_accession = os.path.join(
             data_dir, "load_data_infile.repeat_accesion.tsv"
         )
-        with self.assertRaises(ena_downloader.Error):
+        with self.assertRaises(Exception):
             ena_downloader.EnaDownloader._load_data_infile(infile_repeat_accession)
 
         infile_good = os.path.join(data_dir, "load_data_infile.good.tsv")
