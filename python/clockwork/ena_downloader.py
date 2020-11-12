@@ -8,10 +8,6 @@ import sys
 from clockwork import spreadsheet_helper, utils
 
 
-class Error(Exception):
-    pass
-
-
 # https://ena-docs.readthedocs.io/en/latest/submit/general-guide/accessions.html
 run_pattern = re.compile("^[EDS]RR[0-9]{6,}$")
 
@@ -86,16 +82,16 @@ class EnaDownloader:
             for line in f:
                 fields = line.rstrip().split("\t")
                 if len(fields) != 2:
-                    raise Error(
+                    raise Exception(
                         "Expect two columns in each line. Error at this line:\n" + line
                     )
                 if fields[0] in data:
-                    raise Error('Error. Non-unique sample name "' + fields[0] + '"')
+                    raise Exception('Error. Non-unique sample name "' + fields[0] + '"')
                 accessions = set(fields[1].split(","))
                 accessions_seen_already = seen_accessions.intersection(accessions)
                 if len(accessions_seen_already) > 0:
                     accessions_seen_already = sorted(list(accessions_seen_already))
-                    raise Error(
+                    raise Exception(
                         "Error. Non-unique acccession(s): "
                         + ",".join(accessions_seen_already)
                     )
@@ -191,23 +187,23 @@ class EnaDownloader:
 
     @classmethod
     def _ena_run_to_sample_and_instrument_model(cls, run_id):
-        url = "http://www.ebi.ac.uk/ena/data/warehouse/filereport?"
+        wanted_fields = ["sample_accession", "instrument_model", "center_name"]
+        url = "http://www.ebi.ac.uk/ena/portal/api/filereport?"
         data = {
             "accession": run_id,
             "result": "read_run",
-            "download": "txt",
-            "fields": "sample_accession,instrument_model,center_name",
+            "fields": ",".join(wanted_fields),
         }
 
         try:
             r = requests.get(url, data)
         except:
-            raise Error(
+            raise Exception(
                 "Error querying ENA to get sample from run " + run_id + "\n" + r.url
             )
 
         if r.status_code != requests.codes.ok:
-            raise Error(
+            raise Exception(
                 "Error requesting data. Error code: "
                 + str(r.status_code)
                 + "\n"
@@ -217,16 +213,33 @@ class EnaDownloader:
         # rstrip explicitly on newline because the center name can be empty, which
         # means the line ends in a tab character, which we want to keep so that
         # later when splitting on tab we end up with 3 fields, not 2.
+        #
+        # Also, even though we request fields:
+        #    sample_accession,instrument_model,center_name
+        # it also returns the run_accession. This change must have happened
+        # in the last few months (today is 12/11/2020). So let's just look
+        # for the fields we actually want and ignore everything else, so there's
+        # a chance that if they change it again this code will still work.
         lines = r.text.rstrip("\n").split("\n")
-        if (
-            len(lines) != 2
-            or lines[0] != "sample_accession\tinstrument_model\tcenter_name"
-        ):
-            raise Error(
-                "Unexpected format from ENA request " + r.url + "\nGot:" + str(lines)
-            )
+        error_message = f"Unexpected format from ENA request {r.url}\nGot:\n{lines}"
+        if len(lines) != 2:
+            raise Exception(error_message)
 
-        return lines[1].split("\t")
+        field_names = lines[0].split("\t")
+        field_vals = lines[1].split("\t")
+        if len(field_names) != len(field_vals):
+            raise Exception(error_message)
+
+        try:
+            results = dict(zip(field_names, field_vals))
+        except:
+            raise Exception(error_message)
+
+        for field in wanted_fields:
+            if field not in results:
+                raise Exepction(error_message)
+
+        return [results[k] for k in wanted_fields]
 
     @classmethod
     def _write_import_tsv(
