@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.19, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.32, for Linux (x86_64)
 --
 -- Host: localhost    Database: test_db
 -- ------------------------------------------------------
--- Server version	5.7.19-0ubuntu0.17.04.1
+-- Server version	5.7.32-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -66,7 +66,7 @@ CREATE TABLE `Pipeline` (
 
 LOCK TABLES `Pipeline` WRITE;
 /*!40000 ALTER TABLE `Pipeline` DISABLE KEYS */;
-INSERT INTO `Pipeline` VALUES (1,1,NULL,'0.0.1','remove_contam',1,1),(2,2,NULL,'0.0.1','remove_contam',1,1),(3,3,NULL,'0.0.1','remove_contam',1,1),(4,4,NULL,'0.0.1','remove_contam',1,1);
+INSERT INTO `Pipeline` VALUES (1,1,NULL,'0.9.0','remove_contam',1,1),(2,2,NULL,'0.9.0','remove_contam',1,1),(3,3,NULL,'0.9.0','remove_contam',1,1),(4,4,NULL,'0.9.0','remove_contam',1,1);
 /*!40000 ALTER TABLE `Pipeline` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -84,8 +84,8 @@ CREATE TABLE `QC` (
   `fastqc1_adapter_content` text,
   `fastqc1_basic_statistics` text,
   `fastqc1_kmer_content` text,
-  `fastqc1_max_sequence_length` int(11) DEFAULT NULL,
-  `fastqc1_min_sequence_length` int(11) DEFAULT NULL,
+  `fastqc1_max_sequence_length` int(10) unsigned DEFAULT NULL,
+  `fastqc1_min_sequence_length` int(10) unsigned DEFAULT NULL,
   `fastqc1_overrepresented_sequences` text,
   `fastqc1_per_base_n_content` text,
   `fastqc1_per_base_sequence_content` text,
@@ -94,14 +94,14 @@ CREATE TABLE `QC` (
   `fastqc1_per_sequence_quality_scores` text,
   `fastqc1_sequence_duplication_levels` text,
   `fastqc1_sequence_length_distribution` text,
-  `fastqc1_sequences_flagged_as_poor_quality` int(11) DEFAULT NULL,
-  `fastqc1_total_sequences` int(11) DEFAULT NULL,
+  `fastqc1_sequences_flagged_as_poor_quality` int(10) unsigned DEFAULT NULL,
+  `fastqc1_total_sequences` int(10) unsigned DEFAULT NULL,
   `fastqc2_gc` float DEFAULT NULL,
   `fastqc2_adapter_content` text,
   `fastqc2_basic_statistics` text,
   `fastqc2_kmer_content` text,
-  `fastqc2_max_sequence_length` int(11) DEFAULT NULL,
-  `fastqc2_min_sequence_length` int(11) DEFAULT NULL,
+  `fastqc2_max_sequence_length` int(10) unsigned DEFAULT NULL,
+  `fastqc2_min_sequence_length` int(10) unsigned DEFAULT NULL,
   `fastqc2_overrepresented_sequences` text,
   `fastqc2_per_base_n_content` text,
   `fastqc2_per_base_sequence_content` text,
@@ -110,23 +110,29 @@ CREATE TABLE `QC` (
   `fastqc2_per_sequence_quality_scores` text,
   `fastqc2_sequence_duplication_levels` text,
   `fastqc2_sequence_length_distribution` text,
-  `fastqc2_sequences_flagged_as_poor_quality` int(11) DEFAULT NULL,
-  `fastqc2_total_sequences` int(11) DEFAULT NULL,
-  `samtools_raw_total_sequences` int(11) DEFAULT NULL,
-  `samtools_reads_mapped` int(11) DEFAULT NULL,
-  `samtools_reads_duplicated` int(11) DEFAULT NULL,
-  `samtools_bases_mapped_cigar` int(11) DEFAULT NULL,
-  `samtools_bases_trimmed` int(11) DEFAULT NULL,
+  `fastqc2_sequences_flagged_as_poor_quality` int(10) unsigned DEFAULT NULL,
+  `fastqc2_total_sequences` int(10) unsigned DEFAULT NULL,
+  `samtools_raw_total_sequences` int(10) unsigned DEFAULT NULL,
+  `samtools_reads_mapped` int(10) unsigned DEFAULT NULL,
+  `samtools_reads_duplicated` int(10) unsigned DEFAULT NULL,
+  `samtools_bases_mapped_cigar` bigint(20) unsigned DEFAULT NULL,
+  `samtools_bases_trimmed` bigint(20) unsigned DEFAULT NULL,
   `samtools_error_rate` float DEFAULT NULL,
   `samtools_average_quality` float DEFAULT NULL,
   `samtools_insert_size_average` float DEFAULT NULL,
   `samtools_insert_size_standard_deviation` float DEFAULT NULL,
-  `samtools_inward_oriented_pairs` int(11) DEFAULT NULL,
-  `samtools_outward_oriented_pairs` int(11) DEFAULT NULL,
-  `samtools_pairs_with_other_orientation` int(11) DEFAULT NULL,
-  `het_snp_positions` int(11) DEFAULT NULL,
-  `het_snp_total_snps` int(11) DEFAULT NULL,
-  `het_snp_het_calls` int(11) DEFAULT NULL
+  `samtools_inward_oriented_pairs` int(10) unsigned DEFAULT NULL,
+  `samtools_outward_oriented_pairs` int(10) unsigned DEFAULT NULL,
+  `samtools_pairs_with_other_orientation` int(10) unsigned DEFAULT NULL,
+  `het_snp_positions` int(10) unsigned DEFAULT NULL,
+  `het_snp_total_snps` int(10) unsigned DEFAULT NULL,
+  `het_snp_het_calls` int(10) unsigned DEFAULT NULL,
+  `samtools_positions_with_depth_of_0` int(10) unsigned DEFAULT NULL,
+  `samtools_positions_with_depth_atleast_2` int(10) unsigned DEFAULT NULL,
+  `samtools_positions_with_depth_atleast_5` int(10) unsigned DEFAULT NULL,
+  `samtools_positions_with_depth_atleast_10` int(10) unsigned DEFAULT NULL,
+  `samtools_positions_with_depth_atleast_20` int(10) unsigned DEFAULT NULL,
+  `samtools_positions_with_depth_atleast_100` int(10) unsigned DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -148,11 +154,11 @@ DROP TABLE IF EXISTS `Read_counts`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Read_counts` (
   `seqrep_id` int(11) DEFAULT NULL,
-  `original_total` int(11) DEFAULT NULL,
-  `contamination` int(11) DEFAULT NULL,
-  `not_contamination` int(11) DEFAULT NULL,
-  `unmapped` int(11) DEFAULT NULL,
-  `total_after_remove_contam` int(11) DEFAULT NULL
+  `original_total` int(10) unsigned DEFAULT NULL,
+  `contamination` int(10) unsigned DEFAULT NULL,
+  `not_contamination` int(10) unsigned DEFAULT NULL,
+  `unmapped` int(10) unsigned DEFAULT NULL,
+  `total_after_remove_contam` int(10) unsigned DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -162,7 +168,7 @@ CREATE TABLE `Read_counts` (
 
 LOCK TABLES `Read_counts` WRITE;
 /*!40000 ALTER TABLE `Read_counts` DISABLE KEYS */;
-INSERT INTO `Read_counts` VALUES (1,156,12,132,12,144),(2,156,12,132,12,144),(3,156,12,132,12,144),(4,156,12,132,12,144);
+INSERT INTO `Read_counts` VALUES (2,156,12,132,12,144),(4,156,12,132,12,144),(1,156,12,132,12,144),(3,156,12,132,12,144);
 /*!40000 ALTER TABLE `Read_counts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -230,7 +236,7 @@ DROP TABLE IF EXISTS `Seqrep`;
 CREATE TABLE `Seqrep` (
   `seqrep_id` int(11) NOT NULL AUTO_INCREMENT,
   `isolate_id` int(11) DEFAULT NULL,
-  `sequence_replicate_number` int(11) DEFAULT NULL,
+  `sequence_replicate_number` bigint(20) unsigned DEFAULT NULL,
   `original_reads_file_1_md5` text,
   `original_reads_file_2_md5` text,
   `remove_contam_reads_file_1_md5` text,
@@ -252,7 +258,7 @@ CREATE TABLE `Seqrep` (
 
 LOCK TABLES `Seqrep` WRITE;
 /*!40000 ALTER TABLE `Seqrep` DISABLE KEYS */;
-INSERT INTO `Seqrep` VALUES (1,1,43,'a3b22e537be7e1fc03c29df820f65b06','1676bdb60c23159fbaccc6975aed86c4','d9ea5077779c50c82bb9852fe5582cc0','5a1ef78ffdf7a4071a2b91d7c7dde8d5',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(2,2,45,'b08620e2b9231ee66ae56f926d97f097','808911bb28af5c5674bda3b7c71e3a75','0da67fe9d1f3b4313304c87c4dbc635f','4f20723c34220b96995550b0e627cc1f',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(3,3,47,'9981927389818aa1b57d6285ff490d23','5ffb53b040c7491807f963c3a94ad8fb','8e59250c494f103450c55f373a28ed96','e0c29c85b29af66dd810c5b0e741d0b7',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(4,4,49,'9306e04decb6b721daf0ea765d860c3a','fb0f64bf6f7ff2b05d1fb521634b41b4','164f99ffb7f4416b2c60d7491019d65e','fd7a1fdfe55bcc47ffc5cfa0a655b52f',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0);
+INSERT INTO `Seqrep` VALUES (1,1,43,'25c461ececa0271428a283c534497417','ece4028afddf2365477e130d84748c56','2096a6996aef36c5c75c0a9dba3ed3a4','e77815e19d1f81db41888900039cb1b1',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(2,2,45,'e52a403846ab49eeb5cb9573822e1d92','3eef5d5e74295f7951526e23c7de656a','a4b21345c9ee84baeb4ce3b94aa478ca','3dc2b9875ddbf95de24990aa916492e4',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(3,3,47,'bba6cc17819a133c18e8f0c0e099a55e','e72c48a02f49ee98a45682b6e4dfac56','f35b1d902a4fcfd475b4e3e325942683','a00056bcca5a6c99a4448a2354f6245c',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0),(4,4,49,'866e1700d3c7e0d8c37edf8bb8399ffe','58ea111df4310f356460023a5483229f','e615dc85493f66a33594f8ff22292aa7','a69ad444c1b84271101f460c63e43e2b',0,1,'2017-12-25',0,'Illumina HiSeq 2000',NULL,0);
 /*!40000 ALTER TABLE `Seqrep` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -274,7 +280,7 @@ CREATE TABLE `Version` (
 
 LOCK TABLES `Version` WRITE;
 /*!40000 ALTER TABLE `Version` DISABLE KEYS */;
-INSERT INTO `Version` VALUES (1);
+INSERT INTO `Version` VALUES (4);
 /*!40000 ALTER TABLE `Version` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -287,4 +293,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-13 16:08:54
+-- Dump completed on 2020-11-13 14:09:42
