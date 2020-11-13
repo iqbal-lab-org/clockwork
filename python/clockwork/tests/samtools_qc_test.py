@@ -1,4 +1,5 @@
 import unittest
+import subprocess
 import shutil
 import os
 from clockwork import samtools_qc
@@ -31,8 +32,9 @@ class TestSamtoolsQc(unittest.TestCase):
     def test_make_stats_and_plots(self):
         """test _make_stats_and_plots"""
         ref_fasta = os.path.join(data_dir, "ref.fa")
-        sam_file = os.path.join(data_dir, "sam")
+        sam_file = os.path.join(data_dir, "depth_stats.sorted.sam")
         tmp_dir = "tmp.samtools_qc.make_stats_and_plots"
+        subprocess.check_output(f"rm -rf {tmp_dir}", shell=True)
         os.mkdir(tmp_dir)
         outprefix = os.path.join(tmp_dir, "test")
         samtools_qc.SamtoolsQc._make_stats_and_plots(sam_file, ref_fasta, outprefix)
@@ -57,9 +59,9 @@ class TestSamtoolsQc(unittest.TestCase):
 
     def test_make_depth_stats(self):
         """test _make_depth_stats"""
-        #ref_fasta = os.path.join(data_dir, "ref.fa")
-        sam_file = os.path.join(data_dir, "sam")
+        sam_file = os.path.join(data_dir, "depth_stats.sorted.sam")
         tmp_dir = "tmp.samtools_qc.make_depth_stats"
+        subprocess.check_output(f"rm -rf {tmp_dir}", shell=True)
         os.mkdir(tmp_dir)
         outprefix = os.path.join(tmp_dir, "test")
         samtools_qc.SamtoolsQc._make_depth_stats(sam_file, outprefix)
@@ -72,7 +74,6 @@ class TestSamtoolsQc(unittest.TestCase):
         got_files = sorted(list(os.listdir(tmp_dir)))
         self.assertEqual(expected_files, got_files)
         shutil.rmtree(tmp_dir)
-
 
     def test_stats_from_report(self):
         """test stats_from_report"""
@@ -115,6 +116,7 @@ class TestSamtoolsQc(unittest.TestCase):
         reads2 = os.path.join(data_dir, "reads.2.fq")
         ref_fasta = os.path.join(data_dir, "ref.fa")
         tmp_dir = "tmp.test.samtools_qc.run"
+        subprocess.check_output(f"rm -rf {tmp_dir}", shell=True)
         samqc = samtools_qc.SamtoolsQc(ref_fasta, reads1, reads2, tmp_dir)
         samqc.run()
 
@@ -122,6 +124,7 @@ class TestSamtoolsQc(unittest.TestCase):
             "het_snps.het_calls.vcf",
             "het_snps.per_contig.tsv",
             "het_snps.summary.tsv",
+            "samtools_qc.depths",
             "samtools_qc.plot-acgt-cycles.png",
             "samtools_qc.plot-coverage.png",
             "samtools_qc.plot-gc-content.png",
