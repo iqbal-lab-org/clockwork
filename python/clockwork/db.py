@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import tempfile
+import shutil
 from operator import itemgetter
 from clockwork import (
     db_connection,
@@ -558,7 +559,9 @@ class Db:
                 output_dir = iso_dir.pipeline_dir(
                     row["sequence_replicate_number"], "qc", pipeline_version
                 )
-                assert not os.path.exists(output_dir)
+                if os.path.exists(output_dir):
+                    print("Warning:", output_dir, "already exists. Removing.", file=sys.stderr)
+                    shutil.rmtree(output_dir)
                 try:
                     os.makedirs(output_dir)
                 except:
@@ -1163,6 +1166,10 @@ class Db:
         samtools_stats = samtools_qc.SamtoolsQc.stats_from_report(
             os.path.join(qc_dir, "samtools_qc", "samtools_qc.stats")
         )
+        depth_stats = samtools_qc.SamtoolsQc.depth_stats(
+             os.path.join(qc_dir, "samtools_qc", "samtools_qc.depths")
+        )
+
         fastqc_stats = fastqc.Fastqc.gather_all_stats(os.path.join(qc_dir, "fastqc"))
         assert len(fastqc_stats) == 2
         new_row = {"seqrep_id": seqrep_id, "pipeline_version": pipeline_version}
@@ -1196,6 +1203,13 @@ class Db:
         new_row["het_snp_positions"] = het_stats["Positions_used"]
         new_row["het_snp_total_snps"] = het_stats["Total_SNPs"]
         new_row["het_snp_het_calls"] = het_stats["Het_SNPs"]
+        new_row["samtools_positions_with_depth_of_0"] = depth_stats["eq_0"]
+        new_row["samtools_positions_with_depth_atleast_2"] = depth_stats["atleast_2"]
+        new_row["samtools_positions_with_depth_atleast_5"] = depth_stats["atleast_5"]
+        new_row["samtools_positions_with_depth_atleast_10"] = depth_stats["atleast_10"]
+        new_row["samtools_positions_with_depth_atleast_20"] = depth_stats["atleast_20"]
+        new_row["samtools_positions_with_depth_atleast_100"] = depth_stats["atleast_100"]
+
 
         self.add_row_to_table("QC", new_row)
 

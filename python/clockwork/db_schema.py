@@ -1,4 +1,4 @@
-version = 3
+version = 4
 
 tables = {
     "Isolate": [
@@ -67,7 +67,13 @@ tables = {
         ("het_snp_positions", "integer unsigned"),
         ("het_snp_total_snps", "integer unsigned"),
         ("het_snp_het_calls", "integer unsigned"),
-    ],
+        ("samtools_positions_with_depth_of_0", "integer unsigned"),
+        ("samtools_positions_with_depth_atleast_2", "integer unsigned"),
+        ("samtools_positions_with_depth_atleast_5", "integer unsigned"),
+        ("samtools_positions_with_depth_atleast_10", "integer unsigned"),
+        ("samtools_positions_with_depth_atleast_20", "integer unsigned"),
+        ("samtools_positions_with_depth_atleast_100", "integer unsigned"),
+ ],
     "Read_counts": [
         ("seqrep_id", "integer"),
         ("original_total", "integer unsigned"),
