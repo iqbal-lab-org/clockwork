@@ -46,7 +46,7 @@ cd $install_root
 
 #_________________________ bcftools _______________________#
 cd $install_root
-wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
+wget -q https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
 tar xf bcftools-1.3.1.tar.bz2
 cd bcftools-1.3.1/
 make
@@ -56,7 +56,7 @@ cp -s bcftools-1.3.1/bcftools .
 
 #__________________________ BWA____________________________#
 cd $install_root
-wget https://github.com/lh3/bwa/releases/download/v0.7.15/bwa-0.7.15.tar.bz2
+wget -q https://github.com/lh3/bwa/releases/download/v0.7.15/bwa-0.7.15.tar.bz2
 tar xf bwa-0.7.15.tar.bz2
 cd bwa-0.7.15/
 make
@@ -66,20 +66,20 @@ cp -s bwa-0.7.15/bwa .
 
 #_____________________ enaBrowserTools ____________________#
 cd $install_root
-wget https://github.com/enasequence/enaBrowserTools/archive/v1.5.4.tar.gz
+wget -q https://github.com/enasequence/enaBrowserTools/archive/v1.5.4.tar.gz
 tar xf v1.5.4.tar.gz
 
 
 #_________________________ FASTQC ________________________#
 cd $install_root
-wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip
+wget -q https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip
 unzip fastqc_v0.11.5.zip
 chmod 755 FastQC/fastqc
 cp -s FastQC/fastqc .
 
 #_________________________ qctools ________________________#
 cd $install_root
-wget https://github.com/alastair-droop/fqtools/archive/986e451.tar.gz
+wget -q https://github.com/alastair-droop/fqtools/archive/986e451.tar.gz
 tar xf 986e451.tar.gz
 rm 986e451.tar.gz
 cd fqtools-986e451/
@@ -113,11 +113,11 @@ chmod 755 nextflow
 
 #________________________ picard _________________________#
 cd $install_root
-wget https://github.com/broadinstitute/picard/releases/download/2.9.4/picard.jar
+wget -q https://github.com/broadinstitute/picard/releases/download/2.9.4/picard.jar
 
 #________________________ seqtk __________________________#
 cd $install_root
-wget https://github.com/lh3/seqtk/archive/v1.2.tar.gz
+wget -q https://github.com/lh3/seqtk/archive/v1.2.tar.gz
 tar xf v1.2.tar.gz
 rm v1.2.tar.gz
 cd seqtk-1.2/
@@ -127,7 +127,7 @@ cp -s seqtk-1.2/seqtk .
 
 #_________________________ samtools ______________________#
 cd $install_root
-wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
+wget -q https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
 tar xf samtools-1.3.1.tar.bz2
 cd samtools-1.3.1/
 make
@@ -137,7 +137,7 @@ cp -rp samtools-1.3.1/misc/plot-bamstats .
 
 #________________________ stampy _________________________#
 cd $install_root
-wget http://www.well.ox.ac.uk/~gerton/software/Stampy/stampy-latest.tgz
+wget -q http://www.well.ox.ac.uk/~gerton/software/Stampy/stampy-latest.tgz
 tar xf stampy-latest.tgz
 rm stampy-latest.tgz
 cd stampy-*
@@ -147,12 +147,12 @@ cp -s stampy-*/stampy.py .
 
 #________________________ Trimmomatic ____________________#
 cd $install_root
-wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
+wget -q http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
 unzip Trimmomatic-0.36.zip
 
 #________________________ vcftools _______________________#
 cd $install_root
-wget https://github.com/vcftools/vcftools/releases/download/v0.1.15/vcftools-0.1.15.tar.gz
+wget -q https://github.com/vcftools/vcftools/releases/download/v0.1.15/vcftools-0.1.15.tar.gz
 tar xf vcftools-0.1.15.tar.gz
 cd vcftools-0.1.15
 ./configure --prefix $PWD/install
@@ -189,7 +189,7 @@ pip3 install --process-dependency-links wheel git+https://github.com/iqbal-lab-o
 
 #________________________ mummer ____________________________#
 cd $install_root
-wget https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz
+wget -q https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz
 tar xf mummer-4.0.0beta2.tar.gz
 cd mummer-4.0.0beta2
 ./configure
