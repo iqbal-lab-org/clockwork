@@ -208,4 +208,5 @@ cp -s vt-git/vt .
 
 
 #________________________ minos _____________________________#
-pip3 install git+https://github.com/iqbal-lab-org/minos@69d6f91532c4a7b9f3fa65418f39529df8002e7d
+pip3 install 'cluster_vcf_records==0.13.1'
+pip3 install git+https://github.com/iqbal-lab-org/minos@v0.11.0
