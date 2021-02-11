@@ -164,10 +164,12 @@ ln -s src/perl/ .
 
 #________________________ cortex _________________________#
 cd $install_root
-wget --no-check-certificate -O cortex.tar.gz https://github.com/iqbal-lab/cortex/archive/master.tar.gz
-tar xf cortex.tar.gz
-mv cortex-master cortex
-cd cortex/
+git clone https://github.com/iqbal-lab/cortex.git
+cd cortex
+# After this commit, cortex changed to use minimap2 instead
+# of stampy, but also CLI changed. So pin to this commit,
+# otherwise clockwork calls to cortex need changing
+git checkout 3a235272e4e0121be64527f01e73f9e066d378d3
 bash install.sh
 make NUM_COLS=1 cortex_var
 make NUM_COLS=2 cortex_var
