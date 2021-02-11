@@ -20,12 +20,14 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   graphviz \
   openjdk-8-jre \
   libarchive-dev \
+  libcurl4-gnutls-dev \
   liblzma-dev \
   libbz2-dev \
   libhts-dev \
   libncurses5-dev \
   libncursesw5-dev \
   libvcflib-tools \
+  libssl-dev \
   zlib1g-dev \
   pkg-config \
   python-dev \
@@ -36,6 +38,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   r-base-core \
   rsync \
   unzip \
+  tabix \
   wget
 
 # Note: needed to specify java version 8 (openjdk-8-jre) because
