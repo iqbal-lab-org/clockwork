@@ -25,6 +25,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   libhts-dev \
   libncurses5-dev \
   libncursesw5-dev \
+  libvcflib-tools \
   zlib1g-dev \
   pkg-config \
   python-dev \
@@ -194,6 +195,16 @@ cd mummer-4.0.0beta2
 ./configure
 make
 make install
+
+
+#________________________ vt __________________________________#
+cd $install_root
+git clone https://github.com/atks/vt.git vt-git
+cd vt-git
+git checkout 2187ff6347086e38f71bd9f8ca622cd7dcfbb40c
+make
+cd ..
+cp -s vt-git/vt .
 
 
 #________________________ minos _____________________________#
