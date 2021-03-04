@@ -20,11 +20,14 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   graphviz \
   openjdk-8-jre \
   libarchive-dev \
+  libcurl4-gnutls-dev \
   liblzma-dev \
   libbz2-dev \
   libhts-dev \
   libncurses5-dev \
   libncursesw5-dev \
+  libvcflib-tools \
+  libssl-dev \
   zlib1g-dev \
   pkg-config \
   python-dev \
@@ -35,6 +38,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   r-base-core \
   rsync \
   unzip \
+  tabix \
   wget
 
 # Note: needed to specify java version 8 (openjdk-8-jre) because
@@ -45,7 +49,7 @@ cd $install_root
 
 #_________________________ bcftools _______________________#
 cd $install_root
-wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
+wget -q https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
 tar xf bcftools-1.3.1.tar.bz2
 cd bcftools-1.3.1/
 make
@@ -55,7 +59,7 @@ cp -s bcftools-1.3.1/bcftools .
 
 #__________________________ BWA____________________________#
 cd $install_root
-wget https://github.com/lh3/bwa/releases/download/v0.7.15/bwa-0.7.15.tar.bz2
+wget -q https://github.com/lh3/bwa/releases/download/v0.7.15/bwa-0.7.15.tar.bz2
 tar xf bwa-0.7.15.tar.bz2
 cd bwa-0.7.15/
 make
@@ -65,20 +69,20 @@ cp -s bwa-0.7.15/bwa .
 
 #_____________________ enaBrowserTools ____________________#
 cd $install_root
-wget https://github.com/enasequence/enaBrowserTools/archive/v1.5.4.tar.gz
+wget -q https://github.com/enasequence/enaBrowserTools/archive/v1.5.4.tar.gz
 tar xf v1.5.4.tar.gz
 
 
 #_________________________ FASTQC ________________________#
 cd $install_root
-wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip
+wget -q https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip
 unzip fastqc_v0.11.5.zip
 chmod 755 FastQC/fastqc
 cp -s FastQC/fastqc .
 
 #_________________________ qctools ________________________#
 cd $install_root
-wget https://github.com/alastair-droop/fqtools/archive/986e451.tar.gz
+wget -q https://github.com/alastair-droop/fqtools/archive/986e451.tar.gz
 tar xf 986e451.tar.gz
 rm 986e451.tar.gz
 cd fqtools-986e451/
@@ -112,11 +116,11 @@ chmod 755 nextflow
 
 #________________________ picard _________________________#
 cd $install_root
-wget https://github.com/broadinstitute/picard/releases/download/2.9.4/picard.jar
+wget -q https://github.com/broadinstitute/picard/releases/download/2.9.4/picard.jar
 
 #________________________ seqtk __________________________#
 cd $install_root
-wget https://github.com/lh3/seqtk/archive/v1.2.tar.gz
+wget -q https://github.com/lh3/seqtk/archive/v1.2.tar.gz
 tar xf v1.2.tar.gz
 rm v1.2.tar.gz
 cd seqtk-1.2/
@@ -126,7 +130,7 @@ cp -s seqtk-1.2/seqtk .
 
 #_________________________ samtools ______________________#
 cd $install_root
-wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
+wget -q https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
 tar xf samtools-1.3.1.tar.bz2
 cd samtools-1.3.1/
 make
@@ -136,7 +140,7 @@ cp -rp samtools-1.3.1/misc/plot-bamstats .
 
 #________________________ stampy _________________________#
 cd $install_root
-wget http://www.well.ox.ac.uk/~gerton/software/Stampy/stampy-latest.tgz
+wget -q http://www.well.ox.ac.uk/~gerton/software/Stampy/stampy-latest.tgz
 tar xf stampy-latest.tgz
 rm stampy-latest.tgz
 cd stampy-*
@@ -146,12 +150,12 @@ cp -s stampy-*/stampy.py .
 
 #________________________ Trimmomatic ____________________#
 cd $install_root
-wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
+wget -q http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
 unzip Trimmomatic-0.36.zip
 
 #________________________ vcftools _______________________#
 cd $install_root
-wget https://github.com/vcftools/vcftools/releases/download/v0.1.15/vcftools-0.1.15.tar.gz
+wget -q https://github.com/vcftools/vcftools/releases/download/v0.1.15/vcftools-0.1.15.tar.gz
 tar xf vcftools-0.1.15.tar.gz
 cd vcftools-0.1.15
 ./configure --prefix $PWD/install
@@ -164,10 +168,12 @@ ln -s src/perl/ .
 
 #________________________ cortex _________________________#
 cd $install_root
-wget --no-check-certificate -O cortex.tar.gz https://github.com/iqbal-lab/cortex/archive/master.tar.gz
-tar xf cortex.tar.gz
-mv cortex-master cortex
-cd cortex/
+git clone https://github.com/iqbal-lab/cortex.git
+cd cortex
+# After this commit, cortex changed to use minimap2 instead
+# of stampy, but also CLI changed. So pin to this commit,
+# otherwise clockwork calls to cortex need changing
+git checkout 3a235272e4e0121be64527f01e73f9e066d378d3
 bash install.sh
 make NUM_COLS=1 cortex_var
 make NUM_COLS=2 cortex_var
@@ -186,7 +192,7 @@ pip3 install --process-dependency-links wheel git+https://github.com/iqbal-lab-o
 
 #________________________ mummer ____________________________#
 cd $install_root
-wget https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz
+wget -q https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz
 tar xf mummer-4.0.0beta2.tar.gz
 cd mummer-4.0.0beta2
 ./configure
@@ -194,5 +200,22 @@ make
 make install
 
 
+#________________________ vt __________________________________#
+cd $install_root
+git clone https://github.com/atks/vt.git vt-git
+cd vt-git
+git checkout 2187ff6347086e38f71bd9f8ca622cd7dcfbb40c
+make
+cd ..
+cp -s vt-git/vt .
+
+#______________________ ivcmerge ______________________________#
+cd $install_root
+git clone https://github.com/iqbal-lab-org/ivcfmerge.git
+cd ivcfmerge
+git checkout 5819787614a263a9f35fd0c247442f092ab174ff
+pip3 install .
+
 #________________________ minos _____________________________#
-pip3 install git+https://github.com/iqbal-lab-org/minos@69d6f91532c4a7b9f3fa65418f39529df8002e7d
+pip3 install 'cluster_vcf_records==0.13.1'
+pip3 install git+https://github.com/iqbal-lab-org/minos@v0.11.0

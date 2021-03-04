@@ -16,7 +16,6 @@ params.max_forks_map_reads = 100
 params.max_forks_samtools = 100
 params.max_forks_cortex = 100
 params.max_forks_combine_variant_calls = 100
-params.minos_max_read_length = 200
 params.truth_ref = ""
 params.gvcf = false
 
@@ -65,9 +64,6 @@ if (params.help){
                                 Limit number of concurrent samtools jobs [${params.max_forks_samtools}]
           --max_forks_cortex INT
                                 Limit number of concurrent cortex jobs [${params.max_forks_cortex}]
-          --minos_max_read_length INT
-                                --max_read_length passed to 'minos adjudicate'
-                                when combining variant calls [${params.minos_max_read_length}]
           --truth_ref FILENAME
                                 If this option is used, checks the called variants using this
                                 provided FASTA file as the "truth" genome
@@ -328,7 +324,7 @@ process combine_variant_calls_minos {
     """
     rm -rf ${tsv_fields.output_dir}/minos
     cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
-    minos adjudicate --max_read_length ${params.minos_max_read_length} --force --reads rmdup.bam minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf \$cortex_vcf
+    minos adjudicate --force --reads rmdup.bam minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf \$cortex_vcf
     if ${make_gvcf}; then
         samtools mpileup -Iug -f ${tsv_fields.reference_dir}/ref.fa rmdup.bam | bcftools call -c -O v -o gvcf.samtools.vcf
         clockwork gvcf_from_minos_and_samtools ${tsv_fields.reference_dir}/ref.fa minos/final.vcf gvcf.samtools.vcf minos/gvcf.vcf
