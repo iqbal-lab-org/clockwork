@@ -218,4 +218,4 @@ pip3 install .
 
 #________________________ minos _____________________________#
 pip3 install 'cluster_vcf_records==0.13.1'
-pip3 install git+https://github.com/iqbal-lab-org/minos@v0.11.0
+pip3 install git+https://github.com/iqbal-lab-org/minos@v0.12.0
