@@ -30,7 +30,7 @@ ALQA00000000 CP000511 CP003347 BDDI00000000/;
 
 print "------------------- download genomes --------------------\n";
 my %urls = (
-    'human.fa.gz' => 'ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.26_GRCh38.p11/GCA_000001405.26_GRCh38.p11_genomic.fna.gz',
+    'human.fa.gz' => 'ftp.ncbi.nlm.nih.gov/pub/grc/human/GRC/GRCh38.p13_GenBank/GCA_000001405.28_GRCh38.p13_genomic.fna.gz',
     'NC_001802.1.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_001802.1', # HIV-1
     'NC_007605.1.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_007605.1', # EBV wild type
     'NC_009334.1.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_009334.1', # EBV type 2
