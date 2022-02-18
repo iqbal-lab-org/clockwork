@@ -6,10 +6,6 @@ from clockwork import db, isolate_dir
 from clockwork.ena import object_creator, submit_files
 
 
-class Error(Exception):
-    pass
-
-
 def _upload_fastq_file_pair(names_tuple, ini_file, unit_test=None):
     seqrep_id, to_upload_1, uploaded_1, to_upload_2, uploaded_2 = names_tuple
     if unit_test is not None:
@@ -57,9 +53,8 @@ class DatasetSubmitter:
             self.ini_file, "ena_login", "study_prefix"
         )
         if self.study_prefix is None:
-            raise Error(
-                "Error! Must provide study_prefix in [ena_login] section of ini file "
-                + self.ini_file
+            raise Exception(
+                f"Error! Must provide study_prefix in [ena_login] section of ini file {self.ini_file}"
             )
 
     @classmethod
@@ -111,7 +106,7 @@ class DatasetSubmitter:
         try:
             config.read(ini_file)
         except:
-            raise Error("Error reading config file " + ini_file)
+            raise Exception(f"Error reading config file {ini_file}")
 
         if "sequencing_centres" not in config:
             return {}
@@ -124,7 +119,7 @@ class DatasetSubmitter:
         try:
             config.read(ini_file)
         except:
-            raise Error("Error reading config file " + ini_file)
+            raise Exception(f"Error reading config file {ini_file}")
 
         if section not in config:
             return None
@@ -146,7 +141,7 @@ class DatasetSubmitter:
         if len(center_names) == 1:
             center_name = center_names.pop()
         else:
-            raise Error("Error getting unique ena_center_name from: " + str(data_in))
+            raise Exception(f"Error getting unique ena_center_name from: {data_in}")
 
         return number_to_name_dict.get(center_name, center_name)
 
@@ -156,11 +151,8 @@ class DatasetSubmitter:
 
         study_accessions_from_db = {x["ena_study_accession"] for x in data_in}
         if len(study_accessions_from_db) > 1:
-            raise Error(
-                "Error! More than one study ID found for dataset "
-                + self.dataset_name
-                + ". Got: "
-                + str(study_accessions_from_db)
+            raise Exception(
+                f"Error! More than one study ID found for dataset {self.dataset_name}. Got: {study_accessions_from_db}"
             )
 
         if not os.path.exists(self.project_xml):
@@ -187,17 +179,16 @@ class DatasetSubmitter:
             )
             project_creator.run()
             if not project_creator.submission_receipt.successful:
-                raise Error(
-                    "Error submitting project to ena. XML file: " + self.project_xml
+                raise Exception(
+                    f"Error submitting project to ena. XML file: {self.project_xml}"
                 )
 
             ena_study_accession = project_creator.submission_receipt.accessions.get(
                 "PROJECT", None
             )
             if ena_study_accession is None:
-                raise Error(
-                    "Error getting proejct accession from "
-                    + project_creator.receipt_xml
+                raise Exception(
+                    f"Error getting proejct accession from {project_creator.receipt_xml}"
                 )
 
             for row in data_in:
@@ -210,6 +201,8 @@ class DatasetSubmitter:
             self.db.commit()
         else:
             assert len(study_accessions_from_db) == 1
+            if study_accessions_from_db == {None}:
+                raise Execption("Project XML file exists for dataset {self.dataset_name}, but got project accession of 'None' from the database. Cannot continue")
 
     def _submit_sample_objects(self, data_in):
         submitted_samples = {}  # sample id -> ena accession
@@ -394,7 +387,7 @@ class DatasetSubmitter:
             object_xml = iso_dir.xml_submission_file(
                 "run", sequence_replicate=row["sequence_replicate_number"]
             )
-            object_alias = "run." + str(row["isolate_id"])
+            object_alias = "run." + str(row["isolate_id"]) + "." + str(row["sequence_replicate_number"])
             submit_alias = "submit." + object_alias
             center_name = DatasetSubmitter._ena_center_name_from_db_data(
                 data_in, number_to_name_dict=self.centre_number_to_name
