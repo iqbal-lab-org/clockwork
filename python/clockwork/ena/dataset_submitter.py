@@ -91,7 +91,7 @@ class DatasetSubmitter:
         )
         join = "Seqrep JOIN Isolate ON Seqrep.isolate_id = Isolate.isolate_id JOIN Sample ON Isolate.sample_id = Sample.sample_id"
         where = (
-            'submit_to_ena=1 AND import_status=1 AND ena_run_accession IS NULL AND dataset_name="'
+            'remove_contam_reads_file_1_md5 IS NOT NULL AND remove_contam_reads_file_2_md5 IS NOT NULL AND submit_to_ena=1 AND import_status=1 AND ena_run_accession IS NULL AND dataset_name="'
             + self.dataset_name
             + '"'
         )
