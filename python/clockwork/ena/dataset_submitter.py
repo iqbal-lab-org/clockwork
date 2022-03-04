@@ -1,4 +1,5 @@
 import configparser
+import hashlib
 import itertools
 import multiprocessing
 import os
@@ -202,7 +203,7 @@ class DatasetSubmitter:
         else:
             assert len(study_accessions_from_db) == 1
             if study_accessions_from_db == {None}:
-                raise Execption("Project XML file exists for dataset {self.dataset_name}, but got project accession of 'None' from the database. Cannot continue")
+                raise Exception("Project XML file exists for dataset {self.dataset_name}, but got project accession of 'None' from the database. Cannot continue")
 
     def _submit_sample_objects(self, data_in):
         submitted_samples = {}  # sample id -> ena accession
@@ -218,7 +219,8 @@ class DatasetSubmitter:
                     self.pipeline_root, row["sample_id"], row["isolate_id"]
                 )
                 object_xml = iso_dir.xml_submission_file("sample")
-                object_alias = "sample." + str(row["sample_id"])
+                hash_str = hashlib.sha256((row["subject_id"] + row["sample_id_from_lab"]).encode()).hexdigest()[:8]
+                object_alias = "sample." + str(row["sample_id"]) + "." + hash_str
                 submit_alias = "submit." + object_alias
                 center_name = DatasetSubmitter._ena_center_name_from_db_data(
                     data_in, number_to_name_dict=self.centre_number_to_name
@@ -280,7 +282,8 @@ class DatasetSubmitter:
                     self.pipeline_root, row["sample_id"], row["isolate_id"]
                 )
                 object_xml = iso_dir.xml_submission_file("experiment")
-                object_alias = "experiment." + str(row["isolate_id"])
+                hash_str = hashlib.sha256((row["subject_id"] + row["isolate_number_from_lab"]).encode()).hexdigest()[:8]
+                object_alias = "experiment." + str(row["isolate_id"]) + "." + hash_str
                 submit_alias = "submit." + object_alias
                 center_name = DatasetSubmitter._ena_center_name_from_db_data(
                     data_in, number_to_name_dict=self.centre_number_to_name
@@ -387,7 +390,7 @@ class DatasetSubmitter:
             object_xml = iso_dir.xml_submission_file(
                 "run", sequence_replicate=row["sequence_replicate_number"]
             )
-            object_alias = "run." + str(row["isolate_id"]) + "." + str(row["sequence_replicate_number"])
+            object_alias = "run." + str(row["isolate_id"]) + "." + str(row["sequence_replicate_number"]) + "." + row["remove_contam_reads_file_1_md5"]
             submit_alias = "submit." + object_alias
             center_name = DatasetSubmitter._ena_center_name_from_db_data(
                 data_in, number_to_name_dict=self.centre_number_to_name
