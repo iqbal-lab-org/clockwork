@@ -1,3 +1,4 @@
+nextflow.enable.dsl=1
 params.help = false
 params.reads_in1 = ""
 params.reads_in2 = ""

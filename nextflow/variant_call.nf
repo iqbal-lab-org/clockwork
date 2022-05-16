@@ -1,3 +1,4 @@
+nextflow.enable.dsl=1
 params.help = false
 params.ref_id = ""
 params.references_root = ""
