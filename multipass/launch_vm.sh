@@ -23,3 +23,5 @@ multipass exec ${name} sudo bash install_singularity.sh
 multipass transfer ../scripts/install_dependencies.sh ${name}:.
 multipass exec ${name} sudo bash install_dependencies.sh /bioinf-tools
 
+multipass transfer bashrc ${name}:.bashrc_user
+multipass exec ${name} -- bash -c "echo source \$HOME/.bashrc_user >> ~/.bashrc"
