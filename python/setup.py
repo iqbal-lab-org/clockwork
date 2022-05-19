@@ -22,6 +22,7 @@ setup(
         "pysam >= 0.11.2.1",
         "requests >= 2.9.1",
         "xlsxwriter >= 1.0.0",
+        "xmltodict",
     ],
     license="MIT",
     classifiers=[
