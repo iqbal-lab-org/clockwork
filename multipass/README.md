@@ -14,3 +14,5 @@ Log into the machine with:
 ```
 multipass shell VM_NAME
 ```
+
+The VM has your host $HOME directory mounted as $HOME/Home in the VM.

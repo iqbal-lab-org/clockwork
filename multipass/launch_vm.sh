@@ -10,6 +10,7 @@ fi
 name=$1
 
 multipass launch -m 10G -d 20G -n ${name} 20.04
+multipass mount $HOME ${name}:/home/ubuntu/Home
 
 multipass exec ${name} sudo apt-get update
 multipass exec ${name} -- sudo apt-get upgrade -y
