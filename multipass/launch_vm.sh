@@ -7,7 +7,7 @@ then
     exit
 fi
 
-name=$1
+name=$0
 
 multipass launch -m 10G -d 20G -n ${name} 20.04
 
