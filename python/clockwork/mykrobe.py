@@ -65,11 +65,11 @@ def run_predict(
     os.mkdir(outdir)
     os.chdir(outdir)
     json_out = "out.json"
-    command = [mykrobe, "predict", "--format", "json", sample_name, species]
+    command = [mykrobe, "predict", "--format", "json", f"--sample {sample_name}"]
 
     if custom_probe_and_json is not None:
         assert len(custom_probe_and_json) == 2
-        panel = "custom"
+        panel = None # is ignored anyway when `--species custom` is used
         probe_file = os.path.abspath(custom_probe_and_json[0])
         json_file = os.path.abspath(custom_probe_and_json[1])
         assert os.path.exists(probe_file)
@@ -79,7 +79,10 @@ def run_predict(
             probe_file,
             "--custom_variant_to_resistance_json",
             json_file,
+            "--species custom",
         ]
+    else:
+        command += [f"--species {species}"]
 
     if panel is not None:
         command += ["--panel", panel]

@@ -10,9 +10,9 @@ class Error(Exception):
 
 
 def map_reads(
-    ref_fasta, reads1, reads2, outfile, rmdup=False, markdup=False, read_group=None, threads=1
+    ref_fasta, reads1, reads2, outfile, rmdup=False, markdup=False, read_group=None, threads=1, minimap2_preset="sr",
 ):
-    """Maps reads with BWA MEM. By default, outputs SAM file in input read order.
+    """Maps reads with minimap2. By default, outputs SAM file in input read order.
     rmdup=True => remove duplicates using samtools rmdup. Final output is sorted bam
                   Incompatible with markdup=True
     markdup=True => mark duplicates using picard MarkDuplicate. Final output is sorted bam.
@@ -48,13 +48,15 @@ def map_reads(
 
     cmd = " ".join(
         [
-            "bwa mem -M",
+            "minimap2",
+            "-a",
             f"-t {threads}",
+            f"-x {minimap2_preset}",
             R_option,
             ref_fasta,
             reads1,
             reads2,
-            r""" | awk '/^@/ || !and($2,256)' """,  # remove secondary alignments (but keep header)
+            r""" | awk '/^@/ || !(and($2,256) || and($2,2048))' """,  # remove secondary and supplementary alignments (but keep header)
             ">",
             sam_file,
         ]

@@ -44,10 +44,8 @@ class TestReferenceDir(unittest.TestCase):
         self.assertTrue(os.path.exists(ref_dir.ref_fasta))
         self.assertTrue(filecmp.cmp(ref_dir.ref_fasta, expected_ref, shallow=False))
         self.assertTrue(os.path.exists(ref_dir.ref_fai))
-        self.assertTrue(os.path.exists(ref_dir.ref_fasta + ".bwt"))
-        self.assertTrue(os.path.exists(ref_dir.ref_fasta_prefix + ".stampy.sthash"))
-        self.assertTrue(os.path.exists(ref_dir.ref_fasta_prefix + ".stampy.stidx"))
         self.assertTrue(os.path.exists(ref_dir.ref_fasta_prefix + ".k31.ctx"))
+        self.assertTrue(os.path.exists(ref_dir.minimap2_index))
         shutil.rmtree(tmp_root_dir)
 
     def test_add_remove_contam_metadata_tsv(self):

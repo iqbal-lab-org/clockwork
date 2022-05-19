@@ -57,7 +57,7 @@ class TestCortex(unittest.TestCase):
         """test make_run_calls_index_files"""
         ref_fasta = "tmp.cortex.make_run_calls_index_files.ref.fa"
         outprefix = "tmp.cortex.make_run_calls_index_files.out"
-        expected_suffixes = ["k31.ctx", "stampy.sthash", "stampy.stidx"]
+        expected_suffixes = ["k31.ctx"]
         expected_files = [outprefix + "." + x for x in expected_suffixes]
         for filename in expected_files:
             try:

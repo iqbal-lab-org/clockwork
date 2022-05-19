@@ -36,7 +36,7 @@ class HetSnpCaller:
     def _run_mpileup(cls, bam, ref, outfile):
         cmd = " ".join(
             [
-                "samtools mpileup --skip-indels -d 500 -t INFO/AD,INFO/ADF,INFO/ADR -C50 -uv",
+                "bcftools mpileup --skip-indels -d 500 -a INFO/AD,INFO/ADF,INFO/ADR -C50 --output-type v",
                 "-f",
                 ref,
                 bam,

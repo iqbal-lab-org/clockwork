@@ -28,7 +28,7 @@ class TestReadMap(unittest.TestCase):
         self.assertTrue(os.path.exists(tmp_sam))
         tmp_stats = tmp_sam + ".stats"
         expected_stats = os.path.join(data_dir, "flagstat")
-        utils.syscall("samtools flagstat " + tmp_sam + " > " + tmp_stats)
+        utils.syscall("samtools flagstat " + tmp_sam + " | grep -v primary > " + tmp_stats)
         self.assertTrue(filecmp.cmp(expected_stats, tmp_stats, shallow=False))
         found_rg_line = False
         with open(tmp_sam) as f:
@@ -67,7 +67,7 @@ class TestReadMap(unittest.TestCase):
         self.assertTrue(os.path.exists(tmp_sam))
         tmp_stats = tmp_sam + ".stats"
         expected_stats = os.path.join(data_dir, "rmdup.flagstat")
-        utils.syscall("samtools flagstat " + tmp_sam + " > " + tmp_stats)
+        utils.syscall("samtools flagstat " + tmp_sam + " | grep -v primary > " + tmp_stats)
         self.assertTrue(filecmp.cmp(expected_stats, tmp_stats, shallow=False))
         os.unlink(tmp_sam)
         os.unlink(tmp_stats)
@@ -84,7 +84,7 @@ class TestReadMap(unittest.TestCase):
         self.assertTrue(os.path.exists(tmp_sam))
         tmp_stats = tmp_sam + ".stats"
         expected_stats = os.path.join(data_dir, "markdup.flagstat")
-        utils.syscall("samtools flagstat " + tmp_sam + " > " + tmp_stats)
+        utils.syscall("samtools flagstat " + tmp_sam + " | grep -v primary > " + tmp_stats)
         self.assertTrue(filecmp.cmp(expected_stats, tmp_stats, shallow=False))
         os.unlink(tmp_sam)
         os.unlink(tmp_stats)
