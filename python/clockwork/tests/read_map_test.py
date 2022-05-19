@@ -91,7 +91,7 @@ class TestReadMap(unittest.TestCase):
 
     def test_map_reads_markdup_and_rmdup(self):
         """test map_reads rmdup and markdup"""
-        with self.assertRaises(read_map.Error):
+        with self.assertRaises(Exception):
             read_map.map_reads(
                 "ref_fasta", "reads1", "reads2", "sam", rmdup=True, markdup=True
             )

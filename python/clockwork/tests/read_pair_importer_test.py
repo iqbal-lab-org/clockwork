@@ -45,7 +45,7 @@ class TestReadPairImporter(unittest.TestCase):
         self.assertTrue(os.path.exists(tmp_reads_file))
         self.assertEqual(correct_md5, utils.md5(tmp_reads_file))
 
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             read_pair_importer.ReadPairImporter._copy_reads_file(
                 original_reads_file, tmp_reads_file, "wrong md5"
             )
@@ -74,26 +74,26 @@ class TestReadPairImporter(unittest.TestCase):
         read_pair_importer.ReadPairImporter._check_database(self.db, 1, 1, 1)
 
         # wrong isolate_id
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             read_pair_importer.ReadPairImporter._check_database(self.db, 1, 2, 1)
 
         # wrong sequence_replicate_number
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             read_pair_importer.ReadPairImporter._check_database(self.db, 1, 1, 2)
 
         # unknown import status
         self.db.update_row("Seqrep", {"seqrep_id": 1}, {"import_status": 2})
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             read_pair_importer.ReadPairImporter._check_database(self.db, 1, 1, 1)
 
         # already imported (status 1)
         self.db.update_row("Seqrep", {"seqrep_id": 1}, {"import_status": 1})
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             read_pair_importer.ReadPairImporter._check_database(self.db, 1, 1, 1)
 
         # failed import (status -1)
         self.db.update_row("Seqrep", {"seqrep_id": 1}, {"import_status": -1})
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             read_pair_importer.ReadPairImporter._check_database(self.db, 1, 1, 1)
 
         # should be ok
@@ -102,7 +102,7 @@ class TestReadPairImporter(unittest.TestCase):
 
     def test_update_database(self):
         """test _update_database"""
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             read_pair_importer.ReadPairImporter._update_database(self.db, 1, 1, 3)
 
         seqrep_row = {
@@ -124,7 +124,7 @@ class TestReadPairImporter(unittest.TestCase):
         self.db.add_row_to_table("Seqrep", seqrep_row)
         read_pair_importer.ReadPairImporter._check_database(self.db, 1, 1, 3)
 
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             read_pair_importer.ReadPairImporter._update_database(self.db, 1, 1, 4)
 
         read_pair_importer.ReadPairImporter._update_database(
@@ -169,7 +169,7 @@ class TestReadPairImporter(unittest.TestCase):
         )
 
         # no row in Seqrep table
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             importer.run()
 
         seqrep_row = {
@@ -208,7 +208,7 @@ class TestReadPairImporter(unittest.TestCase):
 
         # reads file doesn't exit
         importer.reads_file_1 = "oops"
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             importer.run()
         importer.reads_file_1 = reads1
 
@@ -217,7 +217,7 @@ class TestReadPairImporter(unittest.TestCase):
         iso_dir.make_essential_dirs()
         lock_file = os.path.join(iso_dir.reads_dir, "import_lock." + str(seqrep_id))
         utils.make_empty_file(lock_file)
-        with self.assertRaises(read_pair_importer.Error):
+        with self.assertRaises(Exception):
             importer.run()
         os.unlink(lock_file)
 

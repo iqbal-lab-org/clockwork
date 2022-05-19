@@ -23,7 +23,7 @@ class TestUtils(unittest.TestCase):
 
     def test_syscall_with_error(self):
         """test syscall when there is an error"""
-        with self.assertRaises(utils.Error):
+        with self.assertRaises(Exception):
             utils.syscall("notacommandunlessyoumadeitone")
 
     def test_md5(self):
@@ -39,9 +39,9 @@ class TestUtils(unittest.TestCase):
         prefix = os.path.join(data_dir, "load_md5_from_file.")
         self.assertEqual(expected, utils.load_md5_from_file(prefix + "good_mac"))
         self.assertEqual(expected, utils.load_md5_from_file(prefix + "good_linux"))
-        with self.assertRaises(utils.Error):
+        with self.assertRaises(Exception):
             utils.load_md5_from_file(prefix + "bad_mac")
-        with self.assertRaises(utils.Error):
+        with self.assertRaises(Exception):
             utils.load_md5_from_file(prefix + "bad_linux")
 
     def test_rsync_and_md5(self):

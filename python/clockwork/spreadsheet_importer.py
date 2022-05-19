@@ -7,10 +7,6 @@ from clockwork import db, lock_file, spreadsheet_helper, utils
 from clockwork.common_data import allowed_sequencing_instruments
 
 
-class Error(Exception):
-    pass
-
-
 def create_template_spreadsheet(filename):
     workbook = xlsxwriter.Workbook(filename)
     main_sheet = workbook.add_worksheet("data")
@@ -215,7 +211,7 @@ class SpreadsheetImporter:
             try:
                 os.mkdir(date_directory)
             except:
-                raise Error("Error mkdir " + date_directory)
+                raise Exception("Error mkdir " + date_directory)
 
         xlsx_basename = os.path.basename(xlsx_file)
         existing_xlsx_files = set(os.listdir(date_directory))
@@ -243,12 +239,12 @@ class SpreadsheetImporter:
         )
 
         if len(data_errors) > 0:
-            raise Error("Error(s) importing spreadsheet:\n" + "\n".join(data_errors))
+            raise Exception("Error(s) importing spreadsheet:\n" + "\n".join(data_errors))
 
         try:
             f_out = open(self.jobs_outfile, "w")
         except:
-            raise Error(
+            raise Exception(
                 'Error opening file "' + self.jobs_outfile + '". Cannot continue'
             )
 
@@ -301,6 +297,6 @@ class SpreadsheetImporter:
             self._import_reads_and_update_db()
         except:
             lock.stop()
-            raise Error("Error immport reads or updating database")
+            raise Exception("Error immport reads or updating database")
 
         lock.stop()

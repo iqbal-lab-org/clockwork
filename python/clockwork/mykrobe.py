@@ -4,10 +4,6 @@ import shutil
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
 built_in_panels = {"tb": {"bradley-2015", "walker-2015", "201901"}}
 
 
@@ -18,7 +14,7 @@ def susceptibility_dict_from_json_file(json_file):
 
     sample_names = list(json_data.keys())
     if len(sample_names) != 1:
-        raise Error(
+        raise Exception(
             "Expected one key in json file "
             + json_file
             + ", but got: "
@@ -30,7 +26,7 @@ def susceptibility_dict_from_json_file(json_file):
     try:
         suscept_data = json_data[sample_name]["susceptibility"]
     except:
-        raise Error("Error getting susceptibility from file " + json_file)
+        raise Exception("Error getting susceptibility from file " + json_file)
 
     return suscept_data
 
@@ -120,7 +116,7 @@ class Panel:
         try:
             os.mkdir(self.root_dir)
         except:
-            raise Error("Error mkdir " + self.root_dir)
+            raise Exception("Error mkdir " + self.root_dir)
 
         self.metadata = {
             "species": species,

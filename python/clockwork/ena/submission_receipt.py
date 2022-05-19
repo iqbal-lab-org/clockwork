@@ -1,17 +1,13 @@
 import xml.etree.ElementTree as ET
 
 
-class Error(Exception):
-    pass
-
-
 class SubmissionReceipt:
     def __init__(self, filename):
         self.filename = filename
         self.tree = ET.parse(self.filename)
         self.root = self.tree.getroot()
         if self.root.tag != "RECEIPT":
-            raise Error(
+            raise Exception(
                 'Error! Expected first tag to be "RECEIPT" in XML file "'
                 + self.filename
                 + '"'

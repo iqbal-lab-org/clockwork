@@ -4,10 +4,6 @@ import pyfastaq
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
 # This is a rewrite into Python of the Perl package here:
 # https://github.com/sanger-pathogens/vr-codebase/blob/master/modules/Pathogens/QC/HetSNPCalculator.pm
 
@@ -60,12 +56,12 @@ class HetSnpCaller:
         adf_search = adf_regex.search(fields[7])
         adr_search = adr_regex.search(fields[7])
         if None in [adf_search, adr_search]:
-            raise Error("Error! Must have ADF and ADR in info column: " + vcf_line)
+            raise Exception("Error! Must have ADF and ADR in info column: " + vcf_line)
 
         adf_list = [int(x) for x in adf_search.group("adf").split(",")]
         adr_list = [int(x) for x in adr_search.group("adr").split(",")]
         if len(adf_list) != len(adr_list):
-            raise Error("Mismatch in lengths of ADF and ADR lists: " + vcf_line)
+            raise Exception("Mismatch in lengths of ADF and ADR lists: " + vcf_line)
 
         adf_sum = sum(adf_list)
         if adf_sum < min_total_depth:

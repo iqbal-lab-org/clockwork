@@ -31,7 +31,7 @@ class TestFakeContamRemover(unittest.TestCase):
         symlink_name = os.path.join(tmpdir, "bar")
 
         # foo doesn't exist
-        with self.assertRaises(fake_contam_remover.Error):
+        with self.assertRaises(Exception):
             fake_contam_remover.FakeContamRemover._symlink_reads_file(
                 file_to_symlink, symlink_name
             )
@@ -48,7 +48,7 @@ class TestFakeContamRemover(unittest.TestCase):
         self.assertEqual("foo", os.readlink(symlink_name))
 
         # bar is not in the same directory as foo
-        with self.assertRaises(fake_contam_remover.Error):
+        with self.assertRaises(Exception):
             fake_contam_remover.FakeContamRemover._symlink_reads_file(
                 file_to_symlink, "bar"
             )

@@ -76,7 +76,7 @@ class TestDatasetSubmitter(unittest.TestCase):
         number_to_name_dict['01'] = 'centre1'
         self.assertEqual('centre1', dataset_submitter.DatasetSubmitter._ena_center_name_from_db_data(test_data, number_to_name_dict=number_to_name_dict))
         test_data.append({'ena_center_name': '02', 'spam': 'eggs'})
-        with self.assertRaises(dataset_submitter.Error):
+        with self.assertRaises(Exception):
             dataset_submitter.DatasetSubmitter._ena_center_name_from_db_data(test_data)
 
 

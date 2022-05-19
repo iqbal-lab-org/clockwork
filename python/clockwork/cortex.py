@@ -7,10 +7,6 @@ import pyfastaq
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
 def _replace_sample_name_in_vcf(infile, outfile, sample_name):
     changed_name = False
 
@@ -19,20 +15,20 @@ def _replace_sample_name_in_vcf(infile, outfile, sample_name):
             if line.startswith("#CHROM"):
                 fields = line.rstrip().split("\t")
                 if len(fields) < 10:
-                    raise Error("Not enough columns in header line of VCF: " + line)
+                    raise Exception("Not enough columns in header line of VCF: " + line)
                 elif len(fields) == 10:
                     fields[9] = sample_name
                     print(*fields, sep="\t", file=f_out)
                     changed_name = True
                 else:
-                    raise Error(
+                    raise Exception(
                         "More than one sample in VCF, from header line: " + line
                     )
             else:
                 print(line, end="", file=f_out)
 
     if not changed_name:
-        raise Error("No #CHROM line found in VCF file " + infile)
+        raise Exception("No #CHROM line found in VCF file " + infile)
 
 
 def _find_binaries(
@@ -43,11 +39,11 @@ def _find_binaries(
     cortex_root = os.path.abspath(cortex_root)
 
     if not os.path.isdir(cortex_root):
-        raise Error("Cortex directory " + cortex_root + " not found. Cannot continue")
+        raise Exception("Cortex directory " + cortex_root + " not found. Cannot continue")
 
     cortex_run_calls = os.path.join(cortex_root, "scripts", "calling", "run_calls.pl")
     if not os.path.exists(cortex_run_calls):
-        raise Error(
+        raise Exception(
             "Cortex run_call.pl script "
             + cortex_run_calls
             + " not found. Cannot continue"
@@ -60,7 +56,7 @@ def _find_binaries(
     minimap2 = os.path.abspath(minimap2)
 
     if not os.path.exists(minimap2):
-        raise Error(f"minimap2 {minimap2} not found. Cannot continue")
+        raise Exception(f"minimap2 {minimap2} not found. Cannot continue")
 
     if vcftools_dir is None:
         vcftools_dir = os.environ.get(
@@ -69,7 +65,7 @@ def _find_binaries(
     vcftools_dir = os.path.abspath(vcftools_dir)
 
     if not os.path.isdir(vcftools_dir):
-        raise Error(
+        raise Exception(
             "vcftools directory " + vcftools_dir + " not found. Cannot continue"
         )
 
@@ -92,7 +88,7 @@ def make_run_calls_index_files(
     )
     cortex_var = os.path.join(cortex_root, "bin", "cortex_var_31_c1")
     if not os.path.exists(cortex_var):
-        raise Error("Cortex script not found: " + cortex_var)
+        raise Exception("Cortex script not found: " + cortex_var)
 
     fofn = outprefix + ".fofn"
     with open(fofn, "w") as f:
@@ -142,7 +138,7 @@ class CortexRunCalls:
         self.cortex_log = os.path.join(self.outdir, "cortex.log")
 
         if os.path.exists(self.outdir):
-            raise Error("Error! Output directory already exists " + self.outdir)
+            raise Exception("Error! Output directory already exists " + self.outdir)
 
         self.cortex_outdir = os.path.join(self.outdir, "cortex.out")
         self.cortex_reads_fofn = os.path.join(self.outdir, "cortex.in.fofn")
@@ -167,7 +163,7 @@ class CortexRunCalls:
         try:
             os.mkdir(self.outdir)
         except:
-            raise Error("Error making directory " + self.outdir + ". Cannot continue")
+            raise Exception("Error making directory " + self.outdir + ". Cannot continue")
 
         with open(self.cortex_reads_fofn, "w") as f:
             print(self.reads_infile, file=f)

@@ -3,10 +3,6 @@ import pyfastaq
 from clockwork import contam_remover, cortex, utils
 
 
-class Error(Exception):
-    pass
-
-
 class ReferenceDir:
     def __init__(
         self, pipeline_references_root_dir=None, reference_id=None, directory=None
@@ -25,7 +21,7 @@ class ReferenceDir:
                 self.pipeline_references_root_dir, str(self.reference_id)
             )
         else:
-            raise Error(
+            raise Exception(
                 "Must provide directory, or both of pipeline_references_root_dir,reference_id"
             )
 
@@ -46,12 +42,12 @@ class ReferenceDir:
         # seqtk just hangs if the input file doesn't exist, so check
         # it first instead
         if not os.path.exists(fasta_in):
-            raise Error("File not found: " + fasta_in)
+            raise Exception("File not found: " + fasta_in)
 
         try:
             os.makedirs(self.directory)
         except:
-            raise Error("Error mkdir " + self.directory)
+            raise Exception("Error mkdir " + self.directory)
 
         # ensure sequence lines are 60 nt long, and remove comments from
         # header lines
@@ -74,4 +70,4 @@ class ReferenceDir:
         pyfastaq.tasks.lengths_from_fai(self.ref_fai, names_in_fasta)
         names_in_fasta = set(names_in_fasta.keys())
         if names_in_fasta != names_in_contam:
-            raise Error("Mismtach in names from metadata tsv and fasta files")
+            raise Exception("Mismtach in names from metadata tsv and fasta files")

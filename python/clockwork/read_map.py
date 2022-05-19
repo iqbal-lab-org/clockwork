@@ -5,10 +5,6 @@ import pysam
 from clockwork import fqtools, picard, utils
 
 
-class Error(Exception):
-    pass
-
-
 def map_reads(
     ref_fasta, reads1, reads2, outfile, rmdup=False, markdup=False, read_group=None, threads=1, minimap2_preset="sr",
 ):
@@ -20,12 +16,12 @@ def map_reads(
     read_group should be a tuple (group_id, group_name). If given, these will be
     put into the BAM"""
     if rmdup and markdup:
-        raise Error("Cannot have rmdup and markdup both True." "")
+        raise Exception("Cannot have rmdup and markdup both True.")
 
     try:
         expected_read_count = 2 * fqtools.count([reads1, reads2])
     except:
-        raise Error("Error counting reads in input files " + reads1 + " " + reads2)
+        raise Exception("Error counting reads in input files " + reads1 + " " + reads2)
 
     if rmdup or markdup:
         tmpdir = tempfile.mkdtemp(
@@ -67,13 +63,13 @@ def map_reads(
     except:
         if rmdup or markdup:
             shutil.rmtree(tmpdir)
-        raise Error("Error running BWA MEM: " + cmd)
+        raise Exception("Error running BWA MEM: " + cmd)
 
     number_in_sam = utils.sam_record_count(sam_file)
     if expected_read_count != number_in_sam:
         if rmdup or markdup:
             shutil.rmtree(tmpdir)
-        raise Error(
+        raise Exception(
             "Error! Mismatch in read counts. Expected "
             + str(expected_read_count)
             + " but got "
@@ -89,7 +85,7 @@ def map_reads(
             utils.syscall(cmd)
         except:
             shutil.rmtree(tmpdir)
-            raise Error("Error running samtools sort: " + cmd)
+            raise Exception("Error running samtools sort: " + cmd)
 
         if rmdup:
             cmd = "samtools rmdup " + sorted_bam + " " + outfile
@@ -97,13 +93,13 @@ def map_reads(
                 utils.syscall(cmd)
             except:
                 shutil.rmtree(tmpdir)
-                raise Error("Error running samtools rmdup: " + cmd)
+                raise Exception("Error running samtools rmdup: " + cmd)
         else:
             try:
                 picard.mark_duplicates(sorted_bam, outfile)
             except:
                 shutil.rmtree(tmpdir)
-                raise Error("Error running picard mark_duplicates " + cmd)
+                raise Exception("Error running picard mark_duplicates " + cmd)
 
         shutil.rmtree(tmpdir)
 

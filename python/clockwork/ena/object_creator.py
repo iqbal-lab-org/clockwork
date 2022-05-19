@@ -2,10 +2,6 @@ import os
 from clockwork.ena import submission_receipt, submit_files, xml_create
 
 
-class Error(Exception):
-    pass
-
-
 class ObjectCreator:
     def __init__(
         self,
@@ -36,11 +32,11 @@ class ObjectCreator:
         self.object_type = object_type
         if object_type == "project":
             if project_description is None:
-                raise Error("Must provide project_description for object_type=project")
+                raise Exception("Must provide project_description for object_type=project")
             self.project_description = project_description
         elif object_type == "sample":
             if taxon_id is None:
-                raise Error("Must provide taxon_id for object_type=sample")
+                raise Exception("Must provide taxon_id for object_type=sample")
             self.taxon_id = taxon_id
         elif object_type == "experiment":
             required = [
@@ -51,7 +47,7 @@ class ObjectCreator:
                 instrument,
             ]
             if None in required:
-                raise Error(
+                raise Exception(
                     "Must provide study_accession, sample_accession, library_name, platform, instrument for object_type=experiment. Got: "
                     + ", ".join([str(x) for x in required])
                 )
@@ -63,7 +59,7 @@ class ObjectCreator:
         elif object_type == "run":
             required = [experiment_accession, reads_1, md5_1, reads_2, md5_2]
             if None in required:
-                raise Error(
+                raise Exception(
                     "Must provide experiment_accession, reads_1, md5_1, reads_2, md5_2 for object_type=run. Got: "
                     + ", ".join([str(x) for x in required])
                 )
@@ -73,7 +69,7 @@ class ObjectCreator:
             self.reads_2 = reads_2
             self.md5_2 = md5_2
         else:
-            raise Error(
+            raise Exception(
                 'objct_type "' + object_type + '" not recognised. Cannot continue'
             )
 
@@ -134,7 +130,7 @@ class ObjectCreator:
                 self.md5_2,
             )
         else:
-            raise Error(
+            raise Exception(
                 'objct_type "' + self.object_type + '" not recognised. Cannot continue'
             )
 

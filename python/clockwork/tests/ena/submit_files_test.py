@@ -35,6 +35,6 @@ class TestSubmitFiles(unittest.TestCase):
 
         for x in ['no_ena_login', 'no_user', 'no_password']:
             filename = os.path.join(data_dir, 'conf.bad.' + x + '.ini')
-            with self.assertRaises(submit_files.Error):
+            with self.assertRaises(Exception):
                 submit_files.parse_config_file(filename)
 

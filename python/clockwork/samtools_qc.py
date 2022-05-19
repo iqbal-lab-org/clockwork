@@ -3,10 +3,6 @@ import glob
 from clockwork import het_snp_caller, read_map, utils
 
 
-class Error(Exception):
-    pass
-
-
 class SamtoolsQc:
     def __init__(self, ref_fasta, reads1, reads2, outdir):
         self.ref_fasta = os.path.abspath(ref_fasta)
@@ -15,7 +11,7 @@ class SamtoolsQc:
         self.outdir = os.path.abspath(outdir)
 
         if os.path.exists(self.outdir):
-            raise Error("Error! Output directory already exists " + self.outdir)
+            raise Exception("Error! Output directory already exists " + self.outdir)
 
     @classmethod
     def _map_reads(cls, ref_fasta, reads1, reads2, outfile):
@@ -96,7 +92,7 @@ class SamtoolsQc:
         try:
             os.mkdir(self.outdir)
         except:
-            raise Error("Error making output directory " + self.outdir)
+            raise Exception("Error making output directory " + self.outdir)
 
         outprefix = os.path.join(self.outdir, "samtools_qc")
         samfile = os.path.join(self.outdir, "tmp.sam")

@@ -6,10 +6,6 @@ import pyfastaq
 from clockwork import db, isolate_dir
 
 
-class Error(Exception):
-    pass
-
-
 mysql_seqrep_isolate_sample_join = "Seqrep join Isolate on Seqrep.isolate_id = Isolate.isolate_id join Sample on Isolate.sample_id = Sample.sample_id"
 
 
@@ -25,7 +21,7 @@ class DataFinder:
         self.db = db.Db(db_ini_file)
         self.pipeline_root = os.path.abspath(pipeline_root)
         if not os.path.exists(self.pipeline_root):
-            raise Error(
+            raise Exception(
                 'Pipeline root directory "'
                 + self.pipeline_root
                 + '" not found. Cannot continue'

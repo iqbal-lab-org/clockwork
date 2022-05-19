@@ -2,10 +2,6 @@ import configparser
 import pymysql
 
 
-class Error(Exception):
-    pass
-
-
 class DbConnection:
     def __init__(self, ini_file, create=False, destroy=False, must_exist=False):
         login_info = DbConnection._parse_config_file(ini_file)
@@ -20,7 +16,7 @@ class DbConnection:
                 port=login_info["port"],
             )
         except:
-            raise Error("Error connecting to database")
+            raise Exception("Error connecting to database")
 
         if destroy:
             if must_exist:
@@ -48,13 +44,13 @@ class DbConnection:
         try:
             config.read(ini_file)
         except:
-            raise Error("Error! [db_login] section not in file " + ini_file)
+            raise Exception("Error! [db_login] section not in file " + ini_file)
 
         expected_keys = {"user", "password", "host", "db"}
         got_keys = set(config["db_login"].keys())
         missing_keys = expected_keys.difference(got_keys)
         if len(missing_keys):
-            raise Error(
+            raise Exception(
                 "Error! Missing these keys from [db_login] section: "
                 + ",".join(list(missing_keys))
             )

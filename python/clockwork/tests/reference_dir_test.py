@@ -11,9 +11,9 @@ data_dir = os.path.join(modules_dir, "tests", "data", "reference_dir")
 class TestReferenceDir(unittest.TestCase):
     def test_init(self):
         """test __init__"""
-        with self.assertRaises(reference_dir.Error):
+        with self.assertRaises(Exception):
             refdir = reference_dir.ReferenceDir(pipeline_references_root_dir="foo")
-        with self.assertRaises(reference_dir.Error):
+        with self.assertRaises(Exception):
             refdir = reference_dir.ReferenceDir(reference_id=42)
 
         refdir = reference_dir.ReferenceDir(
@@ -34,7 +34,7 @@ class TestReferenceDir(unittest.TestCase):
         ref_dir = reference_dir.ReferenceDir(
             pipeline_references_root_dir=tmp_root_dir, reference_id=42
         )
-        with self.assertRaises(reference_dir.Error):
+        with self.assertRaises(Exception):
             ref_dir.make_index_files(
                 "file_does_not_exist", False, True, cortex_mem_height=17
             )
@@ -69,7 +69,7 @@ class TestReferenceDir(unittest.TestCase):
         ]
 
         for bad_file in bad_files:
-            with self.assertRaises(reference_dir.Error):
+            with self.assertRaises(Exception):
                 ref_dir.add_remove_contam_metadata_tsv(bad_file)
 
         ref_dir.add_remove_contam_metadata_tsv(

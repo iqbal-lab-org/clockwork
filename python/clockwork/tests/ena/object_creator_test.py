@@ -10,22 +10,22 @@ data_dir = os.path.normpath(os.path.join(modules_dir, 'tests', 'data', 'ena', 'o
 class TestObjectCreator(unittest.TestCase):
     def test_init_bad_parameters(self):
         '''test init with bad parameters'''
-        with self.assertRaises(object_creator.Error):
+        with self.assertRaises(Exception):
             object_creator.ObjectCreator('ini_file', 'not_a_project', 'obj.xml', 'obj_alias', 'sub_alias', 'center 42', 'title')
 
-        with self.assertRaises(object_creator.Error):
+        with self.assertRaises(Exception):
             # missing project_description
             object_creator.ObjectCreator('ini_file', 'project', 'obj.xml', 'obj_alias', 'sub_alias', 'center 42', 'title')
 
-        with self.assertRaises(object_creator.Error):
+        with self.assertRaises(Exception):
             # missing taxon_id
             object_creator.ObjectCreator('ini_file', 'sample', 'obj.xml', 'obj_alias', 'sub_alias', 'center 42', 'title')
 
-        with self.assertRaises(object_creator.Error):
+        with self.assertRaises(Exception):
             # missing study_accession, sample_accession, library_name, platform, instrument
             object_creator.ObjectCreator('ini_file', 'experiment', 'obj.xml', 'obj_alias', 'sub_alias', 'center 42', 'title')
 
-        with self.assertRaises(object_creator.Error):
+        with self.assertRaises(Exception):
             # missing experiment_accession, reads_1, md5_1, reads_2, md5_2
             object_creator.ObjectCreator('ini_file', 'run', 'obj.xml', 'obj_alias', 'sub_alias', 'center 42', 'title')
 

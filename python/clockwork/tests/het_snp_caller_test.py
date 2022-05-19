@@ -81,7 +81,7 @@ class TestHetSnpCaller(unittest.TestCase):
             ),
         )
 
-        with self.assertRaises(het_snp_caller.Error):
+        with self.assertRaises(Exception):
             het_snp_caller.HetSnpCaller._vcf_line_is_snp_and_or_het(
                 "chrom1\t42\t.\tT\tC,<*>\t0\t.\tDP=54;ADF=1,22,0;ADR=1,17,2,0;AD=39,15,0;I16=22,17,7,8,1421,51911,551,20255,1928,95376,675,30457,730,16036,289,6283;\tPL\t214,0,255,255,255,255",
                 4,
@@ -89,7 +89,7 @@ class TestHetSnpCaller(unittest.TestCase):
                 0.9,
             )
 
-        with self.assertRaises(het_snp_caller.Error):
+        with self.assertRaises(Exception):
             het_snp_caller.HetSnpCaller._vcf_line_is_snp_and_or_het(
                 "chrom1\t42\t.\tT\tC,<*>\t0\t.\tDP=54;ADR=1,2,0;AD=39,15,0;I16=22,17,7,8,1421,51911,551,20255,1928,95376,675,30457,730,16036,289,6283;\tPL\t214,0,255,255,255,255",
                 4,
@@ -97,7 +97,7 @@ class TestHetSnpCaller(unittest.TestCase):
                 0.9,
             )
 
-        with self.assertRaises(het_snp_caller.Error):
+        with self.assertRaises(Exception):
             het_snp_caller.HetSnpCaller._vcf_line_is_snp_and_or_het(
                 "chrom1\t42\t.\tT\tC,<*>\t0\t.\tDP=54;ADF=1,2,0;AD=39,15,0;I16=22,17,7,8,1421,51911,551,20255,1928,95376,675,30457,730,16036,289,6283;\tPL\t214,0,255,255,255,255",
                 4,

@@ -4,10 +4,6 @@ import pyfastaq
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
 class ContamRemover:
     """Takes a BAM file in read name order (ie has not been sorted by reference).
        The reference should have sequence(s) that we want, and the rest are assumed to
@@ -70,14 +66,14 @@ class ContamRemover:
                 try:
                     group, is_contam, *names = line.rstrip().split("\t")
                 except:
-                    raise Error("Error parsing line:\n" + line)
+                    raise Exception("Error parsing line:\n" + line)
 
                 is_contam = {"0": False, "1": True}[is_contam]
                 if (
                     group in data_by_group
                     and data_by_group[group]["contam"] != is_contam
                 ):
-                    raise Error(
+                    raise Exception(
                         'Error! is_contam for one group must always be the same (column 2). Check group "'
                         + group
                         + '"'
@@ -89,7 +85,7 @@ class ContamRemover:
 
                 for name in names:
                     if name in sequence_is_contam:
-                        raise Error('Error! Duplicate sequence name "' + name + '"')
+                        raise Exception('Error! Duplicate sequence name "' + name + '"')
                     sequence_is_contam[name] = is_contam
 
         return data_by_group, sequence_is_contam
@@ -104,7 +100,7 @@ class ContamRemover:
         elif sam.is_read2:
             name += "/2"
         else:
-            raise Error(
+            raise Exception(
                 "Read "
                 + name
                 + " must be first or second of pair according to flag. Cannot continue"
@@ -217,7 +213,7 @@ class ContamRemover:
             pyfastaq.utils.close(filehandle)
 
         if previous_sam is not None:
-            raise Error(
+            raise Exception(
                 "Odd number of sequences in input BAM. Expected paired reads only."
             )
 
