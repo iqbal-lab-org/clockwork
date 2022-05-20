@@ -11,9 +11,14 @@ apt-get install -y software-properties-common
 apt-add-repository universe
 apt-add-repository multiverse
 apt-get update
-apt-get upgrade
-echo "__________________ R version __________________________"
-R --version
+apt-get upgrade -y
+
+apt-get install -y mysql-server
+service mysql start
+mysql -e "CREATE USER 'test_user'@'localhost' IDENTIFIED BY 'test_password'"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'test_user'@'localhost'"
+mysql -e "FLUSH PRIVILEGES"
+
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
   automake \
   build-essential \
@@ -38,6 +43,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   python3-dev \
   python3-pip \
   python3-setuptools \
+  r-base-core \
   rsync \
   unzip \
   tabix \
