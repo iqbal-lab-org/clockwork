@@ -34,7 +34,7 @@ class TestVarCallOneSamplePipeline(unittest.TestCase):
         ref_dir = reference_dir.ReferenceDir(
             directory=os.path.join(root_outdir, "ref_dir")
         )
-        ref_dir.make_index_files(ref_fa, False, True)
+        ref_dir.make_index_files(ref_fa, False, True, cortex_mem_height=21)
         var_call_out = os.path.join(root_outdir, "varcall")
         var_call_one_sample_pipeline.run(
             [reads1],
@@ -44,6 +44,7 @@ class TestVarCallOneSamplePipeline(unittest.TestCase):
             sample_name="test_sample",
             debug=False,
             keep_bam=True,
+            cortex_mem_height=21,
         )
 
         got_files = sorted(list(os.listdir(var_call_out)))
