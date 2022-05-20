@@ -42,6 +42,11 @@ def map_reads(
         + "'"
     )
 
+    # If we're using a reference in a directory made by clockwork reference_prepare,
+    # then there will a minimap2 index file already there we can use.
+    minimap2_index = ref_fasta + ".minimap2_idx"
+    ref_file = minimap2_index if os.path.exists(minimap2_index) else ref_fasta
+
     cmd = " ".join(
         [
             "minimap2",
@@ -49,7 +54,7 @@ def map_reads(
             f"-t {threads}",
             f"-x {minimap2_preset}",
             R_option,
-            ref_fasta,
+            ref_file,
             reads1,
             reads2,
             r""" | awk '/^@/ || !(and($2,256) || and($2,2048))' """,  # remove secondary and supplementary alignments (but keep header)
