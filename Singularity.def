@@ -8,7 +8,7 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
 
 %setup
     mkdir $SINGULARITY_ROOTFS/clockwork
-    rsync -a ../python ../nextflow ../scripts $SINGULARITY_ROOTFS/clockwork/
+    rsync -a python nextflow scripts $SINGULARITY_ROOTFS/clockwork/
 
 %post
     #_____________________ setup $PATH _______________________#
