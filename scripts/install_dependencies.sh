@@ -10,6 +10,7 @@ apt-get update
 apt-get install -y software-properties-common
 apt-add-repository universe
 apt-get update
+apt-get install -y r-cran-plyr r-cran-ggplot2 r-cran-gridbase
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
   automake \
   build-essential \
