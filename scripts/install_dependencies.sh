@@ -12,7 +12,8 @@ apt-add-repository universe
 apt-add-repository multiverse
 apt-get update
 apt-get upgrade
-apt-get install -y r-cran-plyr r-cran-ggplot2 r-cran-gridbase
+echo "__________________ R version __________________________"
+R --version
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
   automake \
   build-essential \
@@ -37,7 +38,6 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   python3-dev \
   python3-pip \
   python3-setuptools \
-  r-base-core \
   rsync \
   unzip \
   tabix \
