@@ -27,7 +27,6 @@ jobs:
         mysql-version: '8.0'
         user: test_user
         password: test_password
-      run: mysql -uroot -h127.0.0.1 -e 'SELECT version()'
 
 
     - name: Set up Go 1.16
