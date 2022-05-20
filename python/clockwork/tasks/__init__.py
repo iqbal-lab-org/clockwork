@@ -29,6 +29,7 @@ __all__ = [
     "trim_reads",
     "validate_spreadsheet",
     "variant_call_make_jobs_tsv",
+    "variant_call_one_sample",
     "version",
 ]
 
