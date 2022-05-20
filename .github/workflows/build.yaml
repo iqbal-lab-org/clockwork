@@ -20,15 +20,6 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     steps:
-
-    - name: Set up mysql
-      uses: shogo82148/actions-setup-mysql@v1
-      with:
-        mysql-version: '8.0'
-        user: test_user
-        password: test_password
-
-
     - name: Set up Go 1.16
       uses: actions/setup-go@v1
       with:
