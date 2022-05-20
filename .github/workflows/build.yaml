@@ -22,7 +22,6 @@ jobs:
     steps:
 
     - name: Set up mysql
-      uses: actions/checkout@v3
       uses: shogo82148/actions-setup-mysql@v1
       with:
         mysql-version: '8.0'
