@@ -256,7 +256,7 @@ process call_vars_samtools {
     set(val(tsv_fields), file("rmdup.bam")) into combine_variant_calls_channel_from_samtools
 
     """
-    samtools mpileup -ugf ${tsv_fields.reference_dir}/ref.fa "rmdup.bam" | bcftools call -vm -O v -o samtools.vcf
+    bcftools mpileup --output-type u -f ${tsv_fields.reference_dir}/ref.fa "rmdup.bam" | bcftools call -vm -O v -o samtools.vcf
     rm -rf ${tsv_fields.output_dir}/samtools/
     mkdir -p ${tsv_fields.output_dir}/samtools/
     samtools index rmdup.bam
@@ -327,7 +327,7 @@ process combine_variant_calls_minos {
     cortex_vcf=\$(find ${tsv_fields.output_dir}/cortex/cortex.out/vcfs/ -name "*FINAL*raw.vcf")
     minos adjudicate --force --reads rmdup.bam minos ${tsv_fields.reference_dir}/ref.fa ${tsv_fields.output_dir}/samtools/samtools.vcf \$cortex_vcf
     if ${make_gvcf}; then
-        samtools mpileup -Iug -f ${tsv_fields.reference_dir}/ref.fa rmdup.bam | bcftools call -c -O v -o gvcf.samtools.vcf
+        bcftools mpileup -I --output-type u -f ${tsv_fields.reference_dir}/ref.fa rmdup.bam | bcftools call -c -O v -o gvcf.samtools.vcf
         clockwork gvcf_from_minos_and_samtools ${tsv_fields.reference_dir}/ref.fa minos/final.vcf gvcf.samtools.vcf minos/gvcf.vcf
         rm gvcf.samtools.vcf
         clockwork gvcf_to_fasta minos/gvcf.vcf minos/gvcf.fasta

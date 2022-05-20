@@ -1,10 +1,6 @@
 import os
 
 
-class Error(Exception):
-    pass
-
-
 MAX_SAMPLE_ID = 99999999
 
 
@@ -47,7 +43,7 @@ class IsolateDir:
             except FileExistsError:
                 pass
             except:
-                raise Error("Error making " + name + " directory: " + directory)
+                raise Exception("Error making " + name + " directory: " + directory)
 
     def contamination_counts_filename(self, sequence_replicate):
         return os.path.join(
@@ -57,12 +53,12 @@ class IsolateDir:
 
     def reads_filename(self, reads_type, sequence_replicate, one_or_two):
         if reads_type not in {"original", "remove_contam", "contam"}:
-            raise Error(
+            raise Exception(
                 'Error! Reads type "' + reads_type + '" not recognised. Cannot continue'
             )
 
         if one_or_two not in {1, 2}:
-            raise Error("Error! Read index must be 1 or 2, but got: " + str(one_or_two))
+            raise Exception("Error! Read index must be 1 or 2, but got: " + str(one_or_two))
 
         return os.path.join(
             self.reads_dir,
@@ -94,7 +90,7 @@ class IsolateDir:
             return os.path.join(self.isolate_dir, "ena_experiment_submission.xml")
         elif xml_type == "run":
             if sequence_replicate is None:
-                raise Error('Must provide sequence_replicate for xml_type "run"')
+                raise Exception('Must provide sequence_replicate for xml_type "run"')
             return os.path.join(
                 self.reads_dir,
                 "reads.remove_contam."
@@ -102,4 +98,4 @@ class IsolateDir:
                 + ".ena_run_submission.xml",
             )
         else:
-            raise Error('xml_type "' + xml_type + '" not recognised. Cannot continue')
+            raise Exception('xml_type "' + xml_type + '" not recognised. Cannot continue')

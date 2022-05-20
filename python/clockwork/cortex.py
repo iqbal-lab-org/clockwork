@@ -7,10 +7,6 @@ import pyfastaq
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
 def _replace_sample_name_in_vcf(infile, outfile, sample_name):
     changed_name = False
 
@@ -19,48 +15,48 @@ def _replace_sample_name_in_vcf(infile, outfile, sample_name):
             if line.startswith("#CHROM"):
                 fields = line.rstrip().split("\t")
                 if len(fields) < 10:
-                    raise Error("Not enough columns in header line of VCF: " + line)
+                    raise Exception("Not enough columns in header line of VCF: " + line)
                 elif len(fields) == 10:
                     fields[9] = sample_name
                     print(*fields, sep="\t", file=f_out)
                     changed_name = True
                 else:
-                    raise Error(
+                    raise Exception(
                         "More than one sample in VCF, from header line: " + line
                     )
             else:
                 print(line, end="", file=f_out)
 
     if not changed_name:
-        raise Error("No #CHROM line found in VCF file " + infile)
+        raise Exception("No #CHROM line found in VCF file " + infile)
 
 
 def _find_binaries(
-    cortex_root=None, stampy_script=None, vcftools_dir=None, mccortex=None
+    cortex_root=None, minimap2=None, vcftools_dir=None, mccortex=None
 ):
     if cortex_root is None:
         cortex_root = os.environ.get("CLOCKWORK_CORTEX_DIR", "/bioinf-tools/cortex")
     cortex_root = os.path.abspath(cortex_root)
 
     if not os.path.isdir(cortex_root):
-        raise Error("Cortex directory " + cortex_root + " not found. Cannot continue")
+        raise Exception("Cortex directory " + cortex_root + " not found. Cannot continue")
 
     cortex_run_calls = os.path.join(cortex_root, "scripts", "calling", "run_calls.pl")
     if not os.path.exists(cortex_run_calls):
-        raise Error(
+        raise Exception(
             "Cortex run_call.pl script "
             + cortex_run_calls
             + " not found. Cannot continue"
         )
 
-    if stampy_script is None:
-        stampy_script = os.environ.get(
-            "CLOCKWORK_STAMPY_SCRIPT", "/bioinf-tools/stampy-1.0.32/stampy.py"
+    if minimap2 is None:
+        minimap2 = os.environ.get(
+            "CLOCKWORK_MINIMAP2", "/bioinf-tools/minimap2"
         )
-    stampy_script = os.path.abspath(stampy_script)
+    minimap2 = os.path.abspath(minimap2)
 
-    if not os.path.exists(stampy_script):
-        raise Error("Stampy script " + stampy_script + " not found. Cannot contine")
+    if not os.path.exists(minimap2):
+        raise Exception(f"minimap2 {minimap2} not found. Cannot continue")
 
     if vcftools_dir is None:
         vcftools_dir = os.environ.get(
@@ -69,7 +65,7 @@ def _find_binaries(
     vcftools_dir = os.path.abspath(vcftools_dir)
 
     if not os.path.isdir(vcftools_dir):
-        raise Error(
+        raise Exception(
             "vcftools directory " + vcftools_dir + " not found. Cannot continue"
         )
 
@@ -77,23 +73,22 @@ def _find_binaries(
         mccortex = os.environ.get("CLOCKWORK_MCCORTEX", "/bioinf-tools/mccortex31")
     mccortex = os.path.abspath(mccortex)
 
-    return cortex_root, cortex_run_calls, stampy_script, vcftools_dir, mccortex
+    return cortex_root, cortex_run_calls, minimap2, vcftools_dir, mccortex
 
 
 def make_run_calls_index_files(
     ref_fasta,
     outprefix,
     cortex_root=None,
-    stampy_script=None,
     vcftools_dir=None,
     mem_height=22,
 ):
-    cortex_root, cortex_run_calls, stampy_script, vcftools_dir, mccortex = _find_binaries(
-        cortex_root=cortex_root, stampy_script=stampy_script, vcftools_dir=vcftools_dir
+    cortex_root, cortex_run_calls, minimap2, vcftools_dir, mccortex = _find_binaries(
+        cortex_root=cortex_root, minimap2=None, vcftools_dir=vcftools_dir
     )
     cortex_var = os.path.join(cortex_root, "bin", "cortex_var_31_c1")
     if not os.path.exists(cortex_var):
-        raise Error("Cortex script not found: " + cortex_var)
+        raise Exception("Cortex script not found: " + cortex_var)
 
     fofn = outprefix + ".fofn"
     with open(fofn, "w") as f:
@@ -119,14 +114,6 @@ def make_run_calls_index_files(
 
     os.unlink(fofn)
 
-    utils.syscall(" ".join([stampy_script, "-G", outprefix + ".stampy", ref_fasta]))
-
-    utils.syscall(
-        " ".join(
-            [stampy_script, "-g", outprefix + ".stampy", "-H", outprefix + ".stampy"]
-        )
-    )
-
 
 class CortexRunCalls:
     def __init__(
@@ -136,7 +123,7 @@ class CortexRunCalls:
         outdir,
         sample_name,
         cortex_root=None,
-        stampy_script=None,
+        minimap2=None,
         vcftools_dir=None,
         mccortex=None,
         mem_height=22,
@@ -146,20 +133,20 @@ class CortexRunCalls:
         self.outdir = os.path.abspath(outdir)
         self.sample_name = sample_name
         self.cortex_root = cortex_root
-        self.stampy_script = stampy_script
+        self.minimap2 = minimap2
         self.vcftools_dir = vcftools_dir
         self.cortex_log = os.path.join(self.outdir, "cortex.log")
 
         if os.path.exists(self.outdir):
-            raise Error("Error! Output directory already exists " + self.outdir)
+            raise Exception("Error! Output directory already exists " + self.outdir)
 
         self.cortex_outdir = os.path.join(self.outdir, "cortex.out")
         self.cortex_reads_fofn = os.path.join(self.outdir, "cortex.in.fofn")
         self.cortex_reads_index = os.path.join(self.outdir, "cortex.in.index")
         self.cortex_ref_fofn = os.path.join(self.outdir, "cortex.in.index_ref.fofn")
-        self.cortex_root, self.cortex_run_calls, self.stampy_script, self.vcftools_dir, self.mccortex = _find_binaries(
+        self.cortex_root, self.cortex_run_calls, self.minimap2, self.vcftools_dir, self.mccortex = _find_binaries(
             cortex_root=cortex_root,
-            stampy_script=stampy_script,
+            minimap2=minimap2,
             vcftools_dir=vcftools_dir,
             mccortex=mccortex,
         )
@@ -176,7 +163,7 @@ class CortexRunCalls:
         try:
             os.mkdir(self.outdir)
         except:
-            raise Error("Error making directory " + self.outdir + ". Cannot continue")
+            raise Exception("Error making directory " + self.outdir + ". Cannot continue")
 
         with open(self.cortex_reads_fofn, "w") as f:
             print(self.reads_infile, file=f)
@@ -272,7 +259,7 @@ class CortexRunCalls:
         )
         utils.syscall(command)
 
-    def run(self):
+    def run(self, run_mccortex_view_kmers=True):
         self._make_input_files()
         ref_fai = os.path.join(self.ref_dir, "ref.fa.fai")
         genome_size = pyfastaq.tasks.stats_from_fai(ref_fai)["total_length"]
@@ -290,10 +277,8 @@ class CortexRunCalls:
                 self.cortex_outdir,
                 "--outvcf cortex",
                 "--ploidy 2",
-                "--stampy_hash",
-                os.path.join(self.ref_dir, "ref.stampy"),
-                "--stampy_bin",
-                self.stampy_script,
+                "--minimap2_bin",
+                self.minimap2,
                 "--list_ref_fasta",
                 self.cortex_ref_fofn,
                 "--refbindir",
@@ -316,4 +301,5 @@ class CortexRunCalls:
 
         utils.syscall(cmd)
         self._tidy_files()
-        self._run_mccortex_view_kmers()
+        if run_mccortex_view_kmers: 
+            self._run_mccortex_view_kmers()

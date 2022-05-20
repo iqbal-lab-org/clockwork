@@ -4,10 +4,6 @@ import os
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
 class Fastqc:
     def __init__(self, outdir, infiles):
         assert isinstance(infiles, list)
@@ -20,7 +16,7 @@ class Fastqc:
         try:
             os.mkdir(outdir)
         except:
-            raise Error("Error mkdir " + outdir)
+            raise Exception("Error mkdir " + outdir)
 
         command = "fastqc --threads 1 --extract -o " + outdir + " " + " ".join(infiles)
         utils.syscall(command)
@@ -51,7 +47,7 @@ class Fastqc:
                     try:
                         stat, value = line.lstrip(">").rstrip().split("\t")
                     except:
-                        raise Error("Error splitting line: " + line)
+                        raise Exception("Error splitting line: " + line)
 
                     stat = "_".join(stat.split()).lower().replace("%", "")
                     if stat == "sequence_length":
@@ -97,7 +93,7 @@ class Fastqc:
                 try:
                     os.unlink(filename)
                 except:
-                    raise Error(
+                    raise Exception(
                         'Error deleting file "' + filename + '". Cannot continue'
                     )
 
@@ -110,7 +106,7 @@ class Fastqc:
                 try:
                     os.rename(old, new)
                 except:
-                    raise Error("Error: mv " + old + " " + new)
+                    raise Exception("Error: mv " + old + " " + new)
 
             shutil.rmtree(images_dir)
             shutil.rmtree(os.path.join(directory, "Icons"))
@@ -121,7 +117,7 @@ class Fastqc:
                 try:
                     os.unlink(full_filename)
                 except:
-                    raise Error("Error rm " + full_filename)
+                    raise Exception("Error rm " + full_filename)
 
     def run(self):
         Fastqc._run_fastqc(self.outdir, self.infiles)

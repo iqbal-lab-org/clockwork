@@ -20,10 +20,6 @@ from clockwork import (
 from clockwork import __version__ as clockwork_version
 
 
-class Error(Exception):
-    pass
-
-
 class Db:
     def __init__(self, ini_file):
         """ini_file must be the filename of a config file, and needs the following:
@@ -50,12 +46,12 @@ class Db:
             try:
                 self.cursor.execute(cmd)
             except:
-                raise Error("Error running the following mysql command: " + cmd)
+                raise Exception("Error running the following mysql command: " + cmd)
         else:
             try:
                 self.cursor.execute(cmd, row)
             except:
-                raise Error(
+                raise Exception(
                     "Error running the following mysql command: "
                     + cmd
                     + ", "
@@ -81,7 +77,7 @@ class Db:
             )
             print("Columns should be:", *columns, file=sys.stderr)
             print("Data dict is:", data, file=sys.stderr)
-            raise Error("Error adding row to table")
+            raise Exception("Error adding row to table")
 
         cmd = " ".join(
             [
@@ -172,7 +168,7 @@ class Db:
         elif len(got_rows) == 1:
             return got_rows[0]["sample_id"]
         else:
-            raise Error(
+            raise Exception(
                 "Error! More than one row found in Isolate table for isolate_id "
                 + str(isolate_id)
             )
@@ -186,7 +182,7 @@ class Db:
         elif len(got_rows) == 1:
             return got_rows[0]["sequence_replicate_number"]
         else:
-            raise Error(
+            raise Exception(
                 "Error! More than one row found in Seqrep table for seqrep_id "
                 + str(seqrep_id)
             )
@@ -209,7 +205,7 @@ class Db:
         if len(isolate_matches) == 0:
             return False
         elif len(isolate_matches) > 1:
-            raise Error(
+            raise Exception(
                 "Error! Found more than one Isolate with sample_id "
                 + str(sample_id)
                 + " and isolate_number_from_lab "
@@ -272,13 +268,13 @@ class Db:
         )
 
         if not patient_site_lab_unique:
-            raise Error(
+            raise Exception(
                 "Error! Should not find >1 row for one sample. Cannot continue. Data was:\n"
                 + sample_dict
             )
 
         if replicates_exist:
-            raise Error(
+            raise Exception(
                 "Error! isolate_number and sequence_replicate_number already in database for data:\n"
                 + sample_dict
             )
@@ -321,7 +317,7 @@ class Db:
         elif len(isolate_rows) == 1:
             isolate_id = isolate_rows[0]["isolate_id"]
         else:
-            raise Error("Error! More than one row found from query: " + isolate_where)
+            raise Exception("Error! More than one row found from query: " + isolate_where)
 
         assert isolate_id is not None
 
@@ -349,7 +345,7 @@ class Db:
         try:
             self.connection.commit()
         except:
-            raise Error("Error committing changes to database. Cannot continue")
+            raise Exception("Error committing changes to database. Cannot continue")
 
     def make_remove_contam_jobs_tsv(
         self,
@@ -562,7 +558,7 @@ class Db:
                 try:
                     os.makedirs(output_dir)
                 except:
-                    raise Error(
+                    raise Exception(
                         "Error making directory " + output_dir + " -- cannot continue"
                     )
                 print(
@@ -1084,7 +1080,7 @@ class Db:
         try:
             self.connection.close()
         except:
-            raise Error("Error closing database connection. Cannot continue")
+            raise Exception("Error closing database connection. Cannot continue")
 
     def _update_remove_contam_stats(self, seqrep_id, read_counts_file):
         """Updates the Read counts table for the given sequence replicate, using
@@ -1111,7 +1107,7 @@ class Db:
             "Seqrep", where="seqrep_id =" + str(seqrep_id)
         )
         if len(seqrep_rows) != 1:
-            raise Error(
+            raise Exception(
                 "Error. seqrep_id "
                 + str(seqrep_id)
                 + " not found in Seqrep table. Cannot continue"
@@ -1120,7 +1116,7 @@ class Db:
             "Read_counts", where="seqrep_id =" + str(seqrep_id)
         )
         if len(seqrep_rows) != 0:
-            raise Error(
+            raise Exception(
                 "Error. Found entry for seqrep_id "
                 + str(seqrep_id)
                 + " in Read_counts table."
@@ -1147,7 +1143,7 @@ class Db:
         )
         got_rows = self.query_to_dict(query)
         if len(got_rows) != 1:
-            raise Error(
+            raise Exception(
                 "Error, expceted exactly 1 row from this query: "
                 + query
                 + "\nbut got:"
@@ -1213,10 +1209,10 @@ class Db:
         assert (seqrep_id is None) != (seqrep_pool is None)
         if new_pipeline_status == 1:
             if pipeline_name == "qc" and pipeline_root is None:
-                raise Error("Error! Must supply pipeline_root when pipeline_name is qc")
+                raise Exception("Error! Must supply pipeline_root when pipeline_name is qc")
 
             if pipeline_name == "remove_contam" and pipeline_root is None:
-                raise Error(
+                raise Exception(
                     "Error! must supply contam_reads_count_file when pipeline_name is remove_contam"
                 )
 
@@ -1244,7 +1240,7 @@ class Db:
         )
 
         if len(pipeline_rows) == 0:
-            raise Error(
+            raise Exception(
                 "Error! No match found in database for isolate_id="
                 + str(isolate_id)
                 + ", seqrep_id="
@@ -1259,7 +1255,7 @@ class Db:
                 + str(reference_id)
             )
         elif len(pipeline_rows) > 1:
-            raise Error(
+            raise Exception(
                 "Error! More than one row found in database for isolate_id="
                 + str(isolate_id)
                 + ", seqrep_id="
@@ -1278,7 +1274,7 @@ class Db:
 
         row = pipeline_rows[0]
         if row["status"] != 0:
-            raise Error(
+            raise Exception(
                 "Error! Expected status 0 but got "
                 + str(row["status"])
                 + " for seqrep_id="
@@ -1309,14 +1305,14 @@ class Db:
             elif pipeline_name == "remove_contam":
                 sample_id = self.isolate_id_to_sample_id(isolate_id)
                 if sample_id is None:
-                    raise Error(
+                    raise Exception(
                         "Error getting sample_id for isolate_id " + str(isolate_id)
                     )
                 sequence_replicate_number = self.seqrep_id_to_sequence_replicate_number(
                     seqrep_id
                 )
                 if sequence_replicate_number is None:
-                    raise Error(
+                    raise Exception(
                         "Error getting sequence_replicate_number for seqrep_id "
                         + str(seqrep_id)
                     )
@@ -1351,7 +1347,7 @@ class Db:
             csv_reader = csv.DictReader(f, delimiter="\t")
             for column in ["isolate_id", "seqrep_id", "sequence_replicate_number"]:
                 if column not in csv_reader.fieldnames:
-                    raise Error(
+                    raise Exception(
                         'Error! column "' + column + '" not found in file ' + infile
                     )
 
@@ -1385,7 +1381,7 @@ class Db:
             csv_reader = csv.DictReader(f, delimiter="\t")
             for column in ["isolate_id", "seqrep_id", "sequence_replicate_number"]:
                 if column not in csv_reader.fieldnames:
-                    raise Error(
+                    raise Exception(
                         'Error! column "' + column + '" not found in file ' + jobs_tsv
                     )
 
@@ -1416,7 +1412,7 @@ class Db:
             "Reference", columns="*", where='name ="' + name + '"'
         )
         if len(got_rows):
-            raise Error(
+            raise Exception(
                 'Error! Reference with name "'
                 + name
                 + '" already in database. Cannot add it again'
@@ -1441,7 +1437,7 @@ class Db:
             reference_id = self.add_reference(name)
         except:
             lock.stop()
-            raise Error(
+            raise Exception(
                 'Error adding reference with name "' + name + '". Cannot continue'
             )
 
@@ -1463,7 +1459,7 @@ class Db:
 
     def get_reference_dir(self, reference_id, reference_root):
         if not self.has_reference(reference_id):
-            raise Error("Reference with ID " + str(reference_id) + " not found.")
+            raise Exception("Reference with ID " + str(reference_id) + " not found.")
         return reference_dir.ReferenceDir(
             pipeline_references_root_dir=reference_root, reference_id=reference_id
         )
@@ -1473,7 +1469,7 @@ class Db:
             backup_dir = os.path.abspath(backup_dir)
             assert outfile is None
             if not os.path.isdir(backup_dir):
-                raise Error("Error! mysql backup directory not found: " + backup_dir)
+                raise Exception("Error! mysql backup directory not found: " + backup_dir)
             now = datetime.datetime.now()
             now_string = "-".join([str(x).zfill(2) for x in now.timetuple()[:6]])
             outfile = os.path.join(backup_dir, "backup." + now_string)
@@ -1485,12 +1481,12 @@ class Db:
         elif outfile is not None:
             assert backup_dir is None
         else:
-            raise Error("Error! Must provide back_dir or outfile. Cannot continue")
+            raise Exception("Error! Must provide back_dir or outfile. Cannot continue")
 
         outfile = os.path.abspath(outfile)
 
         if os.path.exists(outfile):
-            raise Error("Error! mysql backup file already exists: " + outfile)
+            raise Exception("Error! mysql backup file already exists: " + outfile)
 
         # to use the mysql dump command, need to make a config file
         # that has the login info in it

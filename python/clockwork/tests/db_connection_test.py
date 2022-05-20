@@ -11,12 +11,12 @@ data_dir = os.path.join(modules_dir, "tests", "data", "db_connection")
 class TestDbConnection(unittest.TestCase):
     def test_parse_config_file(self):
         """test _parse_config_file"""
-        with self.assertRaises(db_connection.Error):
+        with self.assertRaises(Exception):
             db_connection.DbConnection._parse_config_file(
                 os.path.join(data_dir, "config.missing_user.ini")
             )
 
-        with self.assertRaises(db_connection.Error):
+        with self.assertRaises(Exception):
             db_connection.DbConnection._parse_config_file(
                 os.path.join(data_dir, "config.no_db_login_header.ini")
             )

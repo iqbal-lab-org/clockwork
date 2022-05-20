@@ -81,7 +81,7 @@ class TestHetSnpCaller(unittest.TestCase):
             ),
         )
 
-        with self.assertRaises(het_snp_caller.Error):
+        with self.assertRaises(Exception):
             het_snp_caller.HetSnpCaller._vcf_line_is_snp_and_or_het(
                 "chrom1\t42\t.\tT\tC,<*>\t0\t.\tDP=54;ADF=1,22,0;ADR=1,17,2,0;AD=39,15,0;I16=22,17,7,8,1421,51911,551,20255,1928,95376,675,30457,730,16036,289,6283;\tPL\t214,0,255,255,255,255",
                 4,
@@ -89,7 +89,7 @@ class TestHetSnpCaller(unittest.TestCase):
                 0.9,
             )
 
-        with self.assertRaises(het_snp_caller.Error):
+        with self.assertRaises(Exception):
             het_snp_caller.HetSnpCaller._vcf_line_is_snp_and_or_het(
                 "chrom1\t42\t.\tT\tC,<*>\t0\t.\tDP=54;ADR=1,2,0;AD=39,15,0;I16=22,17,7,8,1421,51911,551,20255,1928,95376,675,30457,730,16036,289,6283;\tPL\t214,0,255,255,255,255",
                 4,
@@ -97,7 +97,7 @@ class TestHetSnpCaller(unittest.TestCase):
                 0.9,
             )
 
-        with self.assertRaises(het_snp_caller.Error):
+        with self.assertRaises(Exception):
             het_snp_caller.HetSnpCaller._vcf_line_is_snp_and_or_het(
                 "chrom1\t42\t.\tT\tC,<*>\t0\t.\tDP=54;ADF=1,2,0;AD=39,15,0;I16=22,17,7,8,1421,51911,551,20255,1928,95376,675,30457,730,16036,289,6283;\tPL\t214,0,255,255,255,255",
                 4,
@@ -161,9 +161,8 @@ class TestHetSnpCaller(unittest.TestCase):
 
         self.assertTrue(filecmp.cmp(expected_per_contig, got_per_contig, shallow=False))
         self.assertTrue(filecmp.cmp(expected_summary, got_summary, shallow=False))
-
         expected_lines = [
-            "ref1\t251\t.\tC\tA,<*>\t0\t.\tDP=31;ADF=9,5,0;ADR=9,7,0;AD=18,12,0;I16=9,9,5,7,716,28496,479,19121,900,45000,528,23232,279,5591,203,4283;QS=0.599163,0.400837,0;VDB=0.670984;SGB=-0.680642;RPB=0.596826;MQB=2.89016e-05;MQSB=0.932405;BQB=0.994415;MQ0F=0\tPL\t251,0,255,255,255,255\n"
+            "ref1\t251\t.\tC\tA,<*>\t0\t.\tDP=31;ADF=9,5,0;ADR=9,8,0;AD=18,13,0;I16=9,9,5,8,720,28800,520,20800,900,45000,572,25168,279,5591,203,4283;QS=0.580645,0.419355,0;VDB=0.78464;SGB=-0.683931;RPBZ=0.621123;MQBZ=-5.47723;MQSBZ=-0.626654;BQBZ=0;SCBZ=0;FS=0;MQ0F=0\tPL\t255,0,255,255,255,255\n"
         ]
         with open(got_vcf) as f:
             got_lines = [x for x in f if not x.startswith("#")]

@@ -15,11 +15,11 @@ class TestCortex(unittest.TestCase):
         bad1 = os.path.join(data_dir, "replace_sample_name_in_vcf.in.bad1.vcf")
         bad2 = os.path.join(data_dir, "replace_sample_name_in_vcf.in.bad2.vcf")
         bad3 = os.path.join(data_dir, "replace_sample_name_in_vcf.in.bad3.vcf")
-        with self.assertRaises(cortex.Error):
+        with self.assertRaises(Exception):
             cortex._replace_sample_name_in_vcf(bad1, tmp_out, "NEW_NAME")
-        with self.assertRaises(cortex.Error):
+        with self.assertRaises(Exception):
             cortex._replace_sample_name_in_vcf(bad2, tmp_out, "NEW_NAME")
-        with self.assertRaises(cortex.Error):
+        with self.assertRaises(Exception):
             cortex._replace_sample_name_in_vcf(bad3, tmp_out, "NEW_NAME")
 
         infile = os.path.join(data_dir, "replace_sample_name_in_vcf.in.vcf")
@@ -57,7 +57,7 @@ class TestCortex(unittest.TestCase):
         """test make_run_calls_index_files"""
         ref_fasta = "tmp.cortex.make_run_calls_index_files.ref.fa"
         outprefix = "tmp.cortex.make_run_calls_index_files.out"
-        expected_suffixes = ["k31.ctx", "stampy.sthash", "stampy.stidx"]
+        expected_suffixes = ["k31.ctx"]
         expected_files = [outprefix + "." + x for x in expected_suffixes]
         for filename in expected_files:
             try:

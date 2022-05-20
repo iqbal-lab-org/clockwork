@@ -12,12 +12,12 @@ class TestFqtools(unittest.TestCase):
     def test_validate(self):
         """test validate"""
         bad_file = os.path.join(data_dir, "validate.bad.fq")
-        with self.assertRaises(fqtools.Error):
+        with self.assertRaises(Exception):
             fqtools.validate([bad_file])
 
         bad_pair_1 = os.path.join(data_dir, "validate.bad.pair.1.fq")
         bad_pair_2 = os.path.join(data_dir, "validate.bad.pair.2.fq")
-        with self.assertRaises(fqtools.Error):
+        with self.assertRaises(Exception):
             fqtools.validate([bad_pair_1, bad_pair_2])
 
         ok_pair_1 = os.path.join(data_dir, "validate.ok.pair.1.fq")

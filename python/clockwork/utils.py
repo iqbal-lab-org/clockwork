@@ -6,10 +6,6 @@ import subprocess
 import sys
 
 
-class Error(Exception):
-    pass
-
-
 def decode(x):
     try:
         s = x.decode()
@@ -37,7 +33,7 @@ def syscall(command):
         print(
             "Output from stderr:", completed_process.stderr, sep="\n", file=sys.stderr
         )
-        raise Error("Error in system call. Cannot continue")
+        raise Exception("Error in system call. Cannot continue")
 
     logging.info(f"stdout:\n{completed_process.stdout.rstrip()}")
     logging.info(f"stderr:\n{completed_process.stderr.rstrip()}")
@@ -71,10 +67,10 @@ def load_md5_from_file(filename):
         else:
             md5sum = line.split()[0]
     except:
-        raise Error("Error getting md5 from file " + filename + ". Unexpected format")
+        raise Exception("Error getting md5 from file " + filename + ". Unexpected format")
 
     if len(md5sum) != 32:
-        raise Error(
+        raise Exception(
             "Error getting md5 from file " + filename + ". Expected string of length 32"
         )
 
@@ -94,7 +90,7 @@ def rsync_and_md5(old_name, new_name, md5sum=None):
     new_md5sum = md5(new_name)
 
     if new_md5sum != md5sum:
-        raise Error(
+        raise Exception(
             "Error copying file "
             + old_name
             + " -> "
@@ -111,7 +107,7 @@ def date_string_from_file_mtime(filename):
     try:
         mtime = os.path.getmtime(filename)
     except:
-        raise Error("Error getting modification time from file " + filename)
+        raise Exception("Error getting modification time from file " + filename)
 
     d = datetime.datetime.fromtimestamp(mtime)
     return d.isoformat().split("T")[0].replace("-", "")
@@ -129,6 +125,6 @@ def sam_record_count(filename):
     try:
         count = int(completed_process.stdout.rstrip())
     except:
-        raise Error("Error counting sam records in file " + filename)
+        raise Exception("Error counting sam records in file " + filename)
 
     return count

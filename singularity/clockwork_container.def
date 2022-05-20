@@ -1,9 +1,8 @@
-BootStrap: debootstrap
-OSVersion: bionic
-MirrorURL: http://us.archive.ubuntu.com/ubuntu/
+BootStrap: library
+From: ubuntu:20.04
 
 %environment
-PERL5LIB=/bioinf-tools/vcftools-0.1.15/install/share/perl/5.24.1/:/bioinf-tools/cortex/scripts/analyse_variants/bioinf-perl/lib:/bioinf-tools/cortex/scripts/calling/:$PERL5LIB
+PERL5LIB=/bioinf-tools/vcftools-0.1.15/install/share/perl/5.30.0/:/bioinf-tools/cortex/scripts/analyse_variants/bioinf-perl/lib:/bioinf-tools/cortex/scripts/calling/:$PERL5LIB
 export PERL5LIB
 PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analyse_variants/seq-align/bin/:/bioinf-tools/vcftools-0.1.15/install/bin:/bioinf-tools/enaBrowserTools/python3:/clockwork/scripts/:$PATH
 
@@ -13,8 +12,8 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
 
 %post
     #_____________________ setup $PATH _______________________#
-    export PATH=/bioinf-tools/:/bioinf-tools/cortex/scripts/analyse_variants/seq-align/bin/:/bioinf-tools/vcftools-0.1.15/install/bin:/bioinf-tools/enaBrowserTools/python3:/clockwork/scripts/:$PATH
-    export PERL5LIB=/bioinf-tools/vcftools-0.1.15/install/share/perl/5.24.1/:/bioinf-tools/cortex/scripts/analyse_variants/bioinf-perl/lib:/bioinf-tools/cortex/scripts/calling/:$PERL5LIB
+    export PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analyse_variants/seq-align/bin/:/bioinf-tools/vcftools-0.1.15/install/bin:/bioinf-tools/enaBrowserTools/python3:/clockwork/scripts/:$PATH
+    export PERL5LIB=/bioinf-tools/vcftools-0.1.15/install/share/perl/5.30.0/:/bioinf-tools/cortex/scripts/analyse_variants/bioinf-perl/lib:/bioinf-tools/cortex/scripts/calling/:$PERL5LIB
     export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
     #_________________ install dependencies __________________#

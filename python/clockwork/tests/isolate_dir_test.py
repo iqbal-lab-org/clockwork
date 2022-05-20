@@ -111,9 +111,9 @@ class TestIsolateDir(unittest.TestCase):
             iso_dir.reads_filename("contam", 11, 1),
         )
 
-        with self.assertRaises(isolate_dir.Error):
+        with self.assertRaises(Exception):
             iso_dir.reads_filename("original", 11, 42)
-        with self.assertRaises(isolate_dir.Error):
+        with self.assertRaises(Exception):
             iso_dir.reads_filename("oops_wrong_type", 11, 1)
 
     def test_pipeline_dir(self):
@@ -145,7 +145,7 @@ class TestIsolateDir(unittest.TestCase):
             os.path.join(iso_dir.isolate_dir, "ena_experiment_submission.xml"),
             iso_dir.xml_submission_file("experiment"),
         )
-        with self.assertRaises(isolate_dir.Error):
+        with self.assertRaises(Exception):
             iso_dir.xml_submission_file("run")
         self.assertEqual(
             os.path.join(

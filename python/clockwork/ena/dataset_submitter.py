@@ -6,10 +6,6 @@ from clockwork import db, isolate_dir
 from clockwork.ena import object_creator, submit_files
 
 
-class Error(Exception):
-    pass
-
-
 def _upload_fastq_file_pair(names_tuple, ini_file, unit_test=None):
     seqrep_id, to_upload_1, uploaded_1, to_upload_2, uploaded_2 = names_tuple
     if unit_test is not None:
@@ -57,7 +53,7 @@ class DatasetSubmitter:
             self.ini_file, "ena_login", "study_prefix"
         )
         if self.study_prefix is None:
-            raise Error(
+            raise Exception(
                 "Error! Must provide study_prefix in [ena_login] section of ini file "
                 + self.ini_file
             )
@@ -111,7 +107,7 @@ class DatasetSubmitter:
         try:
             config.read(ini_file)
         except:
-            raise Error("Error reading config file " + ini_file)
+            raise Exception("Error reading config file " + ini_file)
 
         if "sequencing_centres" not in config:
             return {}
@@ -124,7 +120,7 @@ class DatasetSubmitter:
         try:
             config.read(ini_file)
         except:
-            raise Error("Error reading config file " + ini_file)
+            raise Exception("Error reading config file " + ini_file)
 
         if section not in config:
             return None
@@ -146,7 +142,7 @@ class DatasetSubmitter:
         if len(center_names) == 1:
             center_name = center_names.pop()
         else:
-            raise Error("Error getting unique ena_center_name from: " + str(data_in))
+            raise Exception("Error getting unique ena_center_name from: " + str(data_in))
 
         return number_to_name_dict.get(center_name, center_name)
 
@@ -156,7 +152,7 @@ class DatasetSubmitter:
 
         study_accessions_from_db = {x["ena_study_accession"] for x in data_in}
         if len(study_accessions_from_db) > 1:
-            raise Error(
+            raise Exception(
                 "Error! More than one study ID found for dataset "
                 + self.dataset_name
                 + ". Got: "
@@ -187,7 +183,7 @@ class DatasetSubmitter:
             )
             project_creator.run()
             if not project_creator.submission_receipt.successful:
-                raise Error(
+                raise Exception(
                     "Error submitting project to ena. XML file: " + self.project_xml
                 )
 
@@ -195,7 +191,7 @@ class DatasetSubmitter:
                 "PROJECT", None
             )
             if ena_study_accession is None:
-                raise Error(
+                raise Exception(
                     "Error getting proejct accession from "
                     + project_creator.receipt_xml
                 )

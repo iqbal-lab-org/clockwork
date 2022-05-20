@@ -35,6 +35,7 @@ __all__ = [
     "spreadsheet_validator",
     "tasks",
     "utils",
+    "var_call_one_sample_pipeline",
 ]
 
 from clockwork import *

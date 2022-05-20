@@ -262,9 +262,9 @@ subparser_ena_download = subparsers.add_parser(
     usage="clockwork ena_download [options] <data_tsv> <output_dir> <site> <lab> <date> <dataset name>",
     description="Download reads from ENA. Gets fastq files, and makes import spreadsheet for use with the import pipeline",
     epilog="The data TSV file is one line per sample, and each line needs two columns. Column 1 is the sample name, and"
-           "can be anything unique within the file. Column 2 must be a comma-separated list of run accessions. If there"
-           "is problem downloading a sample, that sample will be skipped. Only samples downloaded successfully appear "
-           "in the import spreadsheet.",
+    "can be anything unique within the file. Column 2 must be a comma-separated list of run accessions. If there"
+    "is problem downloading a sample, that sample will be skipped. Only samples downloaded successfully appear "
+    "in the import spreadsheet.",
 )
 
 subparser_ena_download.add_argument(
@@ -477,16 +477,20 @@ subparser_gvcf_from_minos_and_samtools = subparsers.add_parser(
 )
 
 subparser_gvcf_from_minos_and_samtools.add_argument(
-    "ref_fasta", help="Reference genome FASTA file",
+    "ref_fasta",
+    help="Reference genome FASTA file",
 )
 subparser_gvcf_from_minos_and_samtools.add_argument(
-    "minos_vcf", help="VCF file made by minos",
+    "minos_vcf",
+    help="VCF file made by minos",
 )
 subparser_gvcf_from_minos_and_samtools.add_argument(
-    "samtools_vcf", help="VCF file made by samtools",
+    "samtools_vcf",
+    help="VCF file made by samtools",
 )
 subparser_gvcf_from_minos_and_samtools.add_argument(
-    "outfile", help="Output gVCF file",
+    "outfile",
+    help="Output gVCF file",
 )
 subparser_gvcf_from_minos_and_samtools.set_defaults(
     func=clockwork.tasks.gvcf_from_minos_and_samtools.run
@@ -502,10 +506,12 @@ subparser_gvcf_to_fasta = subparsers.add_parser(
 )
 
 subparser_gvcf_to_fasta.add_argument(
-    "gvcf", help="Input gVCF file made by gvcf_from_minos_and_samtools",
+    "gvcf",
+    help="Input gVCF file made by gvcf_from_minos_and_samtools",
 )
 subparser_gvcf_to_fasta.add_argument(
-    "outfile", help="Output FASTA file",
+    "outfile",
+    help="Output FASTA file",
 )
 subparser_gvcf_to_fasta.add_argument(
     "--ignore_minos_pass",
@@ -936,6 +942,59 @@ subparser_variant_call_make_jobs_tsv.add_argument(
 )
 subparser_variant_call_make_jobs_tsv.set_defaults(
     func=clockwork.tasks.variant_call_make_jobs_tsv.run
+)
+
+
+# ---------------- variant_call_one_sample --------------------------
+subparser_variant_call_one_sample = subparsers.add_parser(
+    "variant_call_one_sample",
+    help="Run clockwork variant call pipeline on one sample",
+    usage="clockwork variant_call_one_sample [options] <ref_dir> <outdir> <reads_fwd.fq> <reads_rev.fq> [reads2_fwd.fq reads2_rev.fq ...]",
+    description="Runs the clockwork variant calling pipeline on a single sample. Can provide more than one run of reads from the same sample - if you do this then the reads are all used together, treated as if they were all from one big run. This is for convenience to save catting fastq files.",
+)
+
+subparser_variant_call_one_sample.add_argument(
+    "--sample_name",
+    help="Name of sample [%(default)s]",
+    metavar="STR",
+    default="sample",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--mem_height",
+    type=int,
+    help="cortex mem_height option. Must match what was used when reference_prepare was run [%(default)s]",
+    default="22",
+    metavar="INT",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--force",
+    action="store_true",
+    help="Overwrite outdir if it already exists",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--keep_bam",
+    action="store_true",
+    help="Keep BAM file of rmdup reads",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--debug",
+    action="store_true",
+    help="Debug mode: do not clean up any files",
+)
+subparser_variant_call_one_sample.add_argument(
+    "ref_dir", help="Directory of reference files, made by clockwork reference_prepare"
+)
+subparser_variant_call_one_sample.add_argument(
+    "outdir",
+    help="Output directory (must not exist, will be created)",
+)
+subparser_variant_call_one_sample.add_argument(
+    "reads_files",
+    nargs="+",
+    help="List of forwards and reverse reads filenames (must provide an even number of files). For a single pair of files: reads_forward.fq reads_reverse.fq. For two pairs of files from the same sample: reads1_forward.fq reads1_reverse.fq reads2_forward.fq reads2_reverse.fq",
+)
+subparser_variant_call_one_sample.set_defaults(
+    func=clockwork.tasks.variant_call_one_sample.run
 )
 
 

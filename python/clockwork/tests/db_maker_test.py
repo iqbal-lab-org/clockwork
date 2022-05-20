@@ -20,7 +20,7 @@ class TestDbMaker(unittest.TestCase):
         except:
             pass
         # thorws error because database doesn't exist
-        with self.assertRaises(db_connection.Error):
+        with self.assertRaises(Exception):
             db_connection.DbConnection(ini_file)
 
         dbm = db_maker.DbMaker(ini_file)
