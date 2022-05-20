@@ -259,7 +259,7 @@ class CortexRunCalls:
         )
         utils.syscall(command)
 
-    def run(self):
+    def run(self, run_mccortex_view_kmers=True):
         self._make_input_files()
         ref_fai = os.path.join(self.ref_dir, "ref.fa.fai")
         genome_size = pyfastaq.tasks.stats_from_fai(ref_fai)["total_length"]
@@ -301,4 +301,5 @@ class CortexRunCalls:
 
         utils.syscall(cmd)
         self._tidy_files()
-        self._run_mccortex_view_kmers()
+        if run_mccortex_view_kmers: 
+            self._run_mccortex_view_kmers()
