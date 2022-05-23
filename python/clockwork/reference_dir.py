@@ -54,7 +54,7 @@ class ReferenceDir:
         # header lines
         utils.syscall("seqtk seq -C -l 60 " + fasta_in + " > " + self.ref_fasta)
         utils.syscall("samtools faidx " + self.ref_fasta)
-        utils.syscall(f"minimap2 -x {self.minimap2_preset} -d {self.minimap2_index} {self.ref_fasta}")
+        utils.syscall(f"minimap2 -I 0.5G -x {self.minimap2_preset} -d {self.minimap2_index} {self.ref_fasta}")
 
         if using_cortex:
             cortex.make_run_calls_index_files(
