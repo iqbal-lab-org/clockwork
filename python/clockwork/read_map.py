@@ -50,7 +50,7 @@ def map_reads(
     cmd = " ".join(
         [
             "minimap2",
-            "--split-prefix tmp",
+            f"--split-prefix {sam_file}.tmp",
             "-a",
             f"-t {threads}",
             f"-x {minimap2_preset}",
