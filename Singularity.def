@@ -8,7 +8,7 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
 
 %setup
     mkdir $SINGULARITY_ROOTFS/clockwork
-    rsync -a ../python ../nextflow ../scripts $SINGULARITY_ROOTFS/clockwork/
+    rsync -a python nextflow scripts $SINGULARITY_ROOTFS/clockwork/
 
 %post
     #_____________________ setup $PATH _______________________#
@@ -22,7 +22,10 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
 
     #______________________ clockwork python ________________#
     cd /clockwork/python
+    python3 setup.py test
     python3 setup.py install
+    service mysql stop
+    apt remove -y mysql-server
 
 
 %labels

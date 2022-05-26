@@ -9,7 +9,16 @@ install_root=$1
 apt-get update
 apt-get install -y software-properties-common
 apt-add-repository universe
+apt-add-repository multiverse
 apt-get update
+apt-get upgrade -y
+
+apt-get install -y mysql-server
+service mysql start
+mysql -e "CREATE USER 'test_user'@'localhost' IDENTIFIED BY 'test_password'"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'test_user'@'localhost'"
+mysql -e "FLUSH PRIVILEGES"
+
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
   automake \
   build-essential \
