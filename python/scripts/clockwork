@@ -663,7 +663,7 @@ subparser_map_reads.add_argument(
 subparser_map_reads.add_argument(
     "--threads",
     type=int,
-    help="Number of threads to use when running bwa mem [%(default)s]",
+    help="Number of threads to use when running minimap2 [%(default)s]",
     metavar="INT",
     default=1,
 )
@@ -841,7 +841,7 @@ subparser_samtools_qc = subparsers.add_parser(
 )
 
 subparser_samtools_qc.add_argument(
-    "ref_fasta", help="Name of reference fasta file. Must have had bwa index run on it"
+    "ref_fasta", help="Name of reference fasta file"
 )
 subparser_samtools_qc.add_argument("reads1", help="Name of reads file 1")
 subparser_samtools_qc.add_argument("reads2", help="Name of reads file 2")
