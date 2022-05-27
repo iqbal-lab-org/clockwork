@@ -29,7 +29,7 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
 
 
 %labels
-    Version 0.9.0
+    Version 0.11.0
 
 
 %runscript
