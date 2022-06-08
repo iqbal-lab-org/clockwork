@@ -24,8 +24,11 @@ PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/analy
     cd /clockwork/python
     python3 setup.py test
     python3 setup.py install
+    cd /
+    rm -rf /clockwork
     service mysql stop
     apt remove -y mysql-server
+    apt autoremove -y
 
 
 %labels

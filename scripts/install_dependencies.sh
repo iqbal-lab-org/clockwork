@@ -59,10 +59,12 @@ cd $install_root
 cd $install_root
 wget -q https://github.com/samtools/bcftools/releases/download/1.15.1/bcftools-1.15.1.tar.bz2
 tar xf bcftools-1.15.1.tar.bz2
+rm bcftools-1.15.1.tar.bz2
 cd bcftools-1.15.1/
 make
+make install
 cd ..
-cp -s bcftools-1.15.1/bcftools .
+rm -rf bcftools-1.15.1
 
 #_____________________ enaBrowserTools ____________________#
 cd $install_root
@@ -75,6 +77,7 @@ git checkout 7075a896f822e3ea3d3fac8bc10bcfeeb2506685
 cd $install_root
 wget -q https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip
 unzip fastqc_v0.11.5.zip
+rm fastqc_v0.11.5.zip
 chmod 755 FastQC/fastqc
 cp -s FastQC/fastqc .
 
@@ -95,7 +98,8 @@ cd mccortex
 git checkout 5a9d410468f6b2980434e415ec341be320d37d82
 make all
 cd ..
-cp -s mccortex/bin/mccortex31 .
+mv mccortex/bin/mccortex31 .
+rm -rf mccortex
 
 #------------------------------ minimap2 ---------------------------------------
 cd $install_root
@@ -129,8 +133,10 @@ pip3 install .
 myk_dir=$(pip3 show mykrobe | awk '/^Location/ {print $NF}')
 echo $myk_dir
 cp mccortex/bin/mccortex31 $myk_dir/mykrobe/cortex/mccortex31
+rm -rf mccortex
 mykrobe panels update_metadata --debug
 mykrobe panels update_species --debug all
+rm -rf .git
 
 
 #________________________ nextflow _______________________#
@@ -156,26 +162,30 @@ cp -s seqtk-1.2/seqtk .
 cd $install_root
 wget -q https://github.com/samtools/samtools/releases/download/1.15.1/samtools-1.15.1.tar.bz2
 tar xf samtools-1.15.1.tar.bz2
+rm samtools-1.15.1.tar.bz2
 cd samtools-1.15.1/
 make
+make install
 cd ..
-cp -s samtools-1.15.1/samtools .
-cp -rp samtools-1.15.1/misc/plot-bamstats .
+rm -rf samtools-1.15.1
 
 
 #________________________ Trimmomatic ____________________#
 cd $install_root
 wget -q http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
 unzip Trimmomatic-0.36.zip
+rm Trimmomatic-0.36.zip
 
 #________________________ vcftools _______________________#
 cd $install_root
 wget -q https://github.com/vcftools/vcftools/releases/download/v0.1.15/vcftools-0.1.15.tar.gz
 tar xf vcftools-0.1.15.tar.gz
+rm vcftools-0.1.15.tar.gz
 cd vcftools-0.1.15
 ./configure --prefix $PWD/install
 make
 make install
+rm -rf src/cpp
 
 # cortex needs the perl/ directory. It expects it to be in the vcftools root,
 # but somehwere between v0.1.9 and v0.1.15 it moved into src/.
@@ -189,6 +199,7 @@ git checkout c8147152cd4015c45057900e8fb600376d1d7fb3
 bash install.sh
 make NUM_COLS=1 cortex_var
 make NUM_COLS=2 cortex_var
+rm -rf .git
 
 # ___________________ python packages ___________________#
 # note: requests needs to be here instead of as part of
@@ -218,15 +229,19 @@ cmake .. -DCMAKE_BUILD_TYPE=REL_WITH_ASSERTS
 make gram
 cd ..
 pip3 install -e .
+rm -rf cmake-build .git
 
 #________________________ mummer ____________________________#
 cd $install_root
 wget -q https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz
 tar xf mummer-4.0.0beta2.tar.gz
+rm mummer-4.0.0beta2.tar.gz
 cd mummer-4.0.0beta2
 ./configure
 make
 make install
+cd ..
+rm -rf mummer-4.0.0beta2
 
 
 #________________________ vt __________________________________#
@@ -235,6 +250,7 @@ git clone https://github.com/atks/vt.git vt-git
 cd vt-git
 git checkout 2187ff6347086e38f71bd9f8ca622cd7dcfbb40c
 make
+rm -rf .git
 cd ..
 cp -s vt-git/vt .
 
