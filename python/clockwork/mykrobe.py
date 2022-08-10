@@ -4,7 +4,7 @@ import shutil
 from clockwork import utils
 
 
-built_in_panels = {"tb": {"bradley-2015", "walker-2015", "201901", "202010"}}
+built_in_panels = {"tb": {"bradley-2015", "walker-2015", "201901", "202010", "202206"}}
 
 
 def susceptibility_dict_from_json_file(json_file):
