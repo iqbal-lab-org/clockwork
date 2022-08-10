@@ -122,7 +122,7 @@ cp -s minimap2-${MINIMAP2_V}/minimap2 .
 cd $install_root
 git clone https://github.com/Mykrobe-tools/mykrobe.git mykrobe
 cd mykrobe
-git checkout 17540f25d6b84b5cb3dfa59973d5838f1e1cb51c
+git checkout 3eff3a0f73c1c061912f7a275b1395d5e14c1d62
 pip3 install requests
 rm -rf mccortex
 git clone --recursive -b geno_kmer_count https://github.com/Mykrobe-tools/mccortex mccortex
