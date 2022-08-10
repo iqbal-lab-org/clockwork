@@ -199,8 +199,7 @@ class CortexRunCalls:
             if filename.endswith(".vcf"):
                 tmp_vcf = filename + ".tmp"
                 _replace_sample_name_in_vcf(filename, tmp_vcf, self.sample_name)
-                utils.rsync_and_md5(tmp_vcf, filename)
-                os.unlink(tmp_vcf)
+                os.rename(tmp_vcf, filename)
 
             if not (
                 (filename.endswith(".vcf") and "FINAL" in filename)
@@ -301,5 +300,5 @@ class CortexRunCalls:
 
         utils.syscall(cmd)
         self._tidy_files()
-        if run_mccortex_view_kmers: 
+        if run_mccortex_view_kmers:
             self._run_mccortex_view_kmers()
