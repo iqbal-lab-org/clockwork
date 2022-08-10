@@ -262,5 +262,5 @@ git checkout 5819787614a263a9f35fd0c247442f092ab174ff
 pip3 install .
 
 #________________________ minos _____________________________#
-pip3 install 'cluster_vcf_records==0.13.2'
-pip3 install git+https://github.com/iqbal-lab-org/minos@v0.12.0
+pip3 install 'cluster_vcf_records==0.13.3'
+pip3 install git+https://github.com/iqbal-lab-org/minos@v0.12.4
