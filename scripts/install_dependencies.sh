@@ -28,7 +28,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   git \
   gnuplot \
   graphviz \
-  openjdk-8-jre \
+  openjdk-17-jre \
   libarchive-dev \
   libcurl4-gnutls-dev \
   liblzma-dev \
@@ -48,9 +48,6 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
   unzip \
   tabix \
   wget
-
-# Note: needed to specify java version 8 (openjdk-8-jre) because
-# default is version 10 (from default-jre), which won't work with nextflow.
 
 mkdir $install_root
 cd $install_root
