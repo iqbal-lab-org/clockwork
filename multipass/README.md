@@ -20,5 +20,5 @@ The VM has your host $HOME directory mounted as $HOME/Home in the VM.
 You can run the tests by navigating to the `python/` directory and running:
 
 ```
-python3 setup.py test
+NXF_VER=22.10.0 python3 setup.py test
 ```

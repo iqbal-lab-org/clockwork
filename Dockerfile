@@ -5,6 +5,7 @@ ENV PATH=/bioinf-tools/:/bioinf-tools/cortex/bin/:/bioinf-tools/cortex/scripts/a
 ENV PERL5LIB=/bioinf-tools/vcftools-0.1.15/install/share/perl/5.30.0/:/bioinf-tools/cortex/scripts/analyse_variants/bioinf-perl/lib:/bioinf-tools/cortex/scripts/calling/:$PERL5LIB
 ENV LANG=C.UTF-8
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV NXF_VER=22.10.0
 
 COPY scripts/install_dependencies.sh /install_dependencies.sh
 RUN /install_dependencies.sh /bioinf-tools
