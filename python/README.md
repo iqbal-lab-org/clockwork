@@ -40,7 +40,7 @@ dependencies in the Vagrant VM and in the Singularity container.
 
 Run the tests:
 
-    python3 setup.py test
+    NXF_VER=22.10.0 python3 setup.py test
 
 If the tests pass, install:
 
