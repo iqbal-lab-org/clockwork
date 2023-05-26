@@ -50,6 +50,8 @@ class TestVarCallOneSamplePipeline(unittest.TestCase):
         got_files = sorted(list(os.listdir(var_call_out)))
         expect_files = [
             "cortex.vcf",
+            "final.gvcf",
+            "final.gvcf.fasta",
             "final.vcf",
             "map.bam",
             "map.bam.bai",
