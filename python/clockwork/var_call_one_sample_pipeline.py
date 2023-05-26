@@ -1,7 +1,7 @@
 import logging
 import os
 
-from clockwork import cortex, read_map, read_trim, reference_dir, utils
+from clockwork import cortex, gvcf, read_map, read_trim, reference_dir, utils
 
 
 def run(
@@ -77,7 +77,20 @@ def run(
     minos_dir = os.path.join(outdir, "minos")
     cmd = f"minos adjudicate --reads {rmdup_bam} {minos_dir} {refdir.ref_fasta} {samtools_vcf} {cortex_vcf}"
     utils.syscall(cmd)
-    os.rename(os.path.join(minos_dir, "final.vcf"), os.path.join(outdir, "final.vcf"))
+    final_vcf = os.path.join(outdir, "final.vcf")
+    os.rename(os.path.join(minos_dir, "final.vcf"), final_vcf)
+
+    samtools_gvcf = os.path.join(outdir, "samtools.gvcf")
+    cmd = f"bcftools mpileup -I --output-type u -f {refdir.ref_fasta} {rmdup_bam} | bcftools call -c -O v -o {samtools_gvcf}"
+    utils.syscall(cmd)
+    final_gvcf = os.path.join(outdir, "final.gvcf")
+    gvcf.gvcf_from_minos_vcf_and_samtools_gvcf(
+        refdir.ref_fasta, final_vcf, samtools_gvcf, final_gvcf,
+    )
+    if not debug:
+        os.unlink(samtools_gvcf)
+    gvcf.gvcf_to_fasta(final_gvcf, f"{final_gvcf}.fasta")
+
     if not debug:
         utils.syscall(f"rm -rf {minos_dir}")
 
