@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="clockwork",
-    version="0.11.3",
+    version="0.12.0",
     description="Pipeline code for CRyPTIC project",
     packages=find_packages(),
     author="Martin Hunt",
