@@ -73,4 +73,4 @@ class TestVarCallOneSamplePipeline(unittest.TestCase):
             self.assertEqual(fields[1], "500")
             self.assertEqual(fields[3], "A")
             self.assertEqual(fields[4], "T")
-        #utils.syscall(f"rm -r {root_outdir}")
+        utils.syscall(f"rm -r {root_outdir}")
