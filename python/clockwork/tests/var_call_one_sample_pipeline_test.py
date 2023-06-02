@@ -35,35 +35,42 @@ class TestVarCallOneSamplePipeline(unittest.TestCase):
             directory=os.path.join(root_outdir, "ref_dir")
         )
         ref_dir.make_index_files(ref_fa, False, True, cortex_mem_height=21)
-        var_call_out = os.path.join(root_outdir, "varcall")
-        var_call_one_sample_pipeline.run(
-            [reads1],
-            [reads2],
-            ref_dir.directory,
-            var_call_out,
-            sample_name="test_sample",
-            debug=False,
-            keep_bam=True,
-            cortex_mem_height=21,
-        )
+        for trim_reads in (True, False):
+            var_call_out = os.path.join(root_outdir, "varcall")
+            if trim_reads:
+                var_call_out += ".trim_reads"
+            else:
+                var_call_out += ".no_trim_reads"
 
-        got_files = sorted(list(os.listdir(var_call_out)))
-        expect_files = [
-            "cortex.vcf",
-            "final.gvcf",
-            "final.gvcf.fasta",
-            "final.vcf",
-            "map.bam",
-            "map.bam.bai",
-            "samtools.vcf",
-        ]
-        self.assertEqual(got_files, expect_files)
+            var_call_one_sample_pipeline.run(
+                [reads1],
+                [reads2],
+                ref_dir.directory,
+                var_call_out,
+                sample_name="test_sample",
+                debug=False,
+                keep_bam=True,
+                cortex_mem_height=21,
+                trim_reads=trim_reads,
+            )
 
-        with open(os.path.join(var_call_out, "final.vcf")) as f:
-            calls = [x for x in f if not x.startswith("#")]
-        self.assertEqual(len(calls), 1)
-        fields = calls[0].split("\t")
-        self.assertEqual(fields[1], "500")
-        self.assertEqual(fields[3], "A")
-        self.assertEqual(fields[4], "T")
-        utils.syscall(f"rm -r {root_outdir}")
+            got_files = sorted(list(os.listdir(var_call_out)))
+            expect_files = [
+                "cortex.vcf",
+                "final.gvcf",
+                "final.gvcf.fasta",
+                "final.vcf",
+                "map.bam",
+                "map.bam.bai",
+                "samtools.vcf",
+            ]
+            self.assertEqual(got_files, expect_files)
+
+            with open(os.path.join(var_call_out, "final.vcf")) as f:
+                calls = [x for x in f if not x.startswith("#")]
+            self.assertEqual(len(calls), 1)
+            fields = calls[0].split("\t")
+            self.assertEqual(fields[1], "500")
+            self.assertEqual(fields[3], "A")
+            self.assertEqual(fields[4], "T")
+        #utils.syscall(f"rm -r {root_outdir}")
