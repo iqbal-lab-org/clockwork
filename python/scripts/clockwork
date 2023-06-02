@@ -982,6 +982,11 @@ subparser_variant_call_one_sample.add_argument(
     help="Debug mode: do not clean up any files",
 )
 subparser_variant_call_one_sample.add_argument(
+    "--no_trim",
+    action="store_true",
+    help="Skip read trimming stage at start of pipeline",
+)
+subparser_variant_call_one_sample.add_argument(
     "ref_dir", help="Directory of reference files, made by clockwork reference_prepare"
 )
 subparser_variant_call_one_sample.add_argument(

@@ -22,4 +22,5 @@ def run(options):
         cortex_mem_height=options.mem_height,
         debug=options.debug,
         keep_bam=options.keep_bam,
+        trim_reads=not options.no_trim,
     )

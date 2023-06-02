@@ -13,6 +13,7 @@ def run(
     cortex_mem_height=22,
     debug=False,
     keep_bam=False,
+    trim_reads=True,
 ):
     if len(reads1_list) != len(reads2_list):
         raise Exception(
@@ -24,6 +25,11 @@ def run(
     trimmed_reads_1 = []
     trimmed_reads_2 = []
     for i in range(len(reads1_list)):
+        if not trim_reads:
+            trimmed_reads_1.append(reads1_list[i])
+            trimmed_reads_2.append(reads2_list[i])
+            continue
+
         trimmed_reads_1.append(os.path.join(outdir, f"trimmed_reads.{i}.1.fq.gz"))
         trimmed_reads_2.append(os.path.join(outdir, f"trimmed_reads.{i}.2.fq.gz"))
         read_trim.run_trimmomatic(
@@ -44,7 +50,7 @@ def run(
         read_group=("1", sample_name),
     )
     utils.syscall(f"samtools index {rmdup_bam}")
-    if not debug:
+    if trim_reads and not debug:
         for filename in trimmed_reads_1 + trimmed_reads_2:
             os.unlink(filename)
 
