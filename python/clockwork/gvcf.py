@@ -231,7 +231,7 @@ def _vcf_record_pass_index(record, require_minos_pass=True, min_frs=0.9, min_dp=
 
     if geno_index > 0 and len(alt) != len(record.REF) and alt[0] != record.REF[0]:
         return None
-    elif int(record.FORMAT["DP"]) < min_dp:
+    elif float(record.FORMAT["DP"]) < min_dp:
         return None
     elif record.INFO["CALLER"] == "minos":
         if (require_minos_pass and record.FILTER != {"PASS"}) or float(
