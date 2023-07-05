@@ -203,7 +203,8 @@ def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, ou
                 print(samtools_record, file=f_out)
                 ref_pos = samtools_record.POS + 1
 
-        _finish_contig(ref_pos, ref_seq, minos_record, minos_iter, f_out)
+        if ref_seq is not None: # happens if the samtools VCF was empty
+            _finish_contig(ref_pos, ref_seq, minos_record, minos_iter, f_out)
         _print_non_samtools_seqs(ref_seqs, used_ref_seqs, minos_records, f_out)
 
 
