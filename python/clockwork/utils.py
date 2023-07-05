@@ -5,6 +5,8 @@ import os
 import subprocess
 import sys
 
+import pyfastaq
+
 
 def decode(x):
     try:
@@ -121,10 +123,26 @@ def make_empty_file(filename):
 
 def sam_record_count(filename):
     """Returns number of sam records in file"""
-    completed_process = syscall(r"""grep -c -v '^@' """ + filename)
-    try:
-        count = int(completed_process.stdout.rstrip())
-    except:
-        raise Exception("Error counting sam records in file " + filename)
-
+    count = 0
+    with open(filename) as f:
+        for line in f:
+            if not line.startswith("@"):
+                count += 1
     return count
+
+
+def vcf_has_records(filename):
+    """Returns true if there is at least 1 record in VCF file"""
+    with open(filename) as f:
+        for line in f:
+            if not line.startswith("#"):
+                return True
+    return False
+
+
+def file_has_at_least_one_line(filename):
+    """Returns true if there is at least 1 line in the file. Can be gzipped"""
+    f = pyfastaq.utils.open_file_read(filename)
+    has_line = any(f)
+    f.close()
+    return has_line
