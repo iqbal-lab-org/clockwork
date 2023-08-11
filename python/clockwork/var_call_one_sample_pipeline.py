@@ -137,7 +137,7 @@ def run(
 
     final_gvcf = os.path.join(outdir, "final.gvcf")
     gvcf.gvcf_from_minos_vcf_and_samtools_gvcf(
-        refdir.ref_fasta, final_vcf, samtools_gvcf, final_gvcf,
+        refdir.ref_fasta, final_vcf, samtools_gvcf, final_gvcf, bam_file=rmdup_bam
     )
     if not debug:
         os.unlink(samtools_gvcf)

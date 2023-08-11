@@ -1,4 +1,7 @@
+from collections import Counter
 import datetime
+import logging
+import subprocess
 
 from cluster_vcf_records import vcf_file_read, vcf_record
 import pyfastaq
@@ -15,6 +18,7 @@ def _combine_minos_and_samtools_header(minos_header, samtools_header, ref_seqs):
     new_header = [
         '##FILTER=<ID=NO_DATA,Description="No information from minos or samtools">',
         '##INFO=<ID=CALLER,Number=1,Description="Origin of call, one of minos, samtools, or none if there was no depth">',
+        '##FORMAT=<ID=DP_ACGT,Number=8,Type=Integer,Description="Number of A-forward, A-reverse, C-forward, C-reverse, G-forward, G-reverse, T-forward, T-reverse bases">',
     ]
     new_header.extend(
         [f"##contig=<ID={k},length={len(v)}>" for k, v in ref_seqs.items()]
@@ -126,9 +130,49 @@ def _finish_contig(ref_pos, ref_seq, minos_record, minos_iter, filehandle):
             ref_pos += 1
 
 
-def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, out_vcf):
+def _samtools_acgt_depths(bam_file):
+    command = f"samtools mpileup --no-output-ins --no-output-ins --no-output-del --no-output-del --no-output-ends -aa {bam_file}"
+    logging.info(f"Gathering per-position A/C/G/T depths ({command})")
+    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, universal_newlines=True)
+    acgt_depths = {}
+    acgt = ("A", "a", "C", "c", "G", "g", "T", "t")
+
+    for line in p.stdout:
+        ref, pos, _, _, depths, _ = line.split("\t")
+        pos = int(pos) - 1
+        if ref not in acgt_depths:
+            acgt_depths[ref] = {}
+        assert pos not in acgt_depths[ref]
+        counts = Counter(depths)
+        acgt_depths[ref][pos] = ",".join(str(counts[x]) for x in acgt)
+
+    p.wait()
+    if p.returncode != 0:
+        raise Exception(f"Error running samtools mpileup: {command}")
+
+    logging.info(f"Finished per-position A/C/G/T depths ({command})")
+    return acgt_depths
+
+
+def _add_acgt_depths_to_minos(minos_records, acgt_depths):
+    for ref in minos_records:
+        if ref not in acgt_depths:
+            continue
+        depths = acgt_depths[ref]
+
+        for record in minos_records[ref]:
+            if record.POS in depths:
+                record.set_format_key_value("DP_ACGT", depths[record.POS])
+
+
+def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, out_vcf, bam_file=None):
     minos_header, minos_records = vcf_file_read.vcf_file_to_dict(minos_vcf)
     samtools_header = vcf_file_read.get_header_lines_from_vcf_file(samtools_vcf)
+    if bam_file is not None:
+        acgt_depths = _samtools_acgt_depths(bam_file)
+        _add_acgt_depths_to_minos(minos_records, acgt_depths)
+    else:
+        acgt_depths = {}
 
     ref_seqs = {}
     pyfastaq.tasks.file_to_dict(ref_fasta, ref_seqs)
@@ -136,6 +180,7 @@ def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, ou
     ref_seq = None
     ref_pos = -1
     minos_record = None
+    logging.info(f"Making GVCF file {out_vcf} from {minos_vcf} {samtools_vcf}")
 
     with open(out_vcf, "w") as f_out, open(samtools_vcf) as f_samtools:
         print(
@@ -161,6 +206,10 @@ def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, ou
                 continue
 
             samtools_record = vcf_record.VcfRecord(line)
+            try:
+                samtools_record.set_format_key_value("DP_ACGT", acgt_depths[samtools_record.CHROM][samtools_record.POS])
+            except KeyError:
+                pass
 
             # If we've found a new CHROM in the samtools VCF file
             if ref_seq is None or ref_seq.id != samtools_record.CHROM:

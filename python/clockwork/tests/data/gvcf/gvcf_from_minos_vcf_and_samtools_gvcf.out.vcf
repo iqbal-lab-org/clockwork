@@ -16,6 +16,7 @@
 ##FORMAT=<ID=DP,Number=1,Type=Integer,Description="total read depth from gramtools">
 ##FORMAT=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-forward , ref-reverse, alt-forward and alt-reverse bases">
 ##FORMAT=<ID=DPF,Number=1,Type=Float,Description="Depth Fraction, defined as DP divided by mean depth">
+##FORMAT=<ID=DP_ACGT,Number=8,Type=Integer,Description="Number of A-forward, A-reverse, C-forward, C-reverse, G-forward, G-reverse, T-forward, T-reverse bases">
 ##FORMAT=<ID=FQ,Number=1,Type=Float,Description="Phred probability of all samples being the same">
 ##FORMAT=<ID=FRS,Number=1,Type=Float,Description="Fraction of reads that support the genotype call">
 ##FORMAT=<ID=G3,Number=3,Type=Float,Description="ML estimate of genotype frequencies">

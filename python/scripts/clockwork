@@ -492,6 +492,10 @@ subparser_gvcf_from_minos_and_samtools.add_argument(
     "outfile",
     help="Output gVCF file",
 )
+subparser_gvcf_from_minos_and_samtools.add_argument(
+    "--bam_file",
+    help="BAM file. If used, will add DP_ACGT to VCF",
+)
 subparser_gvcf_from_minos_and_samtools.set_defaults(
     func=clockwork.tasks.gvcf_from_minos_and_samtools.run
 )
