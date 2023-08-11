@@ -133,7 +133,9 @@ def _finish_contig(ref_pos, ref_seq, minos_record, minos_iter, filehandle):
 def _samtools_acgt_depths(bam_file):
     command = f"samtools mpileup --no-output-ins --no-output-ins --no-output-del --no-output-del --no-output-ends -aa {bam_file}"
     logging.info(f"Gathering per-position A/C/G/T depths ({command})")
-    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, universal_newlines=True)
+    p = subprocess.Popen(
+        command, shell=True, stdout=subprocess.PIPE, universal_newlines=True
+    )
     acgt_depths = {}
     acgt = ("A", "a", "C", "c", "G", "g", "T", "t")
 
@@ -165,7 +167,9 @@ def _add_acgt_depths_to_minos(minos_records, acgt_depths):
                 record.set_format_key_value("DP_ACGT", depths[record.POS])
 
 
-def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, out_vcf, bam_file=None):
+def gvcf_from_minos_vcf_and_samtools_gvcf(
+    ref_fasta, minos_vcf, samtools_vcf, out_vcf, bam_file=None
+):
     minos_header, minos_records = vcf_file_read.vcf_file_to_dict(minos_vcf)
     samtools_header = vcf_file_read.get_header_lines_from_vcf_file(samtools_vcf)
     if bam_file is not None:
@@ -207,7 +211,9 @@ def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, ou
 
             samtools_record = vcf_record.VcfRecord(line)
             try:
-                samtools_record.set_format_key_value("DP_ACGT", acgt_depths[samtools_record.CHROM][samtools_record.POS])
+                samtools_record.set_format_key_value(
+                    "DP_ACGT", acgt_depths[samtools_record.CHROM][samtools_record.POS]
+                )
             except KeyError:
                 pass
 
@@ -252,7 +258,7 @@ def gvcf_from_minos_vcf_and_samtools_gvcf(ref_fasta, minos_vcf, samtools_vcf, ou
                 print(samtools_record, file=f_out)
                 ref_pos = samtools_record.POS + 1
 
-        if ref_seq is not None: # happens if the samtools VCF was empty
+        if ref_seq is not None:  # happens if the samtools VCF was empty
             _finish_contig(ref_pos, ref_seq, minos_record, minos_iter, f_out)
         _print_non_samtools_seqs(ref_seqs, used_ref_seqs, minos_records, f_out)
 
