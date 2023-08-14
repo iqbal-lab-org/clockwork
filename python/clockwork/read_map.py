@@ -146,9 +146,9 @@ def map_reads_set(
     if len(outfiles) == 1:
         os.rename(outfiles[-1], outfile)
     else:
-        file_string = ", ".join(
-            ["outfiles[" + str(i) + "]" for i in range(len(outfiles))]
-        )
-        exec('pysam.merge("-c", outfile, ' + file_string + ")")
+        flags = ["-c"]
+        if not (rmdup or markdup):
+            flags.append("-n")
+        pysam.merge(*flags, outfile, *outfiles)
 
     shutil.rmtree(tmpdir)
