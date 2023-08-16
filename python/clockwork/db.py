@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import tempfile
+import shutil
 from operator import itemgetter
 from clockwork import (
     db_connection,
@@ -554,7 +555,9 @@ class Db:
                 output_dir = iso_dir.pipeline_dir(
                     row["sequence_replicate_number"], "qc", pipeline_version
                 )
-                assert not os.path.exists(output_dir)
+                if os.path.exists(output_dir):
+                    print("Warning:", output_dir, "already exists. Removing.", file=sys.stderr)
+                    shutil.rmtree(output_dir)
                 try:
                     os.makedirs(output_dir)
                 except:
