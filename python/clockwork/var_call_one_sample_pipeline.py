@@ -34,9 +34,13 @@ def run(
             "Must give same number of forward and reverse reads files. Got:\nForward:{reads1_list}\nReverse:{reads2_list}"
         )
     if not check_reads_files(reads1_list + reads2_list):
-        raise Exception("Reads file(s) not found or are empty. See previous error messages. Cannot continue")
+        raise Exception(
+            "Reads file(s) not found or are empty. See previous error messages. Cannot continue"
+        )
     if not os.path.exists(ref_dir):
-        raise FileNotFoundError(f"Reference directory not found: {ref_dir}. Cannot continue")
+        raise FileNotFoundError(
+            f"Reference directory not found: {ref_dir}. Cannot continue"
+        )
 
     os.mkdir(outdir)
 
@@ -51,10 +55,7 @@ def run(
         trimmed_reads_1.append(os.path.join(outdir, f"trimmed_reads.{i}.1.fq.gz"))
         trimmed_reads_2.append(os.path.join(outdir, f"trimmed_reads.{i}.2.fq.gz"))
         read_trim.run_trimmomatic(
-            reads1_list[i],
-            reads2_list[i],
-            trimmed_reads_1[-1],
-            trimmed_reads_2[-1],
+            reads1_list[i], reads2_list[i], trimmed_reads_1[-1], trimmed_reads_2[-1]
         )
 
     refdir = reference_dir.ReferenceDir(directory=ref_dir)
@@ -77,7 +78,9 @@ def run(
     utils.syscall(cmd)
     samtools_vcf_has_vars = utils.vcf_has_records(samtools_vcf)
     if not samtools_vcf_has_vars:
-        logging.warn("SAMTOOLS VCF FILE HAS ZERO VARIANTS. PLEASE CHECK THE QUALITY OF INPUT DATA")
+        logging.warn(
+            "SAMTOOLS VCF FILE HAS ZERO VARIANTS. PLEASE CHECK THE QUALITY OF INPUT DATA"
+        )
 
     samtools_gvcf = os.path.join(outdir, "samtools.gvcf")
     cmd = f"bcftools mpileup -I --output-type u -f {refdir.ref_fasta} {rmdup_bam} | bcftools call -c -O v -o {samtools_gvcf}"
@@ -94,7 +97,9 @@ def run(
     try:
         ctx.run(run_mccortex_view_kmers=False)
     except:
-        logging.error("ERROR RUNNING CORTEX. WILL TRY TO CONTINUE USING SAMTOOLS VCF ONLY (IF SAMTOOLS FOUND VARIANTS), BUT PLEASE CHECK CORTEX LOGS")
+        logging.error(
+            "ERROR RUNNING CORTEX. WILL TRY TO CONTINUE USING SAMTOOLS VCF ONLY (IF SAMTOOLS FOUND VARIANTS), BUT PLEASE CHECK CORTEX LOGS"
+        )
 
     ctx_vcf_dir = os.path.join(cortex_dir, "cortex.out", "vcfs")
     try:
@@ -108,24 +113,43 @@ def run(
 
     cortex_vcf_has_vars = False
     if len(cortex_vcfs) != 1:
-        logging.error("NO VCF FILE MADE BY CORTEX. WILL TRY TO CONTINUE USING SAMTOOLS VCF ONLY (IF SAMTOOLS FOUND VARIANTS), BUT PLEASE CHECK THE QUALITY OF INPUT DATA, AND CORTEX LOGS")
+        logging.error(
+            "NO VCF FILE MADE BY CORTEX. WILL TRY TO CONTINUE USING SAMTOOLS VCF ONLY (IF SAMTOOLS FOUND VARIANTS), BUT PLEASE CHECK THE QUALITY OF INPUT DATA, AND CORTEX LOGS"
+        )
         cortex_vcf = ""
     else:
         cortex_vcf = os.path.join(outdir, "cortex.vcf")
         os.rename(cortex_vcfs[0], cortex_vcf)
         cortex_vcf_has_vars = utils.vcf_has_records(cortex_vcf)
         if not cortex_vcf_has_vars:
-            logging.warn("CORTEX VCF FILE HAS ZERO VARIANTS. PLEASE CHECK THE QUALITY OF INPUT DATA")
+            logging.warn(
+                "CORTEX VCF FILE HAS ZERO VARIANTS. PLEASE CHECK THE QUALITY OF INPUT DATA"
+            )
         if not debug:
             utils.syscall(f"rm -rf {cortex_dir}")
 
     final_vcf = os.path.join(outdir, "final.vcf")
 
     if not (samtools_vcf_has_vars and cortex_vcf_has_vars):
-        logging.error("NO VARIANTS FOUND BY CORTEX OR SAMTOOLS. WRITING HEADER-ONLY FINAL VCF FILE INSTEAD OF RUNNING MINOS")
+        logging.error(
+            "NO VARIANTS FOUND BY CORTEX OR SAMTOOLS. WRITING HEADER-ONLY FINAL VCF FILE INSTEAD OF RUNNING MINOS"
+        )
         with open(final_vcf, "w") as f:
             print("##fileformat=VCFv4.2", file=f)
-            print("#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT", "sample", sep="\t", file=f)
+            print(
+                "#CHROM",
+                "POS",
+                "ID",
+                "REF",
+                "ALT",
+                "QUAL",
+                "FILTER",
+                "INFO",
+                "FORMAT",
+                "sample",
+                sep="\t",
+                file=f,
+            )
         minos_vcf_has_vars = False
     else:
         minos_dir = os.path.join(outdir, "minos")
@@ -137,7 +161,7 @@ def run(
 
     final_gvcf = os.path.join(outdir, "final.gvcf")
     gvcf.gvcf_from_minos_vcf_and_samtools_gvcf(
-        refdir.ref_fasta, final_vcf, samtools_gvcf, final_gvcf,
+        refdir.ref_fasta, final_vcf, samtools_gvcf, final_gvcf, bam_file=rmdup_bam
     )
     if not debug:
         os.unlink(samtools_gvcf)

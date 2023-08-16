@@ -477,20 +477,17 @@ subparser_gvcf_from_minos_and_samtools = subparsers.add_parser(
 )
 
 subparser_gvcf_from_minos_and_samtools.add_argument(
-    "ref_fasta",
-    help="Reference genome FASTA file",
+    "ref_fasta", help="Reference genome FASTA file"
 )
 subparser_gvcf_from_minos_and_samtools.add_argument(
-    "minos_vcf",
-    help="VCF file made by minos",
+    "minos_vcf", help="VCF file made by minos"
 )
 subparser_gvcf_from_minos_and_samtools.add_argument(
-    "samtools_vcf",
-    help="VCF file made by samtools",
+    "samtools_vcf", help="VCF file made by samtools"
 )
+subparser_gvcf_from_minos_and_samtools.add_argument("outfile", help="Output gVCF file")
 subparser_gvcf_from_minos_and_samtools.add_argument(
-    "outfile",
-    help="Output gVCF file",
+    "--bam_file", help="BAM file. If used, will add DP_ACGT to VCF"
 )
 subparser_gvcf_from_minos_and_samtools.set_defaults(
     func=clockwork.tasks.gvcf_from_minos_and_samtools.run
@@ -506,13 +503,9 @@ subparser_gvcf_to_fasta = subparsers.add_parser(
 )
 
 subparser_gvcf_to_fasta.add_argument(
-    "gvcf",
-    help="Input gVCF file made by gvcf_from_minos_and_samtools",
+    "gvcf", help="Input gVCF file made by gvcf_from_minos_and_samtools"
 )
-subparser_gvcf_to_fasta.add_argument(
-    "outfile",
-    help="Output FASTA file",
-)
+subparser_gvcf_to_fasta.add_argument("outfile", help="Output FASTA file")
 subparser_gvcf_to_fasta.add_argument(
     "--ignore_minos_pass",
     action="store_true",
@@ -840,9 +833,7 @@ subparser_samtools_qc = subparsers.add_parser(
     description="Runs BWA MEM, picard MarkDuplicates, then samtools stats and plots",
 )
 
-subparser_samtools_qc.add_argument(
-    "ref_fasta", help="Name of reference fasta file"
-)
+subparser_samtools_qc.add_argument("ref_fasta", help="Name of reference fasta file")
 subparser_samtools_qc.add_argument("reads1", help="Name of reads file 1")
 subparser_samtools_qc.add_argument("reads2", help="Name of reads file 2")
 subparser_samtools_qc.add_argument(
@@ -967,19 +958,13 @@ subparser_variant_call_one_sample.add_argument(
     metavar="INT",
 )
 subparser_variant_call_one_sample.add_argument(
-    "--force",
-    action="store_true",
-    help="Overwrite outdir if it already exists",
+    "--force", action="store_true", help="Overwrite outdir if it already exists"
 )
 subparser_variant_call_one_sample.add_argument(
-    "--keep_bam",
-    action="store_true",
-    help="Keep BAM file of rmdup reads",
+    "--keep_bam", action="store_true", help="Keep BAM file of rmdup reads"
 )
 subparser_variant_call_one_sample.add_argument(
-    "--debug",
-    action="store_true",
-    help="Debug mode: do not clean up any files",
+    "--debug", action="store_true", help="Debug mode: do not clean up any files"
 )
 subparser_variant_call_one_sample.add_argument(
     "--no_trim",
@@ -990,8 +975,7 @@ subparser_variant_call_one_sample.add_argument(
     "ref_dir", help="Directory of reference files, made by clockwork reference_prepare"
 )
 subparser_variant_call_one_sample.add_argument(
-    "outdir",
-    help="Output directory (must not exist, will be created)",
+    "outdir", help="Output directory (must not exist, will be created)"
 )
 subparser_variant_call_one_sample.add_argument(
     "reads_files",
