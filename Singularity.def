@@ -32,7 +32,7 @@ NXF_VER=22.10.0
 
 
 %labels
-    Version 0.12.1
+    Version 0.12.2
 
 
 %runscript
