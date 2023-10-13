@@ -15,11 +15,11 @@ class TestCortex(unittest.TestCase):
         bad1 = os.path.join(data_dir, "replace_sample_name_in_vcf.in.bad1.vcf")
         bad2 = os.path.join(data_dir, "replace_sample_name_in_vcf.in.bad2.vcf")
         bad3 = os.path.join(data_dir, "replace_sample_name_in_vcf.in.bad3.vcf")
-        with self.assertRaises(cortex.Error):
+        with self.assertRaises(Exception):
             cortex._replace_sample_name_in_vcf(bad1, tmp_out, "NEW_NAME")
-        with self.assertRaises(cortex.Error):
+        with self.assertRaises(Exception):
             cortex._replace_sample_name_in_vcf(bad2, tmp_out, "NEW_NAME")
-        with self.assertRaises(cortex.Error):
+        with self.assertRaises(Exception):
             cortex._replace_sample_name_in_vcf(bad3, tmp_out, "NEW_NAME")
 
         infile = os.path.join(data_dir, "replace_sample_name_in_vcf.in.vcf")
@@ -33,7 +33,16 @@ class TestCortex(unittest.TestCase):
         ref_dir = os.path.join(data_dir, "Reference")
         reads_infile = os.path.join(data_dir, "reads.fq")
         tmp_out = "tmp.cortex.out"
-        sample_name = "sample_name"
+        # When cortex is run, the sample is called "sample". Then the VCF is
+        # fixed afterwards with the correct sample name. This was because the
+        # sample name is put in the cortex VCF filename, and could result in
+        # filenames that were too long for the filesystem.
+        # There was a bug where the rsync to copy the temp sample-renamed VCF
+        # back to the original VCF didn't work because it thought the files were
+        # the same. This only happened if the length of the sample name was 6,
+        # ie the same as len("sample"). Hence the sample name below has length
+        # 6, which caused the test to fail before the rsync bug was fixed.
+        sample_name = "123456"
         ctx = cortex.CortexRunCalls(
             ref_dir, reads_infile, tmp_out, sample_name, mem_height=17
         )
@@ -57,7 +66,7 @@ class TestCortex(unittest.TestCase):
         """test make_run_calls_index_files"""
         ref_fasta = "tmp.cortex.make_run_calls_index_files.ref.fa"
         outprefix = "tmp.cortex.make_run_calls_index_files.out"
-        expected_suffixes = ["k31.ctx", "stampy.sthash", "stampy.stidx"]
+        expected_suffixes = ["k31.ctx"]
         expected_files = [outprefix + "." + x for x in expected_suffixes]
         for filename in expected_files:
             try:

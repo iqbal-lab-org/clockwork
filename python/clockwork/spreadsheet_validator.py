@@ -5,10 +5,6 @@ from clockwork import spreadsheet_helper, utils
 from clockwork.common_data import allowed_sequencing_instruments
 
 
-class Error(Exception):
-    pass
-
-
 # This is here for multiprocessing
 def _check_md5(filename, expect_md5):
     got_md5 = utils.md5(filename)

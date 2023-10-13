@@ -2,10 +2,6 @@ import os
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
 def run_trimmomatic(
     reads1,
     reads2,
@@ -28,7 +24,7 @@ def run_trimmomatic(
     trimmo_root = os.path.abspath(trimmo_root)
     jar_files = [x for x in os.listdir(trimmo_root) if x.endswith(".jar")]
     if len(jar_files) != 1:
-        raise Error(
+        raise Exception(
             'Error finding Trimmoatic jar file in directory "'
             + trimmo_root
             + '". Found '
@@ -41,7 +37,7 @@ def run_trimmomatic(
         adapters = os.path.join(trimmo_root, "adapters", adapters)
 
     if not os.path.exists(adapters):
-        raise Error('Cannot find adapters file "' + adapters + '".')
+        raise Exception('Cannot find adapters file "' + adapters + '".')
 
     cmd = " ".join(
         [

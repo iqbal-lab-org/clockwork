@@ -4,10 +4,6 @@ import pathlib
 from clockwork import fqtools
 
 
-class Error(Exception):
-    pass
-
-
 class FakeContamRemover:
     def __init__(
         self, reads_in_1, reads_in_2, reads_out_1, reads_out_2, counts_tsv_out
@@ -41,14 +37,14 @@ class FakeContamRemover:
         The created symlink is a relative path -- this way the whole
         directory can be moved and the symlink is still valid"""
         if not os.path.exists(reads_file):
-            raise Error("Error! file not found: " + reads_file)
+            raise Exception("Error! file not found: " + reads_file)
 
         symlink_path = os.path.abspath(symlink_path)
         symlink_path_dir, symlink_path_name = os.path.split(symlink_path)
         reads_file_dir, reads_file_name = os.path.split(os.path.abspath(reads_file))
 
         if reads_file_dir != symlink_path_dir:
-            raise Error(
+            raise Exception(
                 "Can only make symlinks inside same direcory. Filenames were:\n"
                 + reads_file_dir
                 + "\n"

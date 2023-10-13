@@ -3,17 +3,14 @@ import pyfastaq
 from clockwork import contam_remover, cortex, utils
 
 
-class Error(Exception):
-    pass
-
-
 class ReferenceDir:
     def __init__(
-        self, pipeline_references_root_dir=None, reference_id=None, directory=None
+        self, pipeline_references_root_dir=None, reference_id=None, directory=None, minimap2_preset="sr",
     ):
         self.pipeline_references_root_dir = pipeline_references_root_dir
         self.reference_id = reference_id
         self.directory = directory
+        self.minimap2_preset = minimap2_preset
 
         if self.directory is not None:
             self.directory = os.path.abspath(directory)
@@ -25,12 +22,13 @@ class ReferenceDir:
                 self.pipeline_references_root_dir, str(self.reference_id)
             )
         else:
-            raise Error(
+            raise Exception(
                 "Must provide directory, or both of pipeline_references_root_dir,reference_id"
             )
 
         self.ref_fasta_prefix = os.path.join(self.directory, "ref")
         self.ref_fasta = self.ref_fasta_prefix + ".fa"
+        self.minimap2_index = self.ref_fasta + ".minimap2_idx"
         self.ref_fai = self.ref_fasta + ".fai"
         self.remove_contam_metadata_tsv = os.path.join(
             self.directory, "remove_contam_metadata.tsv"
@@ -45,22 +43,18 @@ class ReferenceDir:
         # seqtk just hangs if the input file doesn't exist, so check
         # it first instead
         if not os.path.exists(fasta_in):
-            raise Error("File not found: " + fasta_in)
+            raise Exception("File not found: " + fasta_in)
 
         try:
             os.makedirs(self.directory)
         except:
-            raise Error("Error mkdir " + self.directory)
+            raise Exception("Error mkdir " + self.directory)
 
         # ensure sequence lines are 60 nt long, and remove comments from
         # header lines
         utils.syscall("seqtk seq -C -l 60 " + fasta_in + " > " + self.ref_fasta)
         utils.syscall("samtools faidx " + self.ref_fasta)
-
-        if genome_is_big:
-            utils.syscall("bwa index -a bwtsw " + self.ref_fasta)
-        else:
-            utils.syscall("bwa index " + self.ref_fasta)
+        utils.syscall(f"minimap2 -I 0.5G -x {self.minimap2_preset} -d {self.minimap2_index} {self.ref_fasta}")
 
         if using_cortex:
             cortex.make_run_calls_index_files(
@@ -77,4 +71,4 @@ class ReferenceDir:
         pyfastaq.tasks.lengths_from_fai(self.ref_fai, names_in_fasta)
         names_in_fasta = set(names_in_fasta.keys())
         if names_in_fasta != names_in_contam:
-            raise Error("Mismtach in names from metadata tsv and fasta files")
+            raise Exception("Mismtach in names from metadata tsv and fasta files")

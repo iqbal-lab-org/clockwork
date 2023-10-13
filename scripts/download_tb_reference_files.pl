@@ -19,7 +19,7 @@ my @ntm_accessions = qw/CU458896 JALN00000000 CVQQ00000000 CCAW00000000
 ACFI00000000 BCSX00000000 BCQY00000000 AFVW00000000 CCBB00000000 BBHD00000000
 CCAY00000000 BBFT00000000 ALQB00000000 JAGZ00000000 CP002385 CP012150
 MCHX00000000 CP011883 ARBU00000000 LFOF00000000 LDPO00000000 BBGO00000000
-MIGZ00000000 FJVO00000000 CP003322 CP006835 CTEE00000000 AL450380 LAWX00000000
+MIGZ00000000 FJVO00000000 CP003322 CP006835 CTEE00000000 AL450380 CP083405
 CP019882 JXST00000000 CCBF00000000 CVTB00000000 ANPL00000000
 CYSI00000000 JMDW00000000 CWKH00000000 BCTA00000000 JYNU00000000 BBHE00000000
 ADNV00000000 CP014475 BCND00000000 BBHB00000000 BBGS00000000 BBHF00000000
@@ -30,18 +30,18 @@ ALQA00000000 CP000511 CP003347 BDDI00000000/;
 
 print "------------------- download genomes --------------------\n";
 my %urls = (
-    'human.fa.gz' => 'ftp.ncbi.nlm.nih.gov/pub/grc/human/GRC/GRCh38.p13_GenBank/GCA_000001405.28_GRCh38.p13_genomic.fna.gz',
+    'human.fa.gz' => 'https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/009/914/755/GCA_009914755.4_T2T-CHM13v2.0/GCA_009914755.4_T2T-CHM13v2.0_genomic.fna.gz',
     'NC_001802.1.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_001802.1', # HIV-1
     'NC_007605.1.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_007605.1', # EBV wild type
     'NC_009334.1.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_009334.1', # EBV type 2
     'NC_000962.1.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_000962.1', # TB reference genome v1
     'NC_000962.2.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_000962.2', # TB reference genome v2
     'NC_000962.3.fa' => 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&rettype=fasta&retmode=text&id=NC_000962.3', # TB reference genome v3
-    'Saliva.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Saliva.tar.bz2',
-    'Throat.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Throat.tar.bz2',
-    'Tongue_dorsum.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Tongue_dorsum.tar.bz2',
-    'Buccal_mucosa.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Buccal_mucosa.tar.bz2',
-    'Palatine_Tonsils.tar.bz2' => 'http://downloads.ihmpdcc.org/data/HMBSA/Palatine_Tonsils.tar.bz2',
+    'Saliva.tar.bz2' => 'http://downloads.hmpdacc.org/data/HMBSA/Saliva.tar.bz2',
+    'Throat.tar.bz2' => 'http://downloads.hmpdacc.org/data/HMBSA/Throat.tar.bz2',
+    'Tongue_dorsum.tar.bz2' => 'http://downloads.hmpdacc.org/data/HMBSA/Tongue_dorsum.tar.bz2',
+    'Buccal_mucosa.tar.bz2' => 'http://downloads.hmpdacc.org/data/HMBSA/Buccal_mucosa.tar.bz2',
+    'Palatine_Tonsils.tar.bz2' => 'http://downloads.hmpdacc.org/data/HMBSA/Palatine_Tonsils.tar.bz2',
 );
 
 my @ntm_fastas;

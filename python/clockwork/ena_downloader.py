@@ -237,7 +237,7 @@ class EnaDownloader:
 
         for field in wanted_fields:
             if field not in results:
-                raise Exepction(error_message)
+                raise Exception(error_message)
 
         return [results[k] for k in wanted_fields]
 

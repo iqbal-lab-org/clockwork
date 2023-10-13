@@ -422,7 +422,7 @@ class TestSpreadsheetImporter(unittest.TestCase):
         # test lock file stops it running
         utils.make_empty_file(importer.lock_file)
 
-        with self.assertRaises(lock_file.Error):
+        with self.assertRaises(Exception):
             importer.run()
 
         os.unlink(importer.lock_file)

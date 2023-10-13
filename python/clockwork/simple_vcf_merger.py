@@ -4,10 +4,6 @@ import itertools
 from cluster_vcf_records import vcf_clusterer
 
 
-class Error(Exception):
-    pass
-
-
 class SimpleVcfMerger:
     """Merges samtools and cortex vcf files by filtering on samtools SNP QUAL score, minimum DP4 read depth, and minimum cortex GT confidence. Also filters for homozygous only before masking samtools calls by positions of cortex indels."""
 
@@ -61,7 +57,7 @@ class SimpleVcfMerger:
                 if key not in keys:
                     flag = True
             if flag == True:
-                raise Error("Error! At least 1 key is missing from vcf_records!")
+                raise Exception("Error! At least 1 key is missing from vcf_records!")
 
         """This section creates a mask of the genome by creating a list of 1's where cortext indel postions are coded as zero.
         Samtools calls in this region are then thrown out."""

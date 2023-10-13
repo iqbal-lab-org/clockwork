@@ -125,6 +125,6 @@ class TestSpreadsheetHelper(unittest.TestCase):
         ]
 
         for filename in filenames:
-            with self.assertRaises(spreadsheet_helper.Error):
+            with self.assertRaises(Exception):
                 xlsx = os.path.join(data_dir, filename)
                 spreadsheet_helper.load_data_from_spreadsheet(xlsx)

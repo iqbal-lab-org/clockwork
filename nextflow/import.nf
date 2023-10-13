@@ -1,3 +1,4 @@
+nextflow.enable.dsl=1
 params.help = false
 params.dropbox_dir = ""
 params.pipeline_root = ""

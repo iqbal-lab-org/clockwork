@@ -8,7 +8,7 @@ class TestDbMaker(unittest.TestCase):
         """test init and stop"""
         tmp_file = "test.lock_file"
         utils.make_empty_file(tmp_file)
-        with self.assertRaises(lock_file.Error):
+        with self.assertRaises(Exception):
             lock_file.LockFile(tmp_file)
         os.unlink(tmp_file)
 
@@ -16,7 +16,7 @@ class TestDbMaker(unittest.TestCase):
         self.assertTrue(os.path.exists(tmp_file))
 
         os.unlink(tmp_file)
-        with self.assertRaises(lock_file.Error):
+        with self.assertRaises(Exception):
             lock.stop()
 
         lock = lock_file.LockFile(tmp_file)

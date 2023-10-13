@@ -2,10 +2,6 @@ import os
 from clockwork import db, fqtools, isolate_dir, utils
 
 
-class Error(Exception):
-    pass
-
-
 class ReadPairImporter:
     def __init__(
         self,
@@ -35,7 +31,7 @@ class ReadPairImporter:
     def _copy_reads_file(cls, old_name, new_name, expected_md5):
         old_name_md5 = utils.md5(old_name)
         if old_name_md5 != expected_md5:
-            raise Error(
+            raise Exception(
                 "MD5 given by submitter "
                 + expected_md5
                 + " does not match calculated MD5 "
@@ -52,7 +48,7 @@ class ReadPairImporter:
         )
 
         if len(rows) != 1:
-            raise Error(
+            raise Exception(
                 "Error! Got "
                 + str(len(rows))
                 + " rows from Seqrep table with seqrep_id "
@@ -61,7 +57,7 @@ class ReadPairImporter:
 
         got_isolate = rows[0]["isolate_id"]
         if got_isolate != isolate_id:
-            raise Error(
+            raise Exception(
                 "Error! Expected isolate_id "
                 + str(isolate_id)
                 + " but got "
@@ -72,7 +68,7 @@ class ReadPairImporter:
 
         got_sequence_replicate_number = rows[0]["sequence_replicate_number"]
         if got_sequence_replicate_number != sequence_replicate_number:
-            raise Error(
+            raise Exception(
                 "Error! Expected sequence_replicate_number "
                 + str(sequence_replicate_number)
                 + " but got "
@@ -82,13 +78,13 @@ class ReadPairImporter:
             )
 
         if rows[0]["import_status"] == -1:
-            raise Error(
+            raise Exception(
                 "Error! Import already tried and failed for seqrep " + str(seqrep_id)
             )
         elif rows[0]["import_status"] == 1:
-            raise Error("Error! Already imported seqrep " + str(seqrep_id))
+            raise Exception("Error! Already imported seqrep " + str(seqrep_id))
         elif rows[0]["import_status"] != 0:
-            raise Error(
+            raise Exception(
                 "Error! import_status should be -1, 0 or 1, but is "
                 + str(rows[0]["import_status"])
                 + " for seqrep "
@@ -108,7 +104,7 @@ class ReadPairImporter:
                 "Seqrep", {"seqrep_id": seqrep_id}, {"import_status": import_status}
             )
         except:
-            raise Error(
+            raise Exception(
                 "Error updating database at end of import for seqrep " + str(seqrep_id)
             )
 
@@ -118,7 +114,7 @@ class ReadPairImporter:
         )
         for filename in self.reads_file_1, self.reads_file_2:
             if not os.path.exists(filename):
-                raise Error(
+                raise Exception(
                     "Error! Reads file " + filename + " not found, Cannot continue."
                 )
 
@@ -131,7 +127,7 @@ class ReadPairImporter:
             iso_dir.reads_dir, "import_lock." + str(self.seqrep_id)
         )
         if os.path.exists(lock_file):
-            raise Error("Error! Lock file " + lock_file + " found. Cannot continue")
+            raise Exception("Error! Lock file " + lock_file + " found. Cannot continue")
 
         utils.make_empty_file(lock_file)
 

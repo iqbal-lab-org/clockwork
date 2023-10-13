@@ -5,10 +5,6 @@ import string
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
 def _make_dummy_success_receipt(outfile, object_type):
     accession = "".join(
         [random.choice(string.ascii_uppercase + string.digits) for _ in range(10)]
@@ -63,13 +59,13 @@ def parse_config_file(ini_file):
     try:
         config.read(ini_file)
     except:
-        raise Error("Error! Parsing config file " + ini_file)
+        raise Exception("Error! Parsing config file " + ini_file)
 
     if "ena_login" not in config:
-        raise Error("Error! [ena_login] section not found in config file " + ini_file)
+        raise Exception("Error! [ena_login] section not found in config file " + ini_file)
 
     if not ("user" in config["ena_login"] and "password" in config["ena_login"]):
-        raise Error(
+        raise Exception(
             "Error! user and password not found in [ena_login] section of config file "
             + ini_file
         )
@@ -115,7 +111,7 @@ def submit_xml_files(
     elif unit_test == "fail":
         _make_dummy_fail_receipt(outfile)
     else:
-        raise Error("unit_test must be None, success, or fail. Got: " + unit_test)
+        raise Exception("unit_test must be None, success, or fail. Got: " + unit_test)
 
 
 def upload_file_to_ena_ftp(ini_file, filename, uploaded_name):

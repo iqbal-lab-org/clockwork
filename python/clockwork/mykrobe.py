@@ -4,11 +4,7 @@ import shutil
 from clockwork import utils
 
 
-class Error(Exception):
-    pass
-
-
-built_in_panels = {"tb": {"bradley-2015", "walker-2015", "201901"}}
+built_in_panels = {"tb": {"bradley-2015", "walker-2015", "201901", "202010", "202206"}}
 
 
 def susceptibility_dict_from_json_file(json_file):
@@ -18,7 +14,7 @@ def susceptibility_dict_from_json_file(json_file):
 
     sample_names = list(json_data.keys())
     if len(sample_names) != 1:
-        raise Error(
+        raise Exception(
             "Expected one key in json file "
             + json_file
             + ", but got: "
@@ -30,7 +26,7 @@ def susceptibility_dict_from_json_file(json_file):
     try:
         suscept_data = json_data[sample_name]["susceptibility"]
     except:
-        raise Error("Error getting susceptibility from file " + json_file)
+        raise Exception("Error getting susceptibility from file " + json_file)
 
     return suscept_data
 
@@ -65,11 +61,11 @@ def run_predict(
     os.mkdir(outdir)
     os.chdir(outdir)
     json_out = "out.json"
-    command = [mykrobe, "predict", "--format", "json", sample_name, species]
+    command = [mykrobe, "predict", "--format", "json", f"--sample {sample_name}"]
 
     if custom_probe_and_json is not None:
         assert len(custom_probe_and_json) == 2
-        panel = "custom"
+        panel = None # is ignored anyway when `--species custom` is used
         probe_file = os.path.abspath(custom_probe_and_json[0])
         json_file = os.path.abspath(custom_probe_and_json[1])
         assert os.path.exists(probe_file)
@@ -79,7 +75,10 @@ def run_predict(
             probe_file,
             "--custom_variant_to_resistance_json",
             json_file,
+            "--species custom",
         ]
+    else:
+        command += [f"--species {species}"]
 
     if panel is not None:
         command += ["--panel", panel]
@@ -117,7 +116,7 @@ class Panel:
         try:
             os.mkdir(self.root_dir)
         except:
-            raise Error("Error mkdir " + self.root_dir)
+            raise Exception("Error mkdir " + self.root_dir)
 
         self.metadata = {
             "species": species,

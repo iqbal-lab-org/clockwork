@@ -1,16 +1,12 @@
 from clockwork import db_connection, db_schema
 
 
-class Error(Exception):
-    pass
-
-
 class DbMaker:
     def __init__(self, ini_file):
         try:
             self.dbc = db_connection.DbConnection(ini_file, create=True)
         except:
-            raise Error("Error connecting to database")
+            raise Exception("Error connecting to database")
 
     @classmethod
     def _create_table_command(cls, table, data_list, primary_key=None):

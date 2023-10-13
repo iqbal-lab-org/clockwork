@@ -7,10 +7,6 @@ import openpyxl
 from clockwork import spreadsheet_importer
 
 
-class Error(Exception):
-    pass
-
-
 date_iso_regex = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
 
 columns = [
@@ -75,7 +71,7 @@ def load_data_from_spreadsheet(infile):
             if fields != columns:
                 fields_str = ", ".join([str(x) for x in fields])
                 expected_str = ", ".join(columns)
-                raise Error(
+                raise Exception(
                     'Error in first line of spreadsheet "'
                     + infile
                     + '". Column names not correct.\nExpected: '
@@ -84,7 +80,7 @@ def load_data_from_spreadsheet(infile):
                     + fields_str
                 )
         elif len(fields) != len(columns):
-            raise Error(
+            raise Exception(
                 "Wrong number of fields in line "
                 + str(line_counter)
                 + " of spreadsheet: "
@@ -105,7 +101,7 @@ def load_data_from_spreadsheet(infile):
             try:
                 date = dateutil.parser.parse(new_data["submission_date"]).date()
             except:
-                raise Error(
+                raise Exception(
                     "Date format error: "
                     + spreadsheet_importer.SpreadsheetImporter.row_data_dict_to_string(
                         new_data

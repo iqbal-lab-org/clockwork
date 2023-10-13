@@ -1916,7 +1916,7 @@ class TestDb(unittest.TestCase):
     def test_update_remove_contam_stats(self):
         """test _update_remove_contam_stats"""
         counts_file = os.path.join(data_dir, "update_remove_contam_stats.counts.tsv")
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db._update_remove_contam_stats(1, counts_file)
 
         got_rows = self.db.get_rows_from_table("Read_counts")
@@ -1952,7 +1952,7 @@ class TestDb(unittest.TestCase):
         self.assertEqual(expected, got_rows[0])
 
         # should raise error because row already exists for this seqrep
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db._update_remove_contam_stats(1, counts_file)
 
     def test_update_qc_stats(self):
@@ -2046,7 +2046,7 @@ class TestDb(unittest.TestCase):
         """test update_finished_pipeline_run"""
 
         # Error because nothing found in Pipeline table
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db.update_finished_pipeline_run(1, 1, None, "pipeline_name", 1)
 
         # Error because status is 1, which means has already been run and updated
@@ -2060,7 +2060,7 @@ class TestDb(unittest.TestCase):
             "reference_id": 1,
         }
         self.db.add_row_to_table("Pipeline", pipeline_row)
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db.update_finished_pipeline_run(
                 1, 1, None, "pipeline_name", 1, pipeline_version=clockwork_version
             )
@@ -2069,7 +2069,7 @@ class TestDb(unittest.TestCase):
         pipeline_row["seqrep_id"] = 2
         self.db.add_row_to_table("Pipeline", pipeline_row)
         self.db.add_row_to_table("Pipeline", pipeline_row)
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db.update_finished_pipeline_run(
                 1, 2, None, "pipeline_name", 1, pipeline_version=clockwork_version
             )
@@ -2376,7 +2376,7 @@ class TestDb(unittest.TestCase):
         got_rows = self.db.get_rows_from_table("Reference")
         expected_rows = [{"reference_id": 1, "name": "ref_name"}]
         self.assertEqual(expected_rows, got_rows)
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db.add_reference("ref_name")
         got_id = self.db.add_reference("ref_name2")
         self.assertEqual(2, got_id)
@@ -2410,7 +2410,7 @@ class TestDb(unittest.TestCase):
         self.assertEqual(species, panel.metadata["species"])
         self.assertEqual(name1, panel.metadata["name"])
         self.assertFalse(panel.metadata["is_built_in"])
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db.add_mykrobe_custom_panel(
                 species, name1, ref_root, tmp_probes, tmp_json
             )
@@ -2444,7 +2444,7 @@ class TestDb(unittest.TestCase):
     def test_get_reference_dir(self):
         """test get_reference_dir"""
         root = "/root/"
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db.get_reference_dir(1, root)
         self.db.add_reference("refname")
         got = self.db.get_reference_dir(1, root)
@@ -2461,7 +2461,7 @@ class TestDb(unittest.TestCase):
         self.db.backup(outfile=tmpfile)
         # trust the mysqldump command, just cgeck backup file got made
         self.assertTrue(os.path.exists(tmpfile))
-        with self.assertRaises(db.Error):
+        with self.assertRaises(Exception):
             self.db.backup(outfile=tmpfile)
         os.unlink(tmpfile)
 

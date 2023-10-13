@@ -5,9 +5,7 @@ import os
 import subprocess
 import sys
 
-
-class Error(Exception):
-    pass
+import pyfastaq
 
 
 def decode(x):
@@ -37,7 +35,7 @@ def syscall(command):
         print(
             "Output from stderr:", completed_process.stderr, sep="\n", file=sys.stderr
         )
-        raise Error("Error in system call. Cannot continue")
+        raise Exception("Error in system call. Cannot continue")
 
     logging.info(f"stdout:\n{completed_process.stdout.rstrip()}")
     logging.info(f"stderr:\n{completed_process.stderr.rstrip()}")
@@ -71,10 +69,10 @@ def load_md5_from_file(filename):
         else:
             md5sum = line.split()[0]
     except:
-        raise Error("Error getting md5 from file " + filename + ". Unexpected format")
+        raise Exception("Error getting md5 from file " + filename + ". Unexpected format")
 
     if len(md5sum) != 32:
-        raise Error(
+        raise Exception(
             "Error getting md5 from file " + filename + ". Expected string of length 32"
         )
 
@@ -94,7 +92,7 @@ def rsync_and_md5(old_name, new_name, md5sum=None):
     new_md5sum = md5(new_name)
 
     if new_md5sum != md5sum:
-        raise Error(
+        raise Exception(
             "Error copying file "
             + old_name
             + " -> "
@@ -111,7 +109,7 @@ def date_string_from_file_mtime(filename):
     try:
         mtime = os.path.getmtime(filename)
     except:
-        raise Error("Error getting modification time from file " + filename)
+        raise Exception("Error getting modification time from file " + filename)
 
     d = datetime.datetime.fromtimestamp(mtime)
     return d.isoformat().split("T")[0].replace("-", "")
@@ -125,10 +123,26 @@ def make_empty_file(filename):
 
 def sam_record_count(filename):
     """Returns number of sam records in file"""
-    completed_process = syscall(r"""grep -c -v '^@' """ + filename)
-    try:
-        count = int(completed_process.stdout.rstrip())
-    except:
-        raise Error("Error counting sam records in file " + filename)
-
+    count = 0
+    with open(filename) as f:
+        for line in f:
+            if not line.startswith("@"):
+                count += 1
     return count
+
+
+def vcf_has_records(filename):
+    """Returns true if there is at least 1 record in VCF file"""
+    with open(filename) as f:
+        for line in f:
+            if not line.startswith("#"):
+                return True
+    return False
+
+
+def file_has_at_least_one_line(filename):
+    """Returns true if there is at least 1 line in the file. Can be gzipped"""
+    f = pyfastaq.utils.open_file_read(filename)
+    has_line = any(f)
+    f.close()
+    return has_line

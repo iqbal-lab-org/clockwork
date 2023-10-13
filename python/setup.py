@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="clockwork",
-    version="0.10.0",
+    version="0.12.2",
     description="Pipeline code for CRyPTIC project",
     packages=find_packages(),
     author="Martin Hunt",
@@ -14,7 +14,7 @@ setup(
     test_suite="nose.collector",
     tests_require=["nose >= 1.3"],
     install_requires=[
-        "cluster_vcf_records >= 0.11.1",
+        "cluster_vcf_records >= 0.13.3",
         "python-dateutil >= 2.6.1",
         "openpyxl >= 2.4.7",
         "pyfastaq >= 3.14.0",
@@ -22,6 +22,7 @@ setup(
         "pysam >= 0.11.2.1",
         "requests >= 2.9.1",
         "xlsxwriter >= 1.0.0",
+        "xmltodict",
     ],
     license="MIT",
     classifiers=[

@@ -23,7 +23,7 @@ class TestUtils(unittest.TestCase):
 
     def test_syscall_with_error(self):
         """test syscall when there is an error"""
-        with self.assertRaises(utils.Error):
+        with self.assertRaises(Exception):
             utils.syscall("notacommandunlessyoumadeitone")
 
     def test_md5(self):
@@ -39,9 +39,9 @@ class TestUtils(unittest.TestCase):
         prefix = os.path.join(data_dir, "load_md5_from_file.")
         self.assertEqual(expected, utils.load_md5_from_file(prefix + "good_mac"))
         self.assertEqual(expected, utils.load_md5_from_file(prefix + "good_linux"))
-        with self.assertRaises(utils.Error):
+        with self.assertRaises(Exception):
             utils.load_md5_from_file(prefix + "bad_mac")
-        with self.assertRaises(utils.Error):
+        with self.assertRaises(Exception):
             utils.load_md5_from_file(prefix + "bad_linux")
 
     def test_rsync_and_md5(self):
@@ -105,4 +105,26 @@ class TestUtils(unittest.TestCase):
                 print("zaphod", file=f)
 
         self.assertEqual(42, utils.sam_record_count(tmpfile))
+        os.unlink(tmpfile)
+
+    def test_vcf_has_records(self):
+        """test vcf_has_records"""
+        tmpfile = "tmp.vcf_has_records.vcf"
+        with open(tmpfile, "w") as f:
+            print("#foo", file=f)
+        self.assertFalse(utils.vcf_has_records(tmpfile))
+        with open(tmpfile, "a") as f:
+            print("ref\t42\t.\tA\tG\t.\tPASS\t.", file=f)
+        self.assertTrue(utils.vcf_has_records(tmpfile))
+        os.unlink(tmpfile)
+
+    def test_file_has_at_least_one_line(self):
+        """test file_has_at_least_one_line"""
+        tmpfile = "tmp.file_has_at_least_one_line"
+        with open(tmpfile, "w") as f:
+            pass
+        self.assertFalse(utils.file_has_at_least_one_line(tmpfile))
+        with open(tmpfile, "w") as f:
+            print("hello there", file=f)
+        self.assertTrue(utils.file_has_at_least_one_line(tmpfile))
         os.unlink(tmpfile)

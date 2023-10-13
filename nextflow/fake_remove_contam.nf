@@ -1,3 +1,4 @@
+nextflow.enable.dsl=1
 params.help = false
 params.pipeline_root = ""
 params.db_config_file = ""
