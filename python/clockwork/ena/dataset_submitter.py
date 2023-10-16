@@ -1,4 +1,5 @@
 import configparser
+import hashlib
 import itertools
 import multiprocessing
 import os
@@ -54,8 +55,7 @@ class DatasetSubmitter:
         )
         if self.study_prefix is None:
             raise Exception(
-                "Error! Must provide study_prefix in [ena_login] section of ini file "
-                + self.ini_file
+                f"Error! Must provide study_prefix in [ena_login] section of ini file {self.ini_file}"
             )
 
     @classmethod
@@ -92,7 +92,7 @@ class DatasetSubmitter:
         )
         join = "Seqrep JOIN Isolate ON Seqrep.isolate_id = Isolate.isolate_id JOIN Sample ON Isolate.sample_id = Sample.sample_id"
         where = (
-            'submit_to_ena=1 AND import_status=1 AND ena_run_accession IS NULL AND dataset_name="'
+            'remove_contam_reads_file_1_md5 IS NOT NULL AND remove_contam_reads_file_2_md5 IS NOT NULL AND submit_to_ena=1 AND import_status=1 AND ena_run_accession IS NULL AND dataset_name="'
             + self.dataset_name
             + '"'
         )
@@ -107,7 +107,7 @@ class DatasetSubmitter:
         try:
             config.read(ini_file)
         except:
-            raise Exception("Error reading config file " + ini_file)
+            raise Exception(f"Error reading config file {ini_file}")
 
         if "sequencing_centres" not in config:
             return {}
@@ -120,7 +120,7 @@ class DatasetSubmitter:
         try:
             config.read(ini_file)
         except:
-            raise Exception("Error reading config file " + ini_file)
+            raise Exception(f"Error reading config file {ini_file}")
 
         if section not in config:
             return None
@@ -142,7 +142,7 @@ class DatasetSubmitter:
         if len(center_names) == 1:
             center_name = center_names.pop()
         else:
-            raise Exception("Error getting unique ena_center_name from: " + str(data_in))
+            raise Exception(f"Error getting unique ena_center_name from: {data_in}")
 
         return number_to_name_dict.get(center_name, center_name)
 
@@ -153,10 +153,7 @@ class DatasetSubmitter:
         study_accessions_from_db = {x["ena_study_accession"] for x in data_in}
         if len(study_accessions_from_db) > 1:
             raise Exception(
-                "Error! More than one study ID found for dataset "
-                + self.dataset_name
-                + ". Got: "
-                + str(study_accessions_from_db)
+                f"Error! More than one study ID found for dataset {self.dataset_name}. Got: {study_accessions_from_db}"
             )
 
         if not os.path.exists(self.project_xml):
@@ -184,7 +181,7 @@ class DatasetSubmitter:
             project_creator.run()
             if not project_creator.submission_receipt.successful:
                 raise Exception(
-                    "Error submitting project to ena. XML file: " + self.project_xml
+                    f"Error submitting project to ena. XML file: {self.project_xml}"
                 )
 
             ena_study_accession = project_creator.submission_receipt.accessions.get(
@@ -192,8 +189,7 @@ class DatasetSubmitter:
             )
             if ena_study_accession is None:
                 raise Exception(
-                    "Error getting proejct accession from "
-                    + project_creator.receipt_xml
+                    f"Error getting proejct accession from {project_creator.receipt_xml}"
                 )
 
             for row in data_in:
@@ -206,6 +202,8 @@ class DatasetSubmitter:
             self.db.commit()
         else:
             assert len(study_accessions_from_db) == 1
+            if study_accessions_from_db == {None}:
+                raise Exception("Project XML file exists for dataset {self.dataset_name}, but got project accession of 'None' from the database. Cannot continue")
 
     def _submit_sample_objects(self, data_in):
         submitted_samples = {}  # sample id -> ena accession
@@ -221,7 +219,8 @@ class DatasetSubmitter:
                     self.pipeline_root, row["sample_id"], row["isolate_id"]
                 )
                 object_xml = iso_dir.xml_submission_file("sample")
-                object_alias = "sample." + str(row["sample_id"])
+                hash_str = hashlib.sha256((row["subject_id"] + row["sample_id_from_lab"]).encode()).hexdigest()[:8]
+                object_alias = "sample." + str(row["sample_id"]) + "." + hash_str
                 submit_alias = "submit." + object_alias
                 center_name = DatasetSubmitter._ena_center_name_from_db_data(
                     data_in, number_to_name_dict=self.centre_number_to_name
@@ -283,7 +282,8 @@ class DatasetSubmitter:
                     self.pipeline_root, row["sample_id"], row["isolate_id"]
                 )
                 object_xml = iso_dir.xml_submission_file("experiment")
-                object_alias = "experiment." + str(row["isolate_id"])
+                hash_str = hashlib.sha256((row["subject_id"] + row["isolate_number_from_lab"]).encode()).hexdigest()[:8]
+                object_alias = "experiment." + str(row["isolate_id"]) + "." + hash_str
                 submit_alias = "submit." + object_alias
                 center_name = DatasetSubmitter._ena_center_name_from_db_data(
                     data_in, number_to_name_dict=self.centre_number_to_name
@@ -390,7 +390,7 @@ class DatasetSubmitter:
             object_xml = iso_dir.xml_submission_file(
                 "run", sequence_replicate=row["sequence_replicate_number"]
             )
-            object_alias = "run." + str(row["isolate_id"])
+            object_alias = "run." + str(row["isolate_id"]) + "." + str(row["sequence_replicate_number"]) + "." + row["remove_contam_reads_file_1_md5"]
             submit_alias = "submit." + object_alias
             center_name = DatasetSubmitter._ena_center_name_from_db_data(
                 data_in, number_to_name_dict=self.centre_number_to_name
