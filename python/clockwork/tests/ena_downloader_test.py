@@ -86,7 +86,7 @@ class TestEnaDownloader(unittest.TestCase):
         )
         self.assertEqual("SAMEA2533482", got_sample)
         self.assertEqual("Illumina HiSeq 2500", got_instrument)
-        self.assertEqual("FZB", got_center_name)
+        self.assertEqual("FORSCHUNGSZENTRUM BORSTEL;FZB", got_center_name)
 
     def test_write_import_tsv(self):
         """Test _write_import_tsv"""
