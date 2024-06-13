@@ -23,4 +23,11 @@ def run(options):
         debug=options.debug,
         keep_bam=options.keep_bam,
         trim_reads=not options.no_trim,
+        minos_filter_min_dp=options.filter_min_dp,
+        minos_filter_min_frs=options.filter_min_frs,
+        minos_filter_min_gcp=options.filter_min_gcp,
+        minos_filter_max_dp=options.filter_max_dp,
+        gvcf_to_fasta_ignore_minos_pass=options.fasta_allow_minos_filter_fail,
+        gvcf_to_fasta_min_frs=options.fasta_min_frs,
+        gvcf_to_fasta_min_dp=options.fasta_min_dp,
     )

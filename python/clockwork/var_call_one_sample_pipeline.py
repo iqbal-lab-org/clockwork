@@ -28,6 +28,13 @@ def run(
     debug=False,
     keep_bam=False,
     trim_reads=True,
+    minos_filter_min_dp=2,
+    minos_filter_min_frs=0.9,
+    minos_filter_min_gcp=0.5,
+    minos_filter_max_dp=3.0,
+    gvcf_to_fasta_ignore_minos_pass=False,
+    gvcf_to_fasta_min_frs=0.9,
+    gvcf_to_fasta_min_dp=2,
 ):
     if len(reads1_list) != len(reads2_list):
         raise Exception(
@@ -153,7 +160,7 @@ def run(
         minos_vcf_has_vars = False
     else:
         minos_dir = os.path.join(outdir, "minos")
-        cmd = f"minos adjudicate --reads {rmdup_bam} {minos_dir} {refdir.ref_fasta} {samtools_vcf} {cortex_vcf}"
+        cmd = f"minos adjudicate --filter_min_dp {minos_filter_min_dp} --filter_min_frs {minos_filter_min_frs} --filter_min_gcp {minos_filter_min_gcp} --filter_max_dp {minos_filter_max_dp} --reads {rmdup_bam} {minos_dir} {refdir.ref_fasta} {samtools_vcf} {cortex_vcf}"
         utils.syscall(cmd)
         os.rename(os.path.join(minos_dir, "final.vcf"), final_vcf)
         if not debug:
@@ -165,7 +172,7 @@ def run(
     )
     if not debug:
         os.unlink(samtools_gvcf)
-    gvcf.gvcf_to_fasta(final_gvcf, f"{final_gvcf}.fasta")
+    gvcf.gvcf_to_fasta(final_gvcf, f"{final_gvcf}.fasta", require_minos_pass=gvcf_to_fasta_ignore_minos_pass, min_frs=gvcf_to_fasta_min_frs, min_dp=gvcf_to_fasta_min_dp)
 
     if not (keep_bam or debug):
         os.unlink(rmdup_bam)

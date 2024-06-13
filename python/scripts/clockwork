@@ -972,6 +972,53 @@ subparser_variant_call_one_sample.add_argument(
     help="Skip read trimming stage at start of pipeline",
 )
 subparser_variant_call_one_sample.add_argument(
+    "--filter_min_dp",
+    type=int,
+    default=2,
+    help="Minimum depth filter cutoff (same as minos option --filter_min_dp) in final VCF file [%(default)s]",
+    metavar="INT",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--filter_min_frs",
+    type=float,
+    default=0.9,
+    help="Minimum FRS filter cutoff (same as minos option --filter_min_frs) in final VCF file [%(default)s]",
+    metavar="FLOAT",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--filter_min_gcp",
+    type=float,
+    default=0.5,
+    help="Minimum GCP filter cutoff (same as minos option --filter_min_gcp) in final VCF file [%(default)s]",
+    metavar="FLOAT",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--filter_max_dp",
+    type=float,
+    default=3.0,
+    help="Determines maximum depth filter cutoff (same as minos option --filter_max_dp) in final VCF file. Using a value of 'x' here sets the cutoff to be more than x standard deviations from the mean read depth [%(default)s]",
+    metavar="FLOAT",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--fasta_allow_minos_filter_fail",
+    action="store_true",
+    help="When making consensus fasta, ignore whether or not PASS is in the FILTER column of minos calls. Default is to put an N whenever there is a filter fail",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--fasta_min_frs",
+    type=float,
+    help="When making consensus fasta, minimum fraction of reads (FRS) required supporting the call. If FRS is less than the given value, then N is added to the FASTA [%(default)s]",
+    default=0.9,
+    metavar="FLOAT",
+)
+subparser_variant_call_one_sample.add_argument(
+    "--fasta_min_dp",
+    type=int,
+    help="When making consensus fasta, minimum total read depth. If depth is less than this, then N is added to the FASTA [%(default)s]",
+    default=2,
+    metavar="INT",
+)
+subparser_variant_call_one_sample.add_argument(
     "ref_dir", help="Directory of reference files, made by clockwork reference_prepare"
 )
 subparser_variant_call_one_sample.add_argument(
